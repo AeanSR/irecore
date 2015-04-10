@@ -1297,7 +1297,6 @@ void scan_apl( rtinfo_t* rti ) {
 
 void host_kernel_entry() {
     float result;
-    int i;
     sim_iterate( &result, 5171, 3945, 1714, 917, 1282, 478, 0 );
 
     printf( "result: %.3f\n", result );

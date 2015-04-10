@@ -1,51 +1,4 @@
-#include <iostream>
-#include <string>
-#include <vector>
-#include <random>
-#include <cstdio>
-#include <intrin.h>
-#include <stdint.h>
-#include <algorithm>
-#include <chrono>
-
-#ifdef __APPLE__
-#include <OpenCL/opencl.h>
-#else
-#include <CL/cl.h>
-#endif
-
-struct {
-	cl_uint gear_str;
-	cl_uint gear_crit;
-	cl_uint gear_haste;
-	cl_uint gear_mastery;
-	cl_uint gear_mult;
-	cl_uint gear_vers;
-} stat = {
-	3945, 1714, 917, 1282, 478, 0,
-};
-cl_uint seed = 5171;
-
-class ocl_t{
-private:
-    cl_mem cl_res;
-    cl_context context;
-    cl_command_queue queue;
-    const int iterations = 100000;
-	cl_device_id device_used;
-public:
-    int init();
-    float run(std::string& apl_cstr);
-    int free();
-    ocl_t(){
-        init();
-    }
-    ~ocl_t(){
-        free();
-    }
-};
-
-ocl_t& ocl();
+#include "irecore.h"
 
 char* ocl_src_char;
 
@@ -197,7 +150,6 @@ float ocl_t::run(std::string& apl_cstr){
     }
 
     clSetKernelArg(sim_iterate, 0, sizeof(cl_mem), &cl_res);
-	seed = (cl_uint)time(NULL);
 	clSetKernelArg(sim_iterate, 1, sizeof(cl_uint), &seed);
 	clSetKernelArg(sim_iterate, 2, sizeof(cl_uint), &stat.gear_str);
 	clSetKernelArg(sim_iterate, 3, sizeof(cl_uint), &stat.gear_crit);
@@ -251,14 +203,4 @@ int ocl_t::free(){
 ocl_t& ocl(){
     static ocl_t s;
     return s;
-}
-
-
-int main(){
-    std::string apla = "SPELL(bloodthirst); SPELL(execute); SPELL(ragingblow); SPELL(wildstrike);";
-    std::string aplb = "SPELL(wildstrike); SPELL(ragingblow); SPELL(execute); SPELL(bloodthirst);";
-
-        std::cout << ocl().run(apla) << "\n";
-        //std::cout << ocl().run(aplb) << "\n";
-
 }

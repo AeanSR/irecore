@@ -6,6 +6,7 @@
 #include <stdint.h>
 #include <algorithm>
 #include <chrono>
+#include <cstdarg>
 
 #ifdef __APPLE__
 #include <OpenCL/opencl.h>
@@ -23,6 +24,17 @@ typedef struct {
 } stat_t;
 extern stat_t stat;
 extern cl_uint seed;
+typedef struct{
+	int str;
+	int ap;
+	int sp;
+	int sta;
+	int crit;
+	int haste;
+	int mastery;
+	int vers;
+	int mult;
+} raidbuff_t;
 
 class ocl_t{
 private:

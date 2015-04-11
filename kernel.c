@@ -4,6 +4,7 @@
 */
 
 #define SHOW_LOG
+#define passive_power_regen 0
 
 /* Front-end gives these defines. */
 #define vary_combat_length 20.0f
@@ -12,7 +13,6 @@
 #define death_pct 0.0f
 #define iterations 1
 #define power_max 100.0f
-#define passive_power_regen 0
 #define PLATE_SPECIALIZATION 0
 #define SINGLE_MINDED 1
 #define BUFF_STR_AGI_INT 1

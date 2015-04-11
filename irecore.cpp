@@ -21,6 +21,9 @@ int oh_low, oh_high;
 int mh_type;
 int oh_type;
 
+int developer_debug;
+int list_available_devices;
+
 const char* race_str_kernel[] = {
 	"RACE_NONE",
 	"RACE_HUMAN",
@@ -72,6 +75,8 @@ void err(const char* format, ...){
 }
 
 void set_default_parameters(){
+	developer_debug = 0;
+	list_available_devices = 0;
 	stat = {
 		3945, 1714, 917, 1282, 478, 0,
 	};
@@ -80,7 +85,7 @@ void set_default_parameters(){
 	};
 	seed = (cl_uint)time(NULL);
 	apl = "SPELL(bloodthirst); SPELL(execute); SPELL(ragingblow); SPELL(wildstrike);";
-	iterations = 100000;
+	iterations = 50000;
 	vary_combat_length = 20.0f;
 	max_length = 450.0f;
 	initial_health_percentage = 100.0f;
@@ -344,6 +349,15 @@ void parse_parameters(std::vector<kvpair_t>& arglist){
 			else err("No such weapon type \"%s\".", i->value.c_str());
 			single_minded = (mh_type == 1 && oh_type == 1);
 		}
+		else if (0 == i->key.compare("developer_debug")){
+			developer_debug = !!atoi(i->value.c_str());
+		}
+		else if (0 == i->key.compare("list_available_devices")){
+			list_available_devices = !!atoi(i->value.c_str());
+		}
+		else if (0 == i->key.compare("opencl_device_id")){
+			ocl().opencl_device_id = atoi(i->value.c_str());
+		}
 		else{
 			err("Cannot parse parameter \"%s\".", i->key.c_str());
 		}
@@ -457,7 +471,14 @@ int main(int argc, char** argv){
 	build_arglist(arglist, argc, argv);
 	parse_parameters(arglist);
 	generate_predef();
-	std::cout << ocl().run(apl, predef) << std::endl;
-//	host_kernel_entry();
+	if (developer_debug){
+		host_kernel_entry();
+	}
+	else if(list_available_devices){
+		ocl().init();
+	}
+	else{
+		std::cout << ocl().run(apl, predef) << std::endl;
+	}
 	return 0;
 }

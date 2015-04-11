@@ -36,6 +36,7 @@ typedef struct{
 extern stat_t stat;
 extern cl_uint seed;
 extern int iterations;
+extern int list_available_devices;
 
 class ocl_t{
 private:
@@ -43,13 +44,14 @@ private:
     cl_context context;
     cl_command_queue queue;
 	cl_device_id device_used;
+	int initialized;
 public:
+	int opencl_device_id;
     int init();
     float run(std::string& apl_cstr, std::string& predef);
     int free();
-    ocl_t(){
-        init();
-    }
+    ocl_t() : initialized(0){
+    } 
     ~ocl_t(){
         free();
     }

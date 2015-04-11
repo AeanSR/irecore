@@ -2,6 +2,11 @@
 
 char* ocl_src_char;
 
+typedef struct{
+	size_t platform_id;
+	size_t device_id;
+} pdpair_t;
+std::vector<pdpair_t> ocl_device_list;
 
 template <typename T>
 T prefix_mean(const T* _data, size_t n) {
@@ -27,68 +32,100 @@ T prefix_mean(const T* _data, size_t n) {
 
 int ocl_t::init()
 {
-    std::cout << "Query available compute devices ...\n";
+	std::cout << "Query available compute devices ...\n";
 
-    cl_int err;
-    cl_uint num;
-    err = clGetPlatformIDs(0, 0, &num);
-    if (err != CL_SUCCESS) {
-        std::cerr << "Unable to get platforms\n";
-        return 0;
-    }
-    std::cout << "num of platforms " << num << "\n";
-    std::vector<cl_platform_id> platforms(num);
-    err = clGetPlatformIDs(num, &platforms[0], &num);
-    if (err != CL_SUCCESS) {
-        std::cerr << "Unable to get platform ID\n";
-        return 0;
-    }
+	cl_int err;
+	cl_uint num;
+	err = clGetPlatformIDs(0, 0, &num);
+	if (err != CL_SUCCESS) {
+		std::cerr << "Unable to get platforms\n";
+		return 0;
+	}
 
-    cl_context_properties prop[] = { CL_CONTEXT_PLATFORM, reinterpret_cast<cl_context_properties>(platforms[1]), 0 };
-    context = clCreateContextFromType(prop, CL_DEVICE_TYPE_ALL, NULL, NULL, NULL);
-    if (context == 0) {
-        std::cerr << "Can't create OpenCL context\n";
-        return 0;
-    }
+	std::vector<cl_platform_id> platforms(num);
+	err = clGetPlatformIDs(num, &platforms[0], &num);
+	if (err != CL_SUCCESS) {
+		std::cerr << "Unable to get platform ID\n";
+		return 0;
+	}
 
-    size_t dev_c, info_c;
-    clGetContextInfo(context, CL_CONTEXT_DEVICES, 0, NULL, &dev_c);
+	int device_counter = 0;
+	for (size_t platform_id = 0; platform_id < num; platform_id++){
+		cl_context_properties prop[] = { CL_CONTEXT_PLATFORM, reinterpret_cast<cl_context_properties>(platforms[platform_id]), 0 };
+		context = clCreateContextFromType(prop, CL_DEVICE_TYPE_ALL, NULL, NULL, NULL);
+		if (context == 0) {
+			std::cerr << "Can't create OpenCL context\n";
+			return 0;
+		}
+
+		size_t dev_c, info_c;
+		clGetContextInfo(context, CL_CONTEXT_DEVICES, 0, NULL, &dev_c);
+		std::vector<cl_device_id> devices(dev_c / sizeof(cl_device_id));
+		clGetContextInfo(context, CL_CONTEXT_DEVICES, dev_c, &devices[0], 0);
+
+		for (auto i = devices.begin(); i != devices.end(); i++){
+			clGetDeviceInfo(*i, CL_DEVICE_NAME, 0, NULL, &info_c);
+			std::string devname;
+			devname.resize(info_c);
+			clGetDeviceInfo(*i, CL_DEVICE_NAME, info_c, &devname[0], 0);
+			std::cout << "\tDevice " << device_counter++ << ": " << devname.c_str() << "\n";
+			pdpair_t pd;
+			pd.device_id = i - devices.begin();
+			pd.platform_id = platform_id;
+			ocl_device_list.push_back(pd);
+		}
+		clReleaseContext(context);
+	}
+
+	if (list_available_devices) return 0;
+
+	cl_context_properties prop[] = { CL_CONTEXT_PLATFORM, reinterpret_cast<cl_context_properties>(platforms[ocl_device_list[opencl_device_id].platform_id]), 0 };
+	context = clCreateContextFromType(prop, CL_DEVICE_TYPE_ALL, NULL, NULL, NULL);
+	if (context == 0) {
+		std::cerr << "Can't create OpenCL context\n";
+		return 0;
+	}
+
+	size_t dev_c, info_c;
+	clGetContextInfo(context, CL_CONTEXT_DEVICES, 0, NULL, &dev_c);
 	std::vector<cl_device_id> devices(dev_c / sizeof(cl_device_id));
-    clGetContextInfo(context, CL_CONTEXT_DEVICES, dev_c, &devices[0], 0);
-	device_used = devices[0];
-    for (auto i = devices.begin(); i != devices.end(); i++){
-        clGetDeviceInfo(*i, CL_DEVICE_NAME, 0, NULL, &info_c);
-        std::string devname;
-        devname.resize(info_c);
-        clGetDeviceInfo(*i, CL_DEVICE_NAME, info_c, &devname[0], 0);
-        std::cout << "\tDevice " << i - devices.begin() + 1 << ": " << devname.c_str() << "\n";
-    }
-    std::cout << "OK!\n";
+	clGetContextInfo(context, CL_CONTEXT_DEVICES, dev_c, &devices[0], 0);
 
-    queue = clCreateCommandQueue(context, devices[0], 0, 0);
-    if (queue == 0) {
-        std::cerr << "Can't create command queue\n";
-        return 0;
-    }
+	device_used = devices[ocl_device_list[opencl_device_id].device_id];
+	clGetDeviceInfo(device_used, CL_DEVICE_NAME, 0, NULL, &info_c);
+	std::string devname;
+	devname.resize(info_c);
+	clGetDeviceInfo(device_used, CL_DEVICE_NAME, info_c, &devname[0], 0);
+	std::cout << "Execute on Device " << opencl_device_id << ": " << devname << std::endl;
+	std::cout << "OK!\n";
 
-    cl_res = clCreateBuffer(context, CL_MEM_WRITE_ONLY, sizeof(cl_float)* iterations, NULL, NULL);
-    if (cl_res == 0) {
-        std::cerr << "Can't create OpenCL buffer\n";
-        return 0;
-    }
+	queue = clCreateCommandQueue(context, device_used, 0, 0);
+	if (queue == 0) {
+		std::cerr << "Can't create command queue\n";
+		return 0;
+	}
 
-    FILE* f = fopen("kernel.c", "rb");
-    fseek(f, 0, SEEK_END);
-    size_t tell = ftell(f);
-    rewind(f);
-    ocl_src_char = (char*)calloc(tell + 1, 1);
-    fread(ocl_src_char, tell, 1, f);
+	cl_res = clCreateBuffer(context, CL_MEM_WRITE_ONLY, sizeof(cl_float)* iterations, NULL, NULL);
+	if (cl_res == 0) {
+		std::cerr << "Can't create OpenCL buffer\n";
+		return 0;
+	}
 
-    return 0;
+	FILE* f = fopen("kernel.c", "rb");
+	fseek(f, 0, SEEK_END);
+	size_t tell = ftell(f);
+	rewind(f);
+	ocl_src_char = (char*)calloc(tell + 1, 1);
+	fread(ocl_src_char, tell, 1, f);
+
+	return 0;
 }
 
 float ocl_t::run(std::string& apl_cstr, std::string& predef){
-    cl_int err;
+	if (!initialized) init();
+	if (list_available_devices) return -1.0f;
+
+	cl_int err;
 	auto t1 = std::chrono::high_resolution_clock::now();
 
     std::cout << "JIT ...\r";

@@ -69,7 +69,7 @@ const char* weapon_type_str[] = {
 void err(const char* format, ...){
 	va_list vl;
 	va_start(vl, format);
-	vprintf(format, vl);
+	vfprintf(stderr, format, vl);
 	va_end(vl);
 	exit(-1);
 }

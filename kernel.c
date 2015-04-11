@@ -1,6 +1,6 @@
 /**
-    frm.c: back-end framework.
-    2014.7.14
+	IreCore kernel, Aean <v#aean.net>
+	based on LuaCL kernel https://github.com/llxibo/LuaCL
 */
 
 #define SHOW_LOG

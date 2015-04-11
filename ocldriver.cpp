@@ -118,6 +118,7 @@ int ocl_t::init()
 	ocl_src_char = (char*)calloc(tell + 1, 1);
 	fread(ocl_src_char, tell, 1, f);
 
+	initialized = 1;
 	return 0;
 }
 

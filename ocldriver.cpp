@@ -87,13 +87,14 @@ int ocl_t::init()
     return 0;
 }
 
-float ocl_t::run(std::string& apl_cstr){
+float ocl_t::run(std::string& apl_cstr, std::string& predef){
     cl_int err;
 	auto t1 = std::chrono::high_resolution_clock::now();
 
     std::cout << "JIT ...\r";
 
-    std::string source(ocl_src_char);
+	std::string source(predef);
+	source.append(ocl_src_char);
     source.append("void scan_apl( rtinfo_t* rti ) {");
     source.append(apl_cstr);
     source.append("}");

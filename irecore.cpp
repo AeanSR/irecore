@@ -6,6 +6,62 @@ cl_uint seed;
 std::string apl;
 std::string predef;
 int iterations;
+float vary_combat_length;
+float max_length;
+float initial_health_percentage;
+float death_pct;
+float power_max; // rage_max
+int plate_specialization;
+int single_minded;
+int race;
+float mh_speed;
+float oh_speed;
+int mh_low, mh_high;
+int oh_low, oh_high;
+int mh_type;
+int oh_type;
+
+const char* race_str_kernel[] = {
+	"RACE_NONE",
+	"RACE_HUMAN",
+	"RACE_DWARF",
+	"RACE_GNOME",
+	"RACE_NIGHTELF_DAY",
+	"RACE_NIGHTELF_NIGHT",
+	"RACE_DRAENEI",
+	"RACE_WORGEN",
+	"RACE_ORC",
+	"RACE_TROLL",
+	"RACE_TAUREN",
+	"RACE_UNDEAD",
+	"RACE_BLOODELF",
+	"RACE_GOBLIN",
+	"RACE_PANDAREN",
+	NULL
+};
+const char* race_str_param[] = {
+	"none",
+	"human",
+	"dwarf",
+	"gnome",
+	"nightelf_day",
+	"nightelf_night",
+	"draenei",
+	"worgen",
+	"orc",
+	"troll",
+	"tauren",
+	"undead",
+	"bloodelf",
+	"goblin",
+	"pandaren",
+	NULL
+};
+const char* weapon_type_str[] = {
+	"WEAPON_2H",
+	"WEAPON_1H",
+	"WEAPON_DAGGER",
+};
 
 void err(const char* format, ...){
 	va_list vl;
@@ -25,6 +81,22 @@ void set_default_parameters(){
 	seed = (cl_uint)time(NULL);
 	apl = "SPELL(bloodthirst); SPELL(execute); SPELL(ragingblow); SPELL(wildstrike);";
 	iterations = 100000;
+	vary_combat_length = 20.0f;
+	max_length = 450.0f;
+	initial_health_percentage = 100.0f;
+	death_pct = 0.0f;
+	power_max = 100.0f;
+	plate_specialization = 1;
+	single_minded = 1;
+	race = 0;
+	mh_speed = 2.6f;
+	oh_speed = 2.6f;
+	mh_high = 1514;
+	oh_high = 1514;
+	mh_low = 814;
+	oh_low = 814;
+	mh_type = 1;
+	oh_type = 1;
 }
 
 typedef struct{
@@ -101,21 +173,27 @@ void parse_parameters(std::vector<kvpair_t>& arglist){
 	for (auto i = arglist.begin(); i != arglist.end(); i++){
 		if (0 == i->key.compare("gear_str")){
 			stat.gear_str = atoi(i->value.c_str());
+			if (stat.gear_str < 0) stat.gear_str = 0;
 		}
 		else if (0 == i->key.compare("gear_crit")){
 			stat.gear_crit = atoi(i->value.c_str());
+			if (stat.gear_crit < 0) stat.gear_crit = 0;
 		}
 		else if (0 == i->key.compare("gear_mastery")){
 			stat.gear_mastery = atoi(i->value.c_str());
+			if (stat.gear_mastery < 0) stat.gear_mastery = 0;
 		}
 		else if (0 == i->key.compare("gear_haste")){
 			stat.gear_haste = atoi(i->value.c_str());
+			if (stat.gear_haste < 0) stat.gear_haste = 0;
 		}
 		else if (0 == i->key.compare("gear_mult")){
 			stat.gear_mult = atoi(i->value.c_str());
+			if (stat.gear_mult < 0) stat.gear_mult = 0;
 		}
 		else if (0 == i->key.compare("gear_vers")){
 			stat.gear_vers = atoi(i->value.c_str());
+			if (stat.gear_vers < 0) stat.gear_vers = 0;
 		}
 		else if (0 == i->key.compare("deterministic_seed")){
 			seed = atoi(i->value.c_str());
@@ -171,10 +249,206 @@ void parse_parameters(std::vector<kvpair_t>& arglist){
 		else if (0 == i->key.compare("actions+")){
 			apl.append(i->value);
 		}
+		else if (0 == i->key.compare("vary_combat_length")){
+			vary_combat_length = atof(i->value.c_str());
+			if (vary_combat_length > 100.0f) vary_combat_length = 100.0f;
+			if (vary_combat_length < 0.0f) vary_combat_length = 0.0f;
+		}
+		else if (0 == i->key.compare("max_length")){
+			max_length = atof(i->value.c_str());
+			if (max_length < 1.0f) max_length = 1.0f;
+		}
+		else if (0 == i->key.compare("initial_health_percentage")){
+			initial_health_percentage = atof(i->value.c_str());
+			if (initial_health_percentage > 100.0f) initial_health_percentage = 100.0f;
+			if (initial_health_percentage < 0.0f) initial_health_percentage = 0.0f;
+		}
+		else if (0 == i->key.compare("death_pct")){
+			death_pct = atof(i->value.c_str());
+			if (death_pct > 100.0f) death_pct = 100.0f;
+			if (death_pct < 0.0f) death_pct = 0.0f;
+		}
+		else if (0 == i->key.compare("rage_max")){
+			power_max = atof(i->value.c_str());
+			if (power_max < 0.0f) power_max = 0.0f;
+		}
+		else if (0 == i->key.compare("plate_specialization")){
+			plate_specialization = atoi(i->value.c_str());
+			plate_specialization = !!plate_specialization;
+		}
+		else if (0 == i->key.compare("race")){
+			race = -1;
+			for (int j = 0; race_str_param[j]; j++){
+				if (0 == i->value.compare(race_str_param[j])){
+					race = j;
+					break;
+				}
+			}
+			if (race == -1) { err("No such race \"%s\".", i->value.c_str()); }
+		}
+		else if (0 == i->key.compare("mh_speed")){
+			mh_speed = atof(i->value.c_str());
+			if (mh_speed <= 0.0f) mh_speed = 1.5f;
+		}
+		else if (0 == i->key.compare("oh_speed")){
+			oh_speed = atof(i->value.c_str());
+			if (oh_speed <= 0.0f) oh_speed = 1.5f;
+		}
+		else if (0 == i->key.compare("mh_low")){
+			mh_low = atoi(i->value.c_str());
+			if (mh_low < 0) mh_low = 0;
+			if (mh_high < mh_low){
+				int t = mh_high;
+				mh_high = mh_low;
+				mh_low = t;
+			}
+		}
+		else if (0 == i->key.compare("mh_high")){
+			mh_high = atoi(i->value.c_str());
+			if (mh_high < 0) mh_high = 0;
+			if (mh_high < mh_low){
+				int t = mh_high;
+				mh_high = mh_low;
+				mh_low = t;
+			}
+		}
+		else if (0 == i->key.compare("oh_low")){
+			oh_low = atoi(i->value.c_str());
+			if (oh_low < 0) oh_low = 0;
+			if (oh_high < oh_low){
+				int t = oh_high;
+				oh_high = oh_low;
+				oh_low = t;
+			}
+		}
+		else if (0 == i->key.compare("oh_high")){
+			oh_high = atoi(i->value.c_str());
+			if (oh_high < 0) oh_high = 0;
+			if (oh_high < oh_low){
+				int t = oh_high;
+				oh_high = oh_low;
+				oh_low = t;
+			}
+		}
+		else if (0 == i->key.compare("mh_type")){
+			if (i->value.compare("2h")) mh_type = 0;
+			else if (i->value.compare("1h")) mh_type = 1;
+			else if (i->value.compare("dagger")) mh_type = 2;
+			else err("No such weapon type \"%s\".", i->value.c_str());
+			single_minded = (mh_type == 1 && oh_type == 1);
+		}
+		else if (0 == i->key.compare("oh_type")){
+			if (i->value.compare("2h")) oh_type = 0;
+			else if (i->value.compare("1h")) oh_type = 1;
+			else if (i->value.compare("dagger")) oh_type = 2;
+			else err("No such weapon type \"%s\".", i->value.c_str());
+			single_minded = (mh_type == 1 && oh_type == 1);
+		}
 		else{
 			err("Cannot parse parameter \"%s\".", i->key.c_str());
 		}
 	}
+}
+
+void generate_predef(){
+	char buffer[256];
+	predef = "";
+	predef.append("#define vary_combat_length ");
+	sprintf(buffer, "%ff", vary_combat_length);
+	predef.append(buffer); predef.append("\r\n");
+
+	predef.append("#define max_length ");
+	sprintf(buffer, "%ff", max_length);
+	predef.append(buffer); predef.append("\r\n");
+
+	predef.append("#define initial_health_percentage ");
+	sprintf(buffer, "%ff", initial_health_percentage);
+	predef.append(buffer); predef.append("\r\n");
+
+	predef.append("#define death_pct ");
+	sprintf(buffer, "%ff", death_pct);
+	predef.append(buffer); predef.append("\r\n");
+
+	predef.append("#define power_max ");
+	sprintf(buffer, "%ff", power_max);
+	predef.append(buffer); predef.append("\r\n");
+
+	predef.append("#define PLATE_SPECIALIZATION ");
+	sprintf(buffer, "%d", plate_specialization);
+	predef.append(buffer); predef.append("\r\n");
+
+	predef.append("#define SINGLE_MINDED ");
+	sprintf(buffer, "%d", single_minded);
+	predef.append(buffer); predef.append("\r\n");
+
+	predef.append("#define BUFF_STR_AGI_INT ");
+	sprintf(buffer, "%d", raidbuff.str);
+	predef.append(buffer); predef.append("\r\n");
+
+	predef.append("#define BUFF_AP ");
+	sprintf(buffer, "%d", raidbuff.ap);
+	predef.append(buffer); predef.append("\r\n");
+
+	predef.append("#define BUFF_CRIT ");
+	sprintf(buffer, "%d", raidbuff.crit);
+	predef.append(buffer); predef.append("\r\n");
+
+	predef.append("#define BUFF_HASTE ");
+	sprintf(buffer, "%d", raidbuff.haste);
+	predef.append(buffer); predef.append("\r\n");
+
+	predef.append("#define BUFF_MASTERY ");
+	sprintf(buffer, "%d", raidbuff.mastery);
+	predef.append(buffer); predef.append("\r\n");
+
+	predef.append("#define BUFF_MULT ");
+	sprintf(buffer, "%d", raidbuff.mult);
+	predef.append(buffer); predef.append("\r\n");
+
+	predef.append("#define BUFF_VERS ");
+	sprintf(buffer, "%d", raidbuff.vers);
+	predef.append(buffer); predef.append("\r\n");
+
+	predef.append("#define BUFF_SP ");
+	sprintf(buffer, "%d", raidbuff.sp);
+	predef.append(buffer); predef.append("\r\n");
+
+	predef.append("#define BUFF_STA ");
+	sprintf(buffer, "%d", raidbuff.sta);
+	predef.append(buffer); predef.append("\r\n");
+
+	predef.append("#define RACE ");
+	predef.append(race_str_kernel[race]); predef.append("\r\n");
+
+	predef.append("#define MH_LOW ");
+	sprintf(buffer, "%d", mh_low);
+	predef.append(buffer); predef.append("\r\n");
+
+	predef.append("#define MH_HIGH ");
+	sprintf(buffer, "%d", mh_high);
+	predef.append(buffer); predef.append("\r\n");
+
+	predef.append("#define OH_LOW ");
+	sprintf(buffer, "%d", oh_low);
+	predef.append(buffer); predef.append("\r\n");
+
+	predef.append("#define OH_HIGH ");
+	sprintf(buffer, "%d", oh_high);
+	predef.append(buffer); predef.append("\r\n");
+
+	predef.append("#define MH_SPEED ");
+	sprintf(buffer, "%ff", mh_speed);
+	predef.append(buffer); predef.append("\r\n");
+
+	predef.append("#define OH_SPEED ");
+	sprintf(buffer, "%ff", oh_speed);
+	predef.append(buffer); predef.append("\r\n");
+
+	predef.append("#define MH_TYPE ");
+	predef.append(weapon_type_str[mh_type]); predef.append("\r\n");
+
+	predef.append("#define OH_TYPE ");
+	predef.append(weapon_type_str[oh_type]); predef.append("\r\n");
 }
 
 int main(int argc, char** argv){
@@ -182,7 +456,8 @@ int main(int argc, char** argv){
 	std::vector<kvpair_t> arglist;
 	build_arglist(arglist, argc, argv);
 	parse_parameters(arglist);
-	std::cout << ocl().run(apl) << std::endl;
+	generate_predef();
+	std::cout << ocl().run(apl, predef) << std::endl;
 //	host_kernel_entry();
 	return 0;
 }

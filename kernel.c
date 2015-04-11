@@ -6,13 +6,14 @@
 #define SHOW_LOG
 #define passive_power_regen 0
 
+#if !defined(__OPENCL_VERSION__)
 /* Front-end gives these defines. */
 #define vary_combat_length 20.0f
 #define max_length 450.0f
 #define initial_health_percentage 100.0f
 #define death_pct 0.0f
 #define iterations 1
-#define power_max 100.0f
+#define power_max 120.0f
 #define PLATE_SPECIALIZATION 0
 #define SINGLE_MINDED 1
 #define BUFF_STR_AGI_INT 1
@@ -33,6 +34,7 @@
 #define OH_HIGH 1514
 #define OH_SPEED 2.6f
 #define OH_TYPE WEAPON_1H
+#endif /* !defined(__OPENCL_VERSION__) */
 
 /* Debug on Host! */
 #if !defined(__OPENCL_VERSION__)

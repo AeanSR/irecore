@@ -33,7 +33,6 @@ typedef struct{
 	int vers;
 	int mult;
 } raidbuff_t;
-
 extern stat_t stat;
 extern cl_uint seed;
 extern int iterations;
@@ -46,7 +45,7 @@ private:
 	cl_device_id device_used;
 public:
     int init();
-    float run(std::string& apl_cstr);
+    float run(std::string& apl_cstr, std::string& predef);
     int free();
     ocl_t(){
         init();

@@ -124,6 +124,56 @@ void parse_parameters(std::vector<kvpair_t>& arglist){
 			iterations = atoi(i->value.c_str());
 			if (iterations <= 0) iterations = 1;
 		}
+		else if (0 == i->key.compare("raidbuff_str")){
+			raidbuff.str = atoi(i->value.c_str());
+			raidbuff.str = !!raidbuff.str;
+		}
+		else if (0 == i->key.compare("raidbuff_ap")){
+			raidbuff.ap = atoi(i->value.c_str());
+			raidbuff.ap = !!raidbuff.ap;
+		}
+		else if (0 == i->key.compare("raidbuff_sp")){
+			raidbuff.sp = atoi(i->value.c_str());
+			raidbuff.sp = !!raidbuff.sp;
+		}
+		else if (0 == i->key.compare("raidbuff_crit")){
+			raidbuff.crit = atoi(i->value.c_str());
+			raidbuff.crit = !!raidbuff.crit;
+		}
+		else if (0 == i->key.compare("raidbuff_haste")){
+			raidbuff.haste = atoi(i->value.c_str());
+			raidbuff.haste = !!raidbuff.haste;
+		}
+		else if (0 == i->key.compare("raidbuff_mastery")){
+			raidbuff.mastery = atoi(i->value.c_str());
+			raidbuff.mastery = !!raidbuff.mastery;
+		}
+		else if (0 == i->key.compare("raidbuff_mult")){
+			raidbuff.mult = atoi(i->value.c_str());
+			raidbuff.mult = !!raidbuff.mult;
+		}
+		else if (0 == i->key.compare("raidbuff_vers")){
+			raidbuff.vers = atoi(i->value.c_str());
+			raidbuff.vers = !!raidbuff.vers;
+		}
+		else if (0 == i->key.compare("raidbuff_sta")){
+			raidbuff.sta = atoi(i->value.c_str());
+			raidbuff.sta = !!raidbuff.sta;
+		}
+		else if (0 == i->key.compare("raidbuff_all")){
+			raidbuff.str = atoi(i->value.c_str());
+			raidbuff.str = !!raidbuff.str;
+			raidbuff.ap = raidbuff.crit = raidbuff.haste = raidbuff.mastery = raidbuff.mult = raidbuff.vers = raidbuff.sp = raidbuff.sta = raidbuff.str;
+		}
+		else if (0 == i->key.compare("actions")){
+			apl = i->value;
+		}
+		else if (0 == i->key.compare("actions+")){
+			apl.append(i->value);
+		}
+		else{
+			err("Cannot parse parameter \"%s\".", i->key.c_str());
+		}
 	}
 }
 

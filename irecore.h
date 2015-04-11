@@ -22,8 +22,6 @@ typedef struct {
 	cl_uint gear_mult;
 	cl_uint gear_vers;
 } stat_t;
-extern stat_t stat;
-extern cl_uint seed;
 typedef struct{
 	int str;
 	int ap;
@@ -36,12 +34,15 @@ typedef struct{
 	int mult;
 } raidbuff_t;
 
+extern stat_t stat;
+extern cl_uint seed;
+extern int iterations;
+
 class ocl_t{
 private:
     cl_mem cl_res;
     cl_context context;
     cl_command_queue queue;
-    const int iterations = 100000;
 	cl_device_id device_used;
 public:
     int init();

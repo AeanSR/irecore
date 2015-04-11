@@ -5,6 +5,7 @@ raidbuff_t raidbuff;
 cl_uint seed;
 std::string apl;
 std::string predef;
+int iterations;
 
 void err(const char* format, ...){
 	va_list vl;
@@ -23,7 +24,7 @@ void set_default_parameters(){
 	};
 	seed = (cl_uint)time(NULL);
 	apl = "SPELL(bloodthirst); SPELL(execute); SPELL(ragingblow); SPELL(wildstrike);";
-
+	iterations = 100000;
 }
 
 typedef struct{
@@ -98,7 +99,31 @@ void build_arglist(std::vector<kvpair_t>& arglist, int argc, char** argv){
 
 void parse_parameters(std::vector<kvpair_t>& arglist){
 	for (auto i = arglist.begin(); i != arglist.end(); i++){
-		std::cout << i->key << " = " << i->value << std::endl;
+		if (0 == i->key.compare("gear_str")){
+			stat.gear_str = atoi(i->value.c_str());
+		}
+		else if (0 == i->key.compare("gear_crit")){
+			stat.gear_crit = atoi(i->value.c_str());
+		}
+		else if (0 == i->key.compare("gear_mastery")){
+			stat.gear_mastery = atoi(i->value.c_str());
+		}
+		else if (0 == i->key.compare("gear_haste")){
+			stat.gear_haste = atoi(i->value.c_str());
+		}
+		else if (0 == i->key.compare("gear_mult")){
+			stat.gear_mult = atoi(i->value.c_str());
+		}
+		else if (0 == i->key.compare("gear_vers")){
+			stat.gear_vers = atoi(i->value.c_str());
+		}
+		else if (0 == i->key.compare("deterministic_seed")){
+			seed = atoi(i->value.c_str());
+		}
+		else if (0 == i->key.compare("iterations")){
+			iterations = atoi(i->value.c_str());
+			if (iterations <= 0) iterations = 1;
+		}
 	}
 }
 
@@ -107,7 +132,7 @@ int main(int argc, char** argv){
 	std::vector<kvpair_t> arglist;
 	build_arglist(arglist, argc, argv);
 	parse_parameters(arglist);
-//	std::cout << ocl().run(apl) << std::endl;
+	std::cout << ocl().run(apl) << std::endl;
 //	host_kernel_entry();
 	return 0;
 }

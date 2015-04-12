@@ -34,6 +34,7 @@
 #define OH_HIGH 1514
 #define OH_SPEED 2.6f
 #define OH_TYPE WEAPON_1H
+#define TALENT_TIER3 1
 #endif /* !defined(__OPENCL_VERSION__) */
 
 /* Debug on Host! */
@@ -288,9 +289,11 @@ typedef struct {
 } event_queue_t;
 
 /* Declarations from class modules. */
+#if (TALENT_TIER3 != 3)
 typedef struct {
     time_t cd;
 } bloodthirst_t;
+#endif
 typedef struct {
     k16u stack;
     time_t expire;
@@ -304,7 +307,7 @@ typedef struct {
 } bloodsurge_t;
 typedef struct {
     time_t expire;
-} sudden_death_t;
+} suddendeath_t;
 
 typedef struct {
     time_t cd;
@@ -400,14 +403,17 @@ typedef struct kdeclspec( packed ) {
     float power;
     float power_regen;
     stat_t stat;
-
+#if (TALENT_TIER3 != 3)
     bloodthirst_t   bloodthirst;
-    ragingblow_t    ragingblow;
+#endif
+	ragingblow_t    ragingblow;
     enrage_t        enrage;
     bloodsurge_t    bloodsurge;
-    sudden_death_t  sudden_death;
 
-    RPPM_t		sudden_death_proc;
+#if (TALENT_TIER3 == 2)
+    suddendeath_t  suddendeath;
+    RPPM_t		suddendeath_proc;
+#endif
 
     time_t gcd;
 }
@@ -909,7 +915,7 @@ kbool deal_damage( rtinfo_t* rti, float dmg, k32u dmgtype, float extra_crit_rate
         }
         rti->damage_collected += fdmg;
 
-        float mr = 0.5f * rti->player.stat.mult;
+        float mr = rti->player.stat.mult;
         float m = uni_rng(rti);
         if (m < mr) {
             c = uni_rng(rti);
@@ -949,8 +955,10 @@ kbool deal_damage( rtinfo_t* rti, float dmg, k32u dmgtype, float extra_crit_rate
 enum {
     routnum_gcd_expire,
     routnum_bloodthirst_execute,
-    routnum_bloodthirst_cd,
-    routnum_ragingblow_execute,
+#if (TALENT_TIER3 != 3)
+	routnum_bloodthirst_cd,
+#endif
+	routnum_ragingblow_execute,
     routnum_ragingblow_trigger,
     routnum_ragingblow_expire,
     routnum_enrage_trigger,
@@ -961,8 +969,10 @@ enum {
     routnum_bloodsurge_expire,
     routnum_auto_attack_mh,
     routnum_auto_attack_oh,
-    routnum_sudden_death_trigger,
-    routnum_sudden_death_expire,
+#if (TALENT_TIER3 == 2)
+	routnum_suddendeath_trigger,
+    routnum_suddendeath_expire,
+#endif
 };
 
 void gcd_start ( rtinfo_t* rti, time_t length ) {
@@ -978,9 +988,10 @@ DECL_EVENT( bloodthirst_execute ) {
     float d = weapon_dmg(rti, 0.5f, 1, 0);
 
     power_gain( rti, 10.0f );
-    rti->player.bloodthirst.cd = TIME_OFFSET( FROM_SECONDS( 4.5 / (1.0f + rti->player.stat.haste) ) );
+#if (TALENT_TIER3 != 3)
+	rti->player.bloodthirst.cd = TIME_OFFSET( FROM_SECONDS( 4.5 / (1.0f + rti->player.stat.haste) ) );
     eq_enqueue( rti, rti->player.bloodthirst.cd, routnum_bloodthirst_cd, 0 );
-
+#endif
     if (uni_rng(rti) < 0.2f) {
         eq_enqueue( rti, TIME_OFFSET( FROM_SECONDS( 0.1 ) ), routnum_bloodsurge_trigger, 0 );
     }
@@ -997,9 +1008,11 @@ DECL_EVENT( bloodthirst_execute ) {
 
 }
 
+#if (TALENT_TIER3 != 3)
 DECL_EVENT( bloodthirst_cd ) {
     lprintf(("bloodthirst ready"));
 }
+#endif
 
 DECL_EVENT( ragingblow_execute ) {
     /* Main hand. */
@@ -1129,8 +1142,10 @@ DECL_EVENT( auto_attack_mh ) {
         lprintf(("mh miss"));
     } else {
         power_gain( rti, 3.5f * weapon[0].speed );
-        proc_RPPM(rti, &rti->player.sudden_death_proc, 2.5f * (1.0f + rti->player.stat.haste), routnum_sudden_death_trigger, 0);
-        if(deal_damage( rti, d, DMGTYPE_MELEE, 0)) {
+#if (TALENT_TIER3 == 2)
+		proc_RPPM(rti, &rti->player.suddendeath_proc, 2.5f * (1.0f + rti->player.stat.haste), routnum_suddendeath_trigger, 0);
+#endif
+		if(deal_damage( rti, d, DMGTYPE_MELEE, 0)) {
             /* Crit */
             lprintf(("mh crit"));
         } else {
@@ -1150,8 +1165,10 @@ DECL_EVENT( auto_attack_oh ) {
         lprintf(("oh miss"));
     } else {
         power_gain( rti, 3.5f * weapon[1].speed * 0.5f );
-        proc_RPPM(rti, &rti->player.sudden_death_proc, 2.5f * (1.0f + rti->player.stat.haste), routnum_sudden_death_trigger, 0);
-        if(deal_damage( rti, d, DMGTYPE_MELEE, 0)) {
+#if (TALENT_TIER3 == 2)
+		proc_RPPM(rti, &rti->player.suddendeath_proc, 2.5f * (1.0f + rti->player.stat.haste), routnum_suddendeath_trigger, 0);
+#endif
+		if(deal_damage( rti, d, DMGTYPE_MELEE, 0)) {
             /* Crit */
             lprintf(("oh crit"));
         } else {
@@ -1163,22 +1180,26 @@ DECL_EVENT( auto_attack_oh ) {
     eq_enqueue(rti, TIME_OFFSET( FROM_SECONDS( weapon[1].speed / (1.0f + rti->player.stat.haste) ) ), routnum_auto_attack_oh, 0);
 }
 
-DECL_EVENT(sudden_death_trigger) {
-    rti->player.sudden_death.expire = TIME_OFFSET( FROM_SECONDS(10) );
-    eq_enqueue(rti, rti->player.sudden_death.expire, routnum_sudden_death_expire, 0);
+#if (TALENT_TIER3 == 2)
+DECL_EVENT(suddendeath_trigger) {
+    rti->player.suddendeath.expire = TIME_OFFSET( FROM_SECONDS(10) );
+    eq_enqueue(rti, rti->player.suddendeath.expire, routnum_suddendeath_expire, 0);
     lprintf(("suddendeath trig"));
 }
 
-DECL_EVENT( sudden_death_expire ) {
-    if (rti->player.sudden_death.expire == rti->timestamp) {
+DECL_EVENT( suddendeath_expire ) {
+    if (rti->player.suddendeath.expire == rti->timestamp) {
         lprintf(("suddendeath expire"));
     }
 }
+#endif
 
 DECL_SPELL( bloodthirst ) {
     if ( rti->player.gcd > rti->timestamp ) return;
-    if ( rti->player.bloodthirst.cd > rti->timestamp ) return;
-    gcd_start( rti, FROM_SECONDS( 1.5 / (1.0f + rti->player.stat.haste) ) );
+#if (TALENT_TIER3 != 3)
+	if ( rti->player.bloodthirst.cd > rti->timestamp ) return;
+#endif
+	gcd_start( rti, FROM_SECONDS( 1.5 / (1.0f + rti->player.stat.haste) ) );
     eq_enqueue( rti, rti->timestamp, routnum_bloodthirst_execute, 0 );
     lprintf(("cast bloodthirst"));
 }
@@ -1195,23 +1216,33 @@ DECL_SPELL( ragingblow ) {
 
 DECL_SPELL( execute ) {
     if ( rti->player.gcd > rti->timestamp ) return;
-    if ( !UP(sudden_death.expire) ) {
+#if (TALENT_TIER3 == 2)
+    if ( !UP(suddendeath.expire) ) {
         if ( enemy_health_percent(rti) >= 20.0f || !power_check( rti, 30.0f ) ) return;
         power_consume( rti, 30.0f );
     } else {
-        rti->player.sudden_death.expire = 0;
-        eq_enqueue( rti, rti->timestamp, routnum_sudden_death_expire, 0 );
+        rti->player.suddendeath.expire = 0;
+        eq_enqueue( rti, rti->timestamp, routnum_suddendeath_expire, 0 );
     }
-    gcd_start( rti, FROM_SECONDS( 1.5 / (1.0f + rti->player.stat.haste) ) );
+#else
+	if ( enemy_health_percent(rti) >= 20.0f || !power_check( rti, 30.0f ) ) return;
+    power_consume( rti, 30.0f );
+#endif
+	gcd_start( rti, FROM_SECONDS( 1.5 / (1.0f + rti->player.stat.haste) ) );
     eq_enqueue( rti, rti->timestamp, routnum_execute_execute, 0 );
     lprintf(("cast execute"));
 }
 
 DECL_SPELL( wildstrike ) {
+#if (TALENT_TIER3 == 1)
+#define WILDSTRIKE_RAGE_COST 20.0f
+#else
+#define WILDSTRIKE_RAGE_COST 45.0f
+#endif
     if ( rti->player.gcd > rti->timestamp ) return;
     if ( !UP(bloodsurge.expire) ) {
-        if ( !power_check( rti, 45.0f ) ) return;
-        power_consume( rti, 45.0f );
+        if ( !power_check( rti, WILDSTRIKE_RAGE_COST ) ) return;
+        power_consume( rti, WILDSTRIKE_RAGE_COST );
     } else {
         rti->player.bloodsurge.stack --;
         if (rti->player.bloodsurge.stack == 0) {
@@ -1230,8 +1261,7 @@ void routine_entries( rtinfo_t* rti, _event_t e ) {
     switch(e.routine) {
         HOOK_EVENT( gcd_expire );
         HOOK_EVENT( bloodthirst_execute );
-        HOOK_EVENT( bloodthirst_cd );
-        HOOK_EVENT( ragingblow_execute );
+		HOOK_EVENT( ragingblow_execute );
         HOOK_EVENT( ragingblow_trigger );
         HOOK_EVENT( ragingblow_expire );
         HOOK_EVENT( enrage_trigger );
@@ -1242,9 +1272,15 @@ void routine_entries( rtinfo_t* rti, _event_t e ) {
         HOOK_EVENT( bloodsurge_expire );
         HOOK_EVENT( auto_attack_mh );
         HOOK_EVENT( auto_attack_oh );
-        HOOK_EVENT( sudden_death_trigger );
-        HOOK_EVENT( sudden_death_expire );
-    default:
+
+#if (TALENT_TIER3 == 2)
+		HOOK_EVENT( suddendeath_trigger );
+        HOOK_EVENT( suddendeath_expire );
+#endif
+#if (TALENT_TIER3 != 3)
+		HOOK_EVENT( bloodthirst_cd );
+#endif
+	default:
         assert( 0 );
     }
 }
@@ -1281,9 +1317,10 @@ void module_init( rtinfo_t* rti ) {
     lprintf(("Raid buffed mult %f", rti->player.stat.mult));
     lprintf(("Raid buffed vers %f", rti->player.stat.vers));
 
-    rti->player.sudden_death_proc.lasttimeattemps = FROM_SECONDS(10);
-    rti->player.sudden_death_proc.lasttimeprocs = FROM_SECONDS(180);
-
+#if (TALENT_TIER3 == 2)
+    rti->player.suddendeath_proc.lasttimeattemps = FROM_SECONDS(10);
+    rti->player.suddendeath_proc.lasttimeprocs = FROM_SECONDS(180);
+#endif
 }
 
 

@@ -20,6 +20,9 @@ int mh_low, mh_high;
 int oh_low, oh_high;
 int mh_type;
 int oh_type;
+int talent;
+const int base10[] = { 1000000, 100000, 10000, 1000, 100, 10, 1 };
+#define TALENT_TIER(tier) ((talent / base10[tier - 1]) % 10)
 
 int developer_debug;
 int list_available_devices;
@@ -94,6 +97,7 @@ void set_default_parameters(){
 	plate_specialization = 1;
 	single_minded = 1;
 	race = 0;
+	talent = 1121311;
 	mh_speed = 2.6f;
 	oh_speed = 2.6f;
 	mh_high = 1514;
@@ -349,6 +353,14 @@ void parse_parameters(std::vector<kvpair_t>& arglist){
 			else err("No such weapon type \"%s\".", i->value.c_str());
 			single_minded = (mh_type == 1 && oh_type == 1);
 		}
+		else if (0 == i->key.compare("talent")){
+			talent = atoi(i->value.c_str());
+			if (talent < 0 || talent > 3333333
+				|| TALENT_TIER(1) > 3 || TALENT_TIER(2) > 3
+				|| TALENT_TIER(3) > 3 || TALENT_TIER(4) > 3 || TALENT_TIER(5) > 3
+				|| TALENT_TIER(6) > 3 || TALENT_TIER(7) > 3)
+				err("Talent set not vaild.");
+		}
 		else if (0 == i->key.compare("developer_debug")){
 			developer_debug = !!atoi(i->value.c_str());
 		}
@@ -463,6 +475,10 @@ void generate_predef(){
 
 	predef.append("#define OH_TYPE ");
 	predef.append(weapon_type_str[oh_type]); predef.append("\r\n");
+
+	predef.append("#define TALENT_TIER3 ");
+	sprintf(buffer, "%d", TALENT_TIER(3));
+	predef.append(buffer); predef.append("\r\n");
 }
 
 int main(int argc, char** argv){

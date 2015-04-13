@@ -84,10 +84,10 @@ void set_default_parameters(){
 		3945, 1714, 917, 1282, 478, 0,
 	};
 	raidbuff = {
-		1, 1, 1, 1, 1, 1, 1, 1, 1,
+		1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1
 	};
 	seed = (cl_uint)time(NULL);
-	apl = "SPELL(bloodthirst); SPELL(execute); SPELL(ragingblow); SPELL(wildstrike);";
+	apl = "SPELL(potion); SPELL(bloodthirst); SPELL(execute); SPELL(ragingblow); SPELL(wildstrike);";
 	iterations = 50000;
 	vary_combat_length = 20.0f;
 	max_length = 450.0f;
@@ -247,10 +247,29 @@ void parse_parameters(std::vector<kvpair_t>& arglist){
 			raidbuff.sta = atoi(i->value.c_str());
 			raidbuff.sta = !!raidbuff.sta;
 		}
+		else if (0 == i->key.compare("raidbuff_flask")){
+			int t = raidbuff.flask;
+			raidbuff.flask = !!atoi(i->value.c_str());
+			if (!t && raidbuff.flask) stat.gear_str += 250;
+			else if (t && !raidbuff.flask) stat.gear_str -= 250;
+		}
+		else if (0 == i->key.compare("raidbuff_food")){
+			int t = raidbuff.food;
+			raidbuff.food = !!atoi(i->value.c_str());
+			if (!t && raidbuff.food) stat.gear_crit += 125;
+			else if (t && !raidbuff.food) stat.gear_crit -= 125;
+		}
+		else if (0 == i->key.compare("raidbuff_potion")){
+			raidbuff.potion = !!atoi(i->value.c_str());
+		}
+		else if (0 == i->key.compare("raidbuff_bloodlust")){
+			raidbuff.bloodlust = !!atoi(i->value.c_str());
+		}
 		else if (0 == i->key.compare("raidbuff_all")){
 			raidbuff.str = atoi(i->value.c_str());
 			raidbuff.str = !!raidbuff.str;
-			raidbuff.ap = raidbuff.crit = raidbuff.haste = raidbuff.mastery = raidbuff.mult = raidbuff.vers = raidbuff.sp = raidbuff.sta = raidbuff.str;
+			raidbuff.bloodlust = raidbuff.flask = raidbuff.food = raidbuff.potion = raidbuff.ap = raidbuff.crit = raidbuff.haste = raidbuff.mastery = raidbuff.mult = raidbuff.vers = raidbuff.sp = raidbuff.sta = raidbuff.str;
+			raidbuff.vers = 1; /* This cannot be cancelled ingame. */
 		}
 		else if (0 == i->key.compare("actions")){
 			apl = i->value;
@@ -441,6 +460,14 @@ void generate_predef(){
 
 	predef.append("#define BUFF_STA ");
 	sprintf(buffer, "%d", raidbuff.sta);
+	predef.append(buffer); predef.append("\r\n");
+
+	predef.append("#define BUFF_POTION ");
+	sprintf(buffer, "%d", raidbuff.potion);
+	predef.append(buffer); predef.append("\r\n");
+
+	predef.append("#define BUFF_BLOODLUST ");
+	sprintf(buffer, "%d", raidbuff.bloodlust);
 	predef.append(buffer); predef.append("\r\n");
 
 	predef.append("#define RACE ");

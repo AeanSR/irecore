@@ -32,6 +32,10 @@ typedef struct{
 	int mastery;
 	int vers;
 	int mult;
+	int flask;
+	int food;
+	int potion;
+	int bloodlust;
 } raidbuff_t;
 extern stat_t stat;
 extern cl_uint seed;

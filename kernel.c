@@ -25,6 +25,8 @@
 #define BUFF_VERS 1
 #define BUFF_SP 1
 #define BUFF_STA 1
+#define BUFF_POTION 1
+#define BUFF_BLOODLUST 1
 #define RACE RACE_NONE
 #define MH_LOW 814
 #define MH_HIGH 1514
@@ -308,6 +310,12 @@ typedef struct {
 typedef struct {
     time_t expire;
 } suddendeath_t;
+#if (BUFF_POTION == 1)
+typedef struct {
+	time_t expire;
+	time_t cd;
+} potion_t;
+#endif
 
 typedef struct {
     time_t cd;
@@ -413,6 +421,9 @@ typedef struct kdeclspec( packed ) {
 #if (TALENT_TIER3 == 2)
     suddendeath_t  suddendeath;
     RPPM_t		suddendeath_proc;
+#endif
+#if (BUFF_POTION == 1)
+	potion_t potion;
 #endif
 
     time_t gcd;
@@ -832,6 +843,7 @@ void refresh_haste(rtinfo_t* rti) {
     if (BUFF_HASTE) haste *= 1.05f;
     if (RACE == RACE_NIGHTELF_NIGHT || RACE == RACE_GOBLIN || RACE == RACE_GNOME)
         haste *= 1.01f;
+	if (BUFF_BLOODLUST) if ((rti->timestamp % FROM_SECONDS(600)) < FROM_SECONDS(30)) haste *= 1.3f;
     rti->player.stat.haste = haste - 1.0f;
 }
 
@@ -972,6 +984,15 @@ enum {
 #if (TALENT_TIER3 == 2)
 	routnum_suddendeath_trigger,
     routnum_suddendeath_expire,
+#endif
+#if (BUFF_BLOODLUST == 1)
+	routnum_bloodlust_start,
+	routnum_bloodlust_end,
+#endif
+#if (BUFF_POTION == 1)
+	routnum_potion_start,
+	routnum_potion_cd,
+	routnum_potion_expire,
 #endif
 };
 
@@ -1194,6 +1215,49 @@ DECL_EVENT( suddendeath_expire ) {
 }
 #endif
 
+#if (BUFF_BLOODLUST == 1)
+DECL_EVENT(bloodlust_start){
+	lprintf(("bloodlust start"));
+	refresh_haste(rti);
+	eq_enqueue(rti, TIME_OFFSET(FROM_SECONDS(30)), routnum_bloodlust_end, 0);
+}
+DECL_EVENT(bloodlust_end){
+	lprintf(("bloodlust end"));
+	refresh_haste(rti);
+	eq_enqueue(rti, TIME_OFFSET(FROM_SECONDS(570)), routnum_bloodlust_end, 0);
+}
+#endif
+#if (BUFF_POTION == 1)
+DECL_EVENT(potion_expire){
+	lprintf(("potion end"));
+	rti->player.stat.gear_str -= 1000;
+	refresh_str(rti);
+	refresh_ap(rti);
+}
+DECL_EVENT(potion_cd){
+	lprintf(("potion cd"));
+}
+DECL_EVENT(potion_start){
+	lprintf(("potion start"));
+	rti->player.stat.gear_str += 1000;
+	refresh_str(rti);
+	refresh_ap(rti);
+	rti->player.potion.expire=TIME_OFFSET(FROM_SECONDS(25));
+	eq_enqueue(rti, rti->player.potion.expire, routnum_potion_expire, 0);
+	if (rti->timestamp == FROM_SECONDS(0)){
+		rti->player.potion.cd = TIME_OFFSET(FROM_SECONDS(60));
+		eq_enqueue(rti, rti->player.potion.cd, routnum_potion_cd, 0);
+	}
+	else{
+		rti->player.potion.cd = rti->expected_combat_length + 1;
+	}
+}
+DECL_SPELL(potion){
+	if ( rti->player.potion.cd > rti->timestamp ) return;
+	eq_enqueue( rti, rti->timestamp, routnum_potion_start, 0 );
+}
+#endif
+
 DECL_SPELL( bloodthirst ) {
     if ( rti->player.gcd > rti->timestamp ) return;
 #if (TALENT_TIER3 != 3)
@@ -1280,6 +1344,15 @@ void routine_entries( rtinfo_t* rti, _event_t e ) {
 #if (TALENT_TIER3 != 3)
 		HOOK_EVENT( bloodthirst_cd );
 #endif
+#if (BUFF_BLOODLUST == 1)
+		HOOK_EVENT( bloodlust_start );
+		HOOK_EVENT( bloodlust_end );
+#endif
+#if (BUFF_POTION == 1)
+		HOOK_EVENT( potion_start );
+		HOOK_EVENT( potion_cd );
+		HOOK_EVENT( potion_expire );
+#endif
 	default:
         assert( 0 );
     }
@@ -1321,6 +1394,13 @@ void module_init( rtinfo_t* rti ) {
     rti->player.suddendeath_proc.lasttimeattemps = FROM_SECONDS(10);
     rti->player.suddendeath_proc.lasttimeprocs = FROM_SECONDS(180);
 #endif
+#if (BUFF_BLOODLUST == 1)
+	eq_enqueue(rti, rti->timestamp, routnum_bloodlust_start, 0);
+#endif
+#if (BUFF_POTION == 1)
+	eq_enqueue(rti, rti->timestamp, routnum_potion_start, 0);
+#endif
+
 }
 
 

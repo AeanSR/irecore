@@ -583,10 +583,13 @@ kbool power_check( rtinfo_t* rti, float cost ) {
     return 0;
 }
 
+//void anger_management_count(rtinfo_t* rti, float rage);
+
 /* Power consume. */
 void power_consume( rtinfo_t* rti, float cost ) {
     assert( power_check( rti, cost ) ); /* Power should suffice. */
     rti->player.power -= cost;
+//	anger_management_count(rti, cost);
 }
 
 /* Execute the top priority. */
@@ -1387,6 +1390,10 @@ void routine_entries( rtinfo_t* rti, _event_t e ) {
         HOOK_EVENT( bloodsurge_expire );
         HOOK_EVENT( auto_attack_mh );
         HOOK_EVENT( auto_attack_oh );
+		HOOK_EVENT( recklessness_cd );
+		HOOK_EVENT( recklessness_execute );
+		HOOK_EVENT( recklessness_expire );
+		HOOK_EVENT( berserkerrage_cd );
 
 #if (TALENT_TIER3 == 2)
 		HOOK_EVENT( suddendeath_trigger );

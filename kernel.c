@@ -310,6 +310,13 @@ typedef struct {
 typedef struct {
     time_t expire;
 } suddendeath_t;
+typedef struct {
+	time_t cd;
+} berserkerrage_t;
+typedef struct {
+	time_t cd;
+	time_t expire;
+} recklessness_t;
 #if (BUFF_POTION == 1)
 typedef struct {
 	time_t expire;
@@ -1014,12 +1021,12 @@ DECL_EVENT( bloodthirst_execute ) {
     eq_enqueue( rti, rti->player.bloodthirst.cd, routnum_bloodthirst_cd, 0 );
 #endif
     if (uni_rng(rti) < 0.2f) {
-        eq_enqueue( rti, TIME_OFFSET( FROM_SECONDS( 0.1 ) ), routnum_bloodsurge_trigger, 0 );
+        eq_enqueue( rti, rti->timestamp, routnum_bloodsurge_trigger, 0 );
     }
 
     if ( deal_damage(rti, d, DMGTYPE_SPECIAL, 0.4f) ) {
         /* Crit */
-        eq_enqueue( rti, TIME_OFFSET( FROM_SECONDS( 0.1 ) ), routnum_enrage_trigger, 0 );
+        eq_enqueue( rti, rti->timestamp, routnum_enrage_trigger, 0 );
         lprintf(("bloodthirst crit"));
 
     } else {

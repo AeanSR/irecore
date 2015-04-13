@@ -506,6 +506,18 @@ void generate_predef(){
 	predef.append("#define TALENT_TIER3 ");
 	sprintf(buffer, "%d", TALENT_TIER(3));
 	predef.append(buffer); predef.append("\r\n");
+
+	predef.append("#define TALENT_TIER4 ");
+	sprintf(buffer, "%d", TALENT_TIER(4));
+	predef.append(buffer); predef.append("\r\n");
+
+	predef.append("#define TALENT_TIER6 ");
+	sprintf(buffer, "%d", TALENT_TIER(6));
+	predef.append(buffer); predef.append("\r\n");
+
+	predef.append("#define TALENT_TIER7 ");
+	sprintf(buffer, "%d", TALENT_TIER(7));
+	predef.append(buffer); predef.append("\r\n");
 }
 
 int main(int argc, char** argv){

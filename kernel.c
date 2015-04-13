@@ -320,6 +320,23 @@ typedef struct {
 	time_t cd;
 	time_t expire;
 } recklessness_t;
+
+#if (TALENT_TIER4 == 1)
+typedef struct {
+    time_t cd;
+} stormbolt_t;
+#endif
+#if (TALENT_TIER4 == 2)
+typedef struct {
+    time_t cd;
+} shockwave_t;
+#endif
+#if (TALENT_TIER4 == 3)
+typedef struct {
+    time_t cd;
+} dragonroar_t;
+#endif
+
 #if (BUFF_POTION == 1)
 typedef struct {
 	time_t expire;
@@ -430,8 +447,17 @@ typedef struct kdeclspec( packed ) {
 	berserkerrage_t	berserkerrage;
 	recklessness_t	recklessness;
 #if (TALENT_TIER3 == 2)
-    suddendeath_t  suddendeath;
-    RPPM_t		suddendeath_proc;
+    suddendeath_t	suddendeath;
+    RPPM_t			suddendeath_proc;
+#endif
+#if (TALENT_TIER4 == 1)
+	stormbolt_t		stormbolt;
+#endif
+#if (TALENT_TIER4 == 2)
+	shockwave_t		shockwave;
+#endif
+#if (TALENT_TIER4 == 3)
+	dragonroar_t	dragonroar;
 #endif
 #if (BUFF_POTION == 1)
 	potion_t potion;
@@ -846,7 +872,7 @@ void refresh_crit(rtinfo_t* rti) {
     crit *= 1.05f;
     crit = 0.05f + crit / 11000;
     if (BUFF_CRIT) crit += 0.05f;
-    if (RACE == RACE_NIGHTELF_DAY || RACE == RACE_BLOODELF || RACE == RACE_WORGEN)
+    if ((RACE == RACE_NIGHTELF_DAY) || (RACE == RACE_BLOODELF) || (RACE == RACE_WORGEN))
         crit += 0.01f;
     rti->player.stat.crit = crit;
 }
@@ -855,7 +881,7 @@ void refresh_haste(rtinfo_t* rti) {
     float haste = rti->player.stat.gear_haste;
     haste = 1.0f + haste / 9000;
     if (BUFF_HASTE) haste *= 1.05f;
-    if (RACE == RACE_NIGHTELF_NIGHT || RACE == RACE_GOBLIN || RACE == RACE_GNOME)
+    if ((RACE == RACE_NIGHTELF_NIGHT) || (RACE == RACE_GOBLIN) || (RACE == RACE_GNOME))
         haste *= 1.01f;
 	if (BUFF_BLOODLUST) if ((rti->timestamp % FROM_SECONDS(600)) < FROM_SECONDS(30)) haste *= 1.3f;
     rti->player.stat.haste = haste - 1.0f;
@@ -1004,10 +1030,24 @@ enum {
 	routnum_recklessness_cd,
 	routnum_recklessness_execute,
 	routnum_recklessness_expire,
+
 #if (TALENT_TIER3 == 2)
 	routnum_suddendeath_trigger,
     routnum_suddendeath_expire,
 #endif
+#if (TALENT_TIER4 == 1)
+	routnum_stormbolt_execute,
+	routnum_stormbolt_cd,
+#endif
+#if (TALENT_TIER4 == 2)
+	routnum_shockwave_execute,
+	routnum_shockwave_cd,
+#endif
+#if (TALENT_TIER4 == 3)
+	routnum_dragonroar_execute,
+	routnum_dragonroar_cd,
+#endif
+
 #if (BUFF_BLOODLUST == 1)
 	routnum_bloodlust_start,
 	routnum_bloodlust_end,
@@ -1374,6 +1414,43 @@ DECL_SPELL( wildstrike ) {
     lprintf(("cast wildstrike"));
 }
 
+#if (TALENT_TIER4 == 1)
+DECL_EVENT(stormbolt_cd){
+	if (rti->player.stormbolt.cd == rti->timestamp) {
+        lprintf(("recklessness ready"));
+    }
+}
+DECL_EVENT(stormbolt_execute){
+	float d = weapon_dmg(rti, 0.6f * 4.0f, 1, 0);
+
+    if (deal_damage( rti, d, DMGTYPE_SPECIAL, 0 ) ) {
+        /* Crit */
+        lprintf(("stormbolt crit"));
+
+    } else {
+        /* Hit */
+        lprintf(("stormbolt hit"));
+    }
+	d = weapon_dmg(rti, 0.6f * 4.0f, 1, 1);
+
+    if (deal_damage( rti, d, DMGTYPE_SPECIAL, 0 ) ) {
+        /* Crit */
+        lprintf(("stormbolt_oh crit"));
+
+    } else {
+        /* Hit */
+        lprintf(("stormbolt_oh hit"));
+    }
+}
+DECL_SPELL(stormbolt){
+	if ( rti->player.gcd > rti->timestamp ) return;
+	if ( rti->player.stormbolt.cd > rti->timestamp ) return;
+	rti->player.stormbolt.cd = TIME_OFFSET(FROM_SECONDS(30));
+	gcd_start( rti, FROM_SECONDS( 1.5 / (1.0f + rti->player.stat.haste) ) );
+	eq_enqueue(rti, rti->player.stormbolt.cd, routnum_stormbolt_cd, 0);
+	eq_enqueue(rti, rti->timestamp, routnum_stormbolt_execute, 0);
+}
+#endif
 
 void routine_entries( rtinfo_t* rti, _event_t e ) {
     switch(e.routine) {
@@ -1401,6 +1478,18 @@ void routine_entries( rtinfo_t* rti, _event_t e ) {
 #endif
 #if (TALENT_TIER3 != 3)
 		HOOK_EVENT( bloodthirst_cd );
+#endif
+#if (TALENT_TIER4 == 1)
+		HOOK_EVENT( stormbolt_execute );
+		HOOK_EVENT( stormbolt_cd );
+#endif
+#if (TALENT_TIER4 == 2)
+		HOOK_EVENT( shockwave_execute );
+		HOOK_EVENT( shockwave_cd );
+#endif
+#if (TALENT_TIER4 == 3)
+		HOOK_EVENT( dragonroar_execute );
+		HOOK_EVENT( dragonroar_cd );
 #endif
 #if (BUFF_BLOODLUST == 1)
 		HOOK_EVENT( bloodlust_start );

@@ -87,7 +87,7 @@ void set_default_parameters(){
 		1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1
 	};
 	seed = (cl_uint)time(NULL);
-	apl = "SPELL(potion); SPELL(bloodthirst); SPELL(execute); SPELL(ragingblow); SPELL(wildstrike);";
+	apl = "SPELL(recklessness); SPELL(bloodthirst); SPELL(execute); SPELL(ragingblow); SPELL(wildstrike);";
 	iterations = 50000;
 	vary_combat_length = 20.0f;
 	max_length = 450.0f;

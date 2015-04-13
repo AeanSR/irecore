@@ -37,6 +37,9 @@
 #define OH_SPEED 2.6f
 #define OH_TYPE WEAPON_1H
 #define TALENT_TIER3 1
+#define TALENT_TIER4 1
+#define TALENT_TIER6 1
+#define TALENT_TIER7 0
 #endif /* !defined(__OPENCL_VERSION__) */
 
 /* Debug on Host! */
@@ -424,7 +427,8 @@ typedef struct kdeclspec( packed ) {
 	ragingblow_t    ragingblow;
     enrage_t        enrage;
     bloodsurge_t    bloodsurge;
-
+	berserkerrage_t	berserkerrage;
+	recklessness_t	recklessness;
 #if (TALENT_TIER3 == 2)
     suddendeath_t  suddendeath;
     RPPM_t		suddendeath_proc;
@@ -918,9 +922,14 @@ kbool deal_damage( rtinfo_t* rti, float dmg, k32u dmgtype, float extra_crit_rate
     default: {
         float c = uni_rng(rti);
         float cr = rti->player.stat.crit - 0.03f + extra_crit_rate;
+		float cdb = (RACE == RACE_DWARF || RACE == RACE_TAUREN) ? 2.04f : 2.0f;
         kbool ret;
         float fdmg;
 
+		if (UP(recklessness.expire)){
+			if(dmgtype == DMGTYPE_SPECIAL) cr += 0.3f;
+			cdb *= 1.1f;
+		}
         dmg *= 0.650684f;
 
         fdmg = dmg;
@@ -940,7 +949,7 @@ kbool deal_damage( rtinfo_t* rti, float dmg, k32u dmgtype, float extra_crit_rate
             c = uni_rng(rti);
             fdmg = dmg * 0.3f;
             if (c < cr) {
-                fdmg *= (RACE == RACE_DWARF || RACE == RACE_TAUREN) ? 2.04f : 2.0f;
+                fdmg *= cdb;
                 lprintf(("mult damage *%.0f*", fdmg));
             } else {
                 lprintf(("mult damage %.0f", fdmg));
@@ -952,7 +961,7 @@ kbool deal_damage( rtinfo_t* rti, float dmg, k32u dmgtype, float extra_crit_rate
             c = uni_rng(rti);
             fdmg = dmg * 0.3f;
             if (c < cr) {
-                fdmg *= (RACE == RACE_DWARF || RACE == RACE_TAUREN) ? 2.04f : 2.0f;
+                fdmg *= cdb;
                 lprintf(("mult damage *%.0f*", fdmg));
             } else {
                 lprintf(("mult damage %.0f", fdmg));
@@ -988,6 +997,10 @@ enum {
     routnum_bloodsurge_expire,
     routnum_auto_attack_mh,
     routnum_auto_attack_oh,
+	routnum_berserkerrage_cd,
+	routnum_recklessness_cd,
+	routnum_recklessness_execute,
+	routnum_recklessness_expire,
 #if (TALENT_TIER3 == 2)
 	routnum_suddendeath_trigger,
     routnum_suddendeath_expire,
@@ -1264,6 +1277,37 @@ DECL_SPELL(potion){
 	eq_enqueue( rti, rti->timestamp, routnum_potion_start, 0 );
 }
 #endif
+
+DECL_EVENT(berserkerrage_cd){
+	lprintf(("berserkerrage ready"));
+}
+DECL_SPELL(berserkerrage){
+	if ( rti->player.berserkerrage.cd > rti->timestamp ) return;
+	rti->player.berserkerrage.cd = TIME_OFFSET(FROM_SECONDS(30));
+	eq_enqueue(rti, rti->player.berserkerrage.cd, routnum_berserkerrage_cd, 0);
+	eq_enqueue(rti, rti->timestamp, routnum_enrage_trigger, 0);
+	lprintf(("cast berserkerrage"));
+}
+
+DECL_EVENT(recklessness_cd){
+	if (rti->player.recklessness.cd == rti->timestamp) {
+        lprintf(("recklessness ready"));
+    }
+}
+DECL_EVENT(recklessness_expire){
+	lprintf(("recklessness expire"));
+}
+DECL_EVENT(recklessness_execute){
+	lprintf(("recklessness start"));
+}
+DECL_SPELL(recklessness){
+	if ( rti->player.recklessness.cd > rti->timestamp ) return;
+	rti->player.recklessness.cd = TIME_OFFSET(FROM_SECONDS(180));
+	eq_enqueue(rti, rti->player.recklessness.cd, routnum_recklessness_cd, 0);
+	rti->player.recklessness.expire = TIME_OFFSET(FROM_SECONDS(10));
+	eq_enqueue(rti, rti->player.recklessness.expire, routnum_recklessness_expire, 0);
+	lprintf(("cast recklessness"));
+}
 
 DECL_SPELL( bloodthirst ) {
     if ( rti->player.gcd > rti->timestamp ) return;

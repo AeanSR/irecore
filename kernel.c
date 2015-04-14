@@ -37,9 +37,9 @@
 #define OH_SPEED 2.6f
 #define OH_TYPE WEAPON_1H
 #define TALENT_TIER3 1
-#define TALENT_TIER4 1
+#define TALENT_TIER4 3
 #define TALENT_TIER6 1
-#define TALENT_TIER7 0
+#define TALENT_TIER7 1
 #endif /* !defined(__OPENCL_VERSION__) */
 
 /* Debug on Host! */
@@ -291,6 +291,9 @@ typedef struct {
     time_t power_suffice;
     _event_t event[EQ_SIZE];
 } event_queue_t;
+hostonly(
+static k32u maxqueuelength = 0;
+)
 
 /* Declarations from class modules. */
 #if (TALENT_TIER3 != 3)
@@ -551,29 +554,34 @@ float stdnor_rng( rtinfo_t* rti ) {
 }
 
 /* Enqueue an event into EQ. */
-_event_t* eq_enqueue( rtinfo_t* rti, time_t trigger, k32u routine ) {
-    k32u i = ++( rti->eq.count );
-    _event_t* p = &( rti->eq.event[-1] );
+_event_t* eq_enqueue(rtinfo_t* rti, time_t trigger, k32u routine) {
+	k32u i = ++(rti->eq.count);
+	_event_t* p = &(rti->eq.event[-1]);
 
-    assert( rti->eq.count <= EQ_SIZE ); /* Full check. */
+	assert(rti->eq.count <= EQ_SIZE); /* Full check. */
+	/* Count max queue length on debug. */
+	hostonly(
+		maxqueuelength = max(maxqueuelength, rti->eq.count);
+	)
 
-    /*
-        There are two circumstances which could cause the assert below fail:
-        1. Devs got something wrong in the class module, enqueued an event happens before 'now'.
-        2. Time register is about to overflow, the triggering delay + current timestamp have exceeded the max representable time.
-        Since the later circumstance is not a fault, we would just throw the event away and continue quietly.
-        When you are exceeding the max time limits, all new events will be thrown, and finally you will get an empty EQ,
-        then the empty checks on EQ will fail.
-    */
-    if ( rti->timestamp <= trigger ) {
-        for( ; i > 1 && p[i >> 1].time > trigger; i >>= 1 )
-            p[i] = p[i >> 1];
-        p[i] = ( _event_t ) {
-            .time = trigger, .routine = routine
-        };
-        return &p[i];
-    }
-    return 0;
+	/*
+		There are two circumstances which could cause the assert below fail:
+		1. Devs got something wrong in the class module, enqueued an event happens before 'now'.
+		2. Time register is about to overflow, the triggering delay + current timestamp have exceeded the max representable time.
+		Since the later circumstance is not a fault, we would just throw the event away and continue quietly.
+		When you are exceeding the max time limits, all new events will be thrown, and finally you will get an empty EQ,
+		then the empty checks on EQ will fail.
+		*/
+	if (rti->timestamp <= trigger) {
+		for (; i > 1 && p[i >> 1].time > trigger; i >>= 1)
+			p[i] = p[i >> 1];
+		p[i] = (_event_t) {
+			.time = trigger, .routine = routine
+		};
+		return &p[i];
+	}	
+    
+	return 0;
 }
 
 /* Enqueue a power suffice event into EQ. */
@@ -1295,9 +1303,23 @@ DECL_SPELL(berserkerrage){
 }
 
 DECL_EVENT(recklessness_cd){
+#if (TALENT_TIER7 == 1)
+	if (rti->player.recklessness.cd < rti->timestamp){
+		return;
+	}
+	else 
+#endif
 	if (rti->player.recklessness.cd == rti->timestamp) {
         lprintf(("recklessness ready"));
-    }
+	}
+#if (TALENT_TIER7 == 1)
+	else if (rti->player.recklessness.cd - rti->timestamp > FROM_MILLISECONDS(333)){
+		eq_enqueue(rti, (rti->player.recklessness.cd + rti->timestamp) / 2, routnum_recklessness_cd);
+	}
+	else {
+		eq_enqueue(rti, rti->player.recklessness.cd, routnum_recklessness_cd);
+	}
+#endif
 }
 DECL_EVENT(recklessness_expire){
 	lprintf(("recklessness expire"));
@@ -1308,7 +1330,11 @@ DECL_EVENT(recklessness_execute){
 DECL_SPELL(recklessness){
 	if ( rti->player.recklessness.cd > rti->timestamp ) return;
 	rti->player.recklessness.cd = TIME_OFFSET(FROM_SECONDS(180));
+#if (TALENT_TIER7 == 1)
+	eq_enqueue(rti, (rti->player.recklessness.cd + rti->timestamp) / 2, routnum_recklessness_cd);
+#else
 	eq_enqueue(rti, rti->player.recklessness.cd, routnum_recklessness_cd);
+#endif
 	rti->player.recklessness.expire = TIME_OFFSET(FROM_SECONDS(10));
 	eq_enqueue(rti, rti->player.recklessness.expire, routnum_recklessness_expire);
 	lprintf(("cast recklessness"));
@@ -1343,7 +1369,10 @@ DECL_SPELL( execute ) {
     } else {
         rti->player.suddendeath.expire = 0;
         eq_enqueue( rti, rti->timestamp, routnum_suddendeath_expire );
-    }
+#if (TALENT_TIER7 == 1)
+		anger_management_count(rti, 30.0f);
+#endif
+	}
 #else
 	if ( enemy_health_percent(rti) >= 20.0f || !power_check( rti, 30.0f ) ) return;
     power_consume( rti, 30.0f );
@@ -1378,9 +1407,23 @@ DECL_SPELL( wildstrike ) {
 
 #if (TALENT_TIER4 == 1)
 DECL_EVENT(stormbolt_cd){
+#if (TALENT_TIER7 == 1)
+	if (rti->player.stormbolt.cd < rti->timestamp){
+		return;
+	}
+	else
+#endif
 	if (rti->player.stormbolt.cd == rti->timestamp) {
         lprintf(("stormbolt ready"));
-    }
+	}
+#if (TALENT_TIER7 == 1)
+	else if (rti->player.stormbolt.cd - rti->timestamp > FROM_MILLISECONDS(333)){
+		eq_enqueue(rti, (rti->player.stormbolt.cd + rti->timestamp) / 2, routnum_stormbolt_cd);
+	}
+	else {
+		eq_enqueue(rti, rti->player.stormbolt.cd, routnum_stormbolt_cd);
+	}
+#endif
 }
 DECL_EVENT(stormbolt_execute){
 	float d = weapon_dmg(rti, 0.6f * 4.0f, 1, 0);
@@ -1409,11 +1452,143 @@ DECL_SPELL(stormbolt){
 	if ( rti->player.stormbolt.cd > rti->timestamp ) return;
 	rti->player.stormbolt.cd = TIME_OFFSET(FROM_SECONDS(30));
 	gcd_start( rti, FROM_SECONDS( 1.5f / (1.0f + rti->player.stat.haste) ) );
+#if (TALENT_TIER7 == 1)
+	eq_enqueue(rti, (rti->timestamp + rti->player.stormbolt.cd) / 2, routnum_stormbolt_cd);
+#else
 	eq_enqueue(rti, rti->player.stormbolt.cd, routnum_stormbolt_cd);
+#endif
 	eq_enqueue(rti, rti->timestamp, routnum_stormbolt_execute);
 	lprintf(("cast stormbolt"));
 }
 #endif
+
+#if (TALENT_TIER4 == 2)
+DECL_EVENT(shockwave_cd){
+#if (TALENT_TIER7 == 1)
+	if (rti->player.shockwave.cd < rti->timestamp){
+		return;
+	}
+	else
+#endif
+	if (rti->player.shockwave.cd == rti->timestamp) {
+        lprintf(("shockwave ready"));
+	}
+#if (TALENT_TIER7 == 1)
+	else if (rti->player.shockwave.cd - rti->timestamp > FROM_MILLISECONDS(333)){
+		eq_enqueue(rti, (rti->player.shockwave.cd + rti->timestamp) / 2, routnum_shockwave_cd);
+	}
+	else {
+		eq_enqueue(rti, rti->player.shockwave.cd, routnum_shockwave_cd);
+	}
+#endif
+}
+DECL_EVENT(shockwave_execute){
+	float d = ap_dmg(rti, 1.25f);
+
+    if (deal_damage( rti, d, DMGTYPE_SPECIAL, 0 ) ) {
+        /* Crit */
+        lprintf(("shockwave crit"));
+
+    } else {
+        /* Hit */
+        lprintf(("shockwave hit"));
+    }
+}
+DECL_SPELL(shockwave){
+	if ( rti->player.gcd > rti->timestamp ) return;
+	if ( rti->player.shockwave.cd > rti->timestamp ) return;
+	rti->player.shockwave.cd = TIME_OFFSET(FROM_SECONDS(40));
+	gcd_start( rti, FROM_SECONDS( 1.5f / (1.0f + rti->player.stat.haste) ) );
+#if (TALENT_TIER7 == 1)
+	eq_enqueue(rti, (rti->timestamp + rti->player.shockwave.cd) / 2, routnum_shockwave_cd);
+#else
+	eq_enqueue(rti, rti->player.shockwave.cd, routnum_shockwave_cd);
+#endif
+	eq_enqueue(rti, rti->timestamp, routnum_shockwave_execute);
+	lprintf(("cast shockwave"));
+}
+#endif
+
+#if (TALENT_TIER4 == 3)
+DECL_EVENT(dragonroar_cd){
+#if (TALENT_TIER7 == 1)
+	if (rti->player.dragonroar.cd < rti->timestamp){
+		return;
+	}
+	else
+#endif
+	if (rti->player.dragonroar.cd == rti->timestamp) {
+        lprintf(("dragonroar ready"));
+	}
+#if (TALENT_TIER7 == 1)
+	else if (rti->player.dragonroar.cd - rti->timestamp > FROM_MILLISECONDS(333)){
+		eq_enqueue(rti, (rti->player.dragonroar.cd + rti->timestamp) / 2, routnum_dragonroar_cd);
+	}
+	else {
+		eq_enqueue(rti, rti->player.dragonroar.cd, routnum_dragonroar_cd);
+	}
+#endif
+}
+DECL_EVENT(dragonroar_execute){
+	float d = ap_dmg(rti, 1.65f);
+
+    if (deal_damage( rti, d, DMGTYPE_DRAGONROAR, 0 ) ) {
+        /* Crit */
+        lprintf(("dragonroar crit"));
+
+    } else {
+        /* Hit */
+        lprintf(("dragonroar hit"));
+    }
+}
+DECL_SPELL(dragonroar){
+	if ( rti->player.gcd > rti->timestamp ) return;
+	if ( rti->player.dragonroar.cd > rti->timestamp ) return;
+	rti->player.dragonroar.cd = TIME_OFFSET(FROM_SECONDS(60));
+	gcd_start( rti, FROM_SECONDS( 1.5f / (1.0f + rti->player.stat.haste) ) );
+#if (TALENT_TIER7 == 1)
+	eq_enqueue(rti, (rti->timestamp + rti->player.dragonroar.cd) / 2, routnum_dragonroar_cd);
+#else
+	eq_enqueue(rti, rti->player.dragonroar.cd, routnum_dragonroar_cd);
+#endif
+	eq_enqueue(rti, rti->timestamp, routnum_dragonroar_execute);
+	lprintf(("cast dragonroar"));
+}
+#endif
+
+void anger_management_count(rtinfo_t* rti, float rage){
+	time_t t = FROM_SECONDS( rage / 30.0f );
+	if (rti->player.recklessness.cd > t)
+		rti->player.recklessness.cd = max( rti->timestamp, rti->player.recklessness.cd - t );
+	else 
+		rti->player.recklessness.cd = max( rti->timestamp, FROM_SECONDS(0) );
+	if (rti->player.recklessness.cd == rti->timestamp)
+		eq_enqueue(rti, rti->timestamp, routnum_recklessness_cd);
+#if (TALENT_TIER4 == 1)
+	if (rti->player.stormbolt.cd > t)
+		rti->player.stormbolt.cd = max( rti->timestamp, rti->player.stormbolt.cd - t );
+	else
+		rti->player.stormbolt.cd = max( rti->timestamp, FROM_SECONDS(0) );
+	if (rti->player.stormbolt.cd == rti->timestamp)
+		eq_enqueue(rti, rti->player.stormbolt.cd, routnum_stormbolt_cd);
+#endif
+#if (TALENT_TIER4 == 2)
+	if (rti->player.shockwave.cd > t)
+		rti->player.shockwave.cd = max( rti->timestamp, rti->player.shockwave.cd - t );
+	else
+		rti->player.shockwave.cd = max( rti->timestamp, FROM_SECONDS(0) );
+	if (rti->player.shockwave.cd == rti->timestamp)
+		eq_enqueue(rti, rti->player.shockwave.cd, routnum_shockwave_cd);
+#endif
+#if (TALENT_TIER4 == 3)
+	if (rti->player.dragonroar.cd > t)
+		rti->player.dragonroar.cd = max( rti->timestamp, rti->player.dragonroar.cd - t );
+	else
+		rti->player.dragonroar.cd = max( rti->timestamp, FROM_SECONDS(0) );
+	if (rti->player.dragonroar.cd == rti->timestamp)
+		eq_enqueue(rti, rti->player.dragonroar.cd, routnum_dragonroar_cd);
+#endif
+}
 
 void routine_entries( rtinfo_t* rti, _event_t e ) {
     switch(e.routine) {
@@ -1517,6 +1692,7 @@ void module_init( rtinfo_t* rti ) {
 /* Debug build. */
 #if !defined(__OPENCL_VERSION__)
 void scan_apl( rtinfo_t* rti ) {
+	SPELL( recklessness );
     SPELL( bloodthirst );
     SPELL( execute );
     SPELL( ragingblow );
@@ -1528,7 +1704,7 @@ void host_kernel_entry() {
     float result;
     sim_iterate( &result, 5171, 3945, 1714, 917, 1282, 478, 0 );
 
-    printf( "result: %.3f\n", result );
+    printf( "result: %.3f\nmax queue length: %d\n", result, maxqueuelength );
 }
 #endif /* !defined(__OPENCL_VERSION__) */
 

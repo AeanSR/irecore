@@ -39,7 +39,7 @@
 #define TALENT_TIER3 1
 #define TALENT_TIER4 3
 #define TALENT_TIER6 1
-#define TALENT_TIER7 1
+#define TALENT_TIER7 3
 #endif /* !defined(__OPENCL_VERSION__) */
 
 /* Debug on Host! */
@@ -338,6 +338,17 @@ typedef struct {
     time_t cd;
 } dragonroar_t;
 #endif
+#if (TALENT_TIER7 == 2)
+typedef struct{
+	time_t cd;
+	time_t expire;
+} ravager_t;
+#endif
+#if (TALENT_TIER7 == 3)
+typedef struct{
+	time_t cd;
+} siegebreaker_t;
+#endif
 
 #if (BUFF_POTION == 1)
 typedef struct {
@@ -450,6 +461,13 @@ typedef struct kdeclspec( packed ) {
 #if (TALENT_TIER4 == 3)
 	dragonroar_t	dragonroar;
 #endif
+#if (TALENT_TIER7 == 2)
+	ravager_t		ravager;
+#endif
+#if (TALENT_TIER7 == 3)
+	siegebreaker_t	siegebreaker;
+#endif
+
 #if (BUFF_POTION == 1)
 	potion_t potion;
 #endif
@@ -1018,6 +1036,14 @@ enum {
 	routnum_dragonroar_execute,
 	routnum_dragonroar_cd,
 #endif
+#if (TALENT_TIER7 == 2)
+	routnum_ravager_tick,
+	routnum_ravager_cd,
+#endif
+#if (TALENT_TIER7 == 3)
+	routnum_siegebreaker_execute,
+	routnum_siegebreaker_cd,
+#endif
 
 #if (BUFF_BLOODLUST == 1)
 	routnum_bloodlust_start,
@@ -1556,6 +1582,78 @@ DECL_SPELL(dragonroar){
 }
 #endif
 
+#if (TALENT_TIER7 == 2)
+DECL_EVENT(ravager_cd){
+	if (rti->player.ravager.cd == rti->timestamp) {
+        lprintf(("ravager ready"));
+	}
+}
+DECL_EVENT(ravager_tick){
+	float d = ap_dmg(rti, 0.615f);
+
+    if (deal_damage( rti, d, DMGTYPE_SPECIAL, 0 ) ) {
+        /* Crit */
+        lprintf(("ravager crit"));
+
+    } else {
+        /* Hit */
+        lprintf(("ravager hit"));
+    }
+	if ( rti->player.ravager.expire > rti->timestamp )
+		eq_enqueue(rti, TIME_OFFSET(FROM_SECONDS(1)), routnum_ravager_tick);
+}
+DECL_SPELL(ravager){
+	if ( rti->player.gcd > rti->timestamp ) return;
+	if ( rti->player.ravager.cd > rti->timestamp ) return;
+	rti->player.ravager.cd = TIME_OFFSET(FROM_SECONDS(60));
+	rti->player.ravager.expire = TIME_OFFSET(FROM_SECONDS(10));
+	gcd_start( rti, FROM_SECONDS( 1.5f / (1.0f + rti->player.stat.haste) ) );
+	eq_enqueue(rti, rti->player.ravager.cd, routnum_ravager_cd);
+	eq_enqueue(rti, TIME_OFFSET(FROM_SECONDS(1)), routnum_ravager_tick);
+	lprintf(("cast ravager"));
+}
+#endif
+
+#if (TALENT_TIER7 == 3)
+DECL_EVENT(siegebreaker_cd){
+	if (rti->player.siegebreaker.cd == rti->timestamp) {
+        lprintf(("siegebreaker ready"));
+	}
+}
+DECL_EVENT(siegebreaker_execute){
+	float d = weapon_dmg(rti, 4.5f, 1, 0);
+
+    if (deal_damage( rti, d, DMGTYPE_SPECIAL, 0 ) ) {
+        /* Crit */
+        lprintf(("siegebreaker crit"));
+
+    } else {
+        /* Hit */
+        lprintf(("siegebreaker hit"));
+    }
+	d = weapon_dmg(rti, 4.5f, 1, 1);
+
+    if (deal_damage( rti, d, DMGTYPE_SPECIAL, 0 ) ) {
+        /* Crit */
+        lprintf(("siegebreaker_oh crit"));
+
+    } else {
+        /* Hit */
+        lprintf(("siegebreaker_oh hit"));
+    }
+}
+DECL_SPELL(siegebreaker){
+	if ( rti->player.gcd > rti->timestamp ) return;
+	if ( rti->player.siegebreaker.cd > rti->timestamp ) return;
+	rti->player.siegebreaker.cd = TIME_OFFSET(FROM_SECONDS(45));
+	gcd_start( rti, FROM_SECONDS( 1.5f / (1.0f + rti->player.stat.haste) ) );
+	eq_enqueue(rti, rti->player.siegebreaker.cd, routnum_siegebreaker_cd);
+	eq_enqueue(rti, rti->timestamp, routnum_siegebreaker_execute);
+	lprintf(("cast siegebreaker"));
+}
+#endif
+
+
 void anger_management_count(rtinfo_t* rti, float rage){
 	time_t t = FROM_SECONDS( rage / 30.0f );
 	if (rti->player.recklessness.cd > t)
@@ -1628,6 +1726,14 @@ void routine_entries( rtinfo_t* rti, _event_t e ) {
 #if (TALENT_TIER4 == 3)
 		HOOK_EVENT( dragonroar_execute );
 		HOOK_EVENT( dragonroar_cd );
+#endif
+#if (TALENT_TIER7 == 2)
+		HOOK_EVENT( ravager_tick );
+		HOOK_EVENT( ravager_cd );
+#endif
+#if (TALENT_TIER7 == 3)
+		HOOK_EVENT( siegebreaker_execute );
+		HOOK_EVENT( siegebreaker_cd );
 #endif
 #if (BUFF_BLOODLUST == 1)
 		HOOK_EVENT( bloodlust_start );

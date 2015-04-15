@@ -1798,6 +1798,14 @@ void anger_management_count(rtinfo_t* rti, float rage){
 	if (rti->player.dragonroar.cd == rti->timestamp)
 		eq_enqueue(rti, rti->player.dragonroar.cd, routnum_dragonroar_cd);
 #endif
+#if (TALENT_TIER6 == 3)
+	if (rti->player.bladestorm.cd > t)
+		rti->player.bladestorm.cd = max( rti->timestamp, rti->player.bladestorm.cd - t );
+	else
+		rti->player.bladestorm.cd = max( rti->timestamp, FROM_SECONDS(0) );
+	if (rti->player.bladestorm.cd == rti->timestamp)
+		eq_enqueue(rti, rti->player.bladestorm.cd, routnum_bladestorm_cd);
+#endif
 }
 
 void routine_entries( rtinfo_t* rti, _event_t e ) {

@@ -38,7 +38,7 @@
 #define OH_TYPE WEAPON_1H
 #define TALENT_TIER3 2
 #define TALENT_TIER4 1
-#define TALENT_TIER6 3
+#define TALENT_TIER6 2
 #define TALENT_TIER7 1
 #endif /* !defined(__OPENCL_VERSION__) */
 
@@ -953,77 +953,6 @@ float ap_dmg(rtinfo_t* rti, float ap_multiplier) {
     return dmg;
 }
 
-enum {
-    DMGTYPE_NONE,
-    DMGTYPE_MELEE,
-    DMGTYPE_SPECIAL,
-	DMGTYPE_DRAGONROAR,
-};
-kbool deal_damage( rtinfo_t* rti, float dmg, k32u dmgtype, float extra_crit_rate ) {
-    switch( dmgtype ) {
-    case DMGTYPE_NONE:
-        lprintf(("damage %.0f", dmg));
-        rti->damage_collected += dmg;
-        return 0;
-        break;
-    default: {
-        float c = uni_rng(rti);
-        float cr = rti->player.stat.crit - 0.03f + extra_crit_rate;
-		float cdb = (RACE == RACE_DWARF || RACE == RACE_TAUREN) ? 2.04f : 2.0f;
-        kbool ret;
-        float fdmg;
-
-		if (UP(recklessness.expire)){
-			if(dmgtype == DMGTYPE_SPECIAL) cr += 0.3f;
-			cdb *= 1.1f;
-		}
-		if (dmgtype == DMGTYPE_DRAGONROAR) cr = 1.0f;
-		else dmg *= 0.650684f;
-
-
-        fdmg = dmg;
-        if (c < cr) {
-            ret = 1;
-            fdmg *= (RACE == RACE_DWARF || RACE == RACE_TAUREN) ? 2.04f : 2.0f;
-            lprintf(("damage *%.0f*", fdmg));
-        } else {
-            ret = 0;
-            lprintf(("damage %.0f", fdmg));
-        }
-        rti->damage_collected += fdmg;
-
-        float mr = rti->player.stat.mult;
-        float m = uni_rng(rti);
-        if (m < mr) {
-            c = uni_rng(rti);
-            fdmg = dmg * 0.3f;
-            if (c < cr) {
-                fdmg *= cdb;
-                lprintf(("mult damage *%.0f*", fdmg));
-            } else {
-                lprintf(("mult damage %.0f", fdmg));
-            }
-            rti->damage_collected += fdmg;
-        }
-        m = uni_rng(rti);
-        if (m < mr) {
-            c = uni_rng(rti);
-            fdmg = dmg * 0.3f;
-            if (c < cr) {
-                fdmg *= cdb;
-                lprintf(("mult damage *%.0f*", fdmg));
-            } else {
-                lprintf(("mult damage %.0f", fdmg));
-            }
-            rti->damage_collected += fdmg;
-        }
-        return ret;
-    }
-    break;
-    }
-
-}
-
 /* Event list. */
 #define DECL_EVENT( name ) void event_##name ( rtinfo_t* rti )
 #define HOOK_EVENT( name ) case routnum_##name: event_##name( rti ); break;
@@ -1069,11 +998,13 @@ enum {
 #endif
 #if (TALENT_TIER6 == 1)
 	routnum_avatar_start,
+	routnum_avatar_expire,
 	routnum_avatar_cd,
 #endif
 #if (TALENT_TIER6 == 2)
 	routnum_bloodbath_start,
 	routnum_bloodbath_cd,
+	routnum_bloodbath_expire,
 	routnum_bloodbath_tick,
 #endif
 #if (TALENT_TIER6 == 3)
@@ -1099,6 +1030,97 @@ enum {
 	routnum_potion_expire,
 #endif
 };
+
+enum {
+    DMGTYPE_NONE,
+    DMGTYPE_MELEE,
+    DMGTYPE_SPECIAL,
+	DMGTYPE_DRAGONROAR,
+};
+kbool deal_damage( rtinfo_t* rti, float dmg, k32u dmgtype, float extra_crit_rate ) {
+    switch( dmgtype ) {
+    case DMGTYPE_NONE:
+        lprintf(("damage %.0f", dmg));
+        rti->damage_collected += dmg;
+        return 0;
+        break;
+    default: {
+        float c = uni_rng(rti);
+        float cr = rti->player.stat.crit - 0.03f + extra_crit_rate;
+		float cdb = (RACE == RACE_DWARF || RACE == RACE_TAUREN) ? 2.04f : 2.0f;
+        kbool ret;
+        float fdmg;
+#if (TALENT_TIER6 == 2)
+		float bbcounter = rti->damage_collected;
+#endif
+
+		if (UP(recklessness.expire)){
+			if(dmgtype == DMGTYPE_SPECIAL) cr += 0.3f;
+			cdb *= 1.1f;
+		}
+		if (dmgtype == DMGTYPE_DRAGONROAR) cr = 1.0f;
+		else dmg *= 0.650684f;
+#if (TALENT_TIER6 == 1)
+		if (UP(avatar.expire))
+			dmg *= 1.2f;
+#endif
+
+        fdmg = dmg;
+        if (c < cr) {
+            ret = 1;
+            fdmg *= (RACE == RACE_DWARF || RACE == RACE_TAUREN) ? 2.04f : 2.0f;
+            lprintf(("damage *%.0f*", fdmg));
+        } else {
+            ret = 0;
+            lprintf(("damage %.0f", fdmg));
+        }
+        rti->damage_collected += fdmg;
+
+        float mr = rti->player.stat.mult;
+        float m = uni_rng(rti);
+        if (m < mr) {
+            c = uni_rng(rti);
+            fdmg = dmg * 0.3f;
+            if (c < cr) {
+                fdmg *= cdb;
+                lprintf(("mult damage *%.0f*", fdmg));
+            } else {
+                lprintf(("mult damage %.0f", fdmg));
+            }
+            rti->damage_collected += fdmg;
+        }
+        m = uni_rng(rti);
+        if (m < mr) {
+            c = uni_rng(rti);
+            fdmg = dmg * 0.3f;
+            if (c < cr) {
+                fdmg *= cdb;
+                lprintf(("mult damage *%.0f*", fdmg));
+            } else {
+                lprintf(("mult damage %.0f", fdmg));
+            }
+            rti->damage_collected += fdmg;
+        }
+
+#if (TALENT_TIER6 == 2)
+		if (dmgtype != DMGTYPE_MELEE && UP(bloodbath.expire)){
+			bbcounter = rti->damage_collected - bbcounter;
+			bbcounter *= 0.3f;
+			rti->player.bloodbath.pool += bbcounter;
+			rti->player.bloodbath.ticks = 6.0f;
+			if (rti->player.bloodbath.dot_start < rti->timestamp){
+				rti->player.bloodbath.dot_start = rti->timestamp;
+				eq_enqueue(rti, TIME_OFFSET(FROM_SECONDS(1)), routnum_bloodbath_tick);
+			}
+		}
+#endif
+
+        return ret;
+    }
+    break;
+    }
+
+}
 
 void gcd_start ( rtinfo_t* rti, time_t length ) {
     rti->player.gcd = TIME_OFFSET( length );
@@ -1416,6 +1438,7 @@ DECL_SPELL(recklessness){
 #endif
 	rti->player.recklessness.expire = TIME_OFFSET(FROM_SECONDS(10));
 	eq_enqueue(rti, rti->player.recklessness.expire, routnum_recklessness_expire);
+	eq_enqueue(rti, rti->timestamp, routnum_recklessness_execute);
 	lprintf(("cast recklessness"));
 }
 
@@ -1766,6 +1789,103 @@ DECL_SPELL(bladestorm){
 }
 #endif
 
+#if (TALENT_TIER6 == 1)
+DECL_EVENT(avatar_cd){
+#if (TALENT_TIER7 == 1)
+	if (rti->player.avatar.cd < rti->timestamp){
+		return;
+	}
+	else
+#endif
+	if (rti->player.avatar.cd == rti->timestamp) {
+        lprintf(("avatar ready"));
+	}
+#if (TALENT_TIER7 == 1)
+	else if (rti->player.avatar.cd - rti->timestamp > FROM_MILLISECONDS(333)){
+		eq_enqueue(rti, (rti->player.avatar.cd + rti->timestamp) / 2, routnum_avatar_cd);
+	}
+	else {
+		eq_enqueue(rti, rti->player.avatar.cd, routnum_avatar_cd);
+	}
+#endif
+}
+DECL_EVENT(avatar_start){
+	rti->player.avatar.expire = TIME_OFFSET(FROM_SECONDS(20));
+	eq_enqueue(rti, rti->player.avatar.expire, routnum_avatar_expire);
+}
+DECL_EVENT(avatar_expire){
+	lprintf(("avatar expire"));
+}
+DECL_SPELL(avatar){
+	if ( rti->player.avatar.cd > rti->timestamp ) return;
+#if (TALENT_TIER6 == 3)
+	if (UP(bladestorm.expire)) return;
+#endif
+	rti->player.avatar.cd = TIME_OFFSET(FROM_SECONDS(90));
+#if (TALENT_TIER7 == 1)
+	eq_enqueue(rti, (rti->player.avatar.cd + rti->timestamp) / 2, routnum_avatar_cd);
+#else
+	eq_enqueue(rti, rti->player.avatar.cd, routnum_avatar_cd);
+#endif
+	eq_enqueue(rti, rti->timestamp, routnum_avatar_start);
+	lprintf(("cast avatar"));
+}
+#endif
+
+#if (TALENT_TIER6 == 2)
+DECL_EVENT(bloodbath_cd){
+#if (TALENT_TIER7 == 1)
+	if (rti->player.bloodbath.cd < rti->timestamp){
+		return;
+	}
+	else
+#endif
+	if (rti->player.bloodbath.cd == rti->timestamp) {
+        lprintf(("bloodbath ready"));
+	}
+#if (TALENT_TIER7 == 1)
+	else if (rti->player.bloodbath.cd - rti->timestamp > FROM_MILLISECONDS(333)){
+		eq_enqueue(rti, (rti->player.bloodbath.cd + rti->timestamp) / 2, routnum_bloodbath_cd);
+	}
+	else {
+		eq_enqueue(rti, rti->player.bloodbath.cd, routnum_bloodbath_cd);
+	}
+#endif
+}
+DECL_EVENT(bloodbath_start){
+	rti->player.bloodbath.expire = TIME_OFFSET(FROM_SECONDS(12));
+	eq_enqueue(rti, rti->player.bloodbath.expire, routnum_bloodbath_expire);
+}
+DECL_EVENT(bloodbath_expire){
+	lprintf(("bloodbath expire"));
+}
+DECL_EVENT(bloodbath_tick){
+	if (rti->player.bloodbath.ticks < 1.0f) return;
+	if (rti->player.bloodbath.dot_start + FROM_SECONDS(7.0f - rti->player.bloodbath.ticks) != rti->timestamp) return;
+	float dmg = rti->player.bloodbath.pool / rti->player.bloodbath.ticks;
+	rti->player.bloodbath.pool -= dmg;
+	deal_damage(rti, dmg, DMGTYPE_NONE, 0);
+	lprintf(("bloodbath ticks"));
+	rti->player.bloodbath.ticks -= 1.0f;
+	if (rti->player.bloodbath.ticks >= 1.0f)
+		eq_enqueue(rti, TIME_OFFSET(FROM_SECONDS(1)), routnum_bloodbath_tick);
+}
+DECL_SPELL(bloodbath){
+	if ( rti->player.bloodbath.cd > rti->timestamp ) return;
+#if (TALENT_TIER6 == 3)
+	if (UP(bladestorm.expire)) return;
+#endif
+	rti->player.bloodbath.cd = TIME_OFFSET(FROM_SECONDS(60));
+#if (TALENT_TIER7 == 1)
+	eq_enqueue(rti, (rti->player.bloodbath.cd + rti->timestamp) / 2, routnum_bloodbath_cd);
+#else
+	eq_enqueue(rti, rti->player.bloodbath.cd, routnum_bloodbath_cd);
+#endif
+	eq_enqueue(rti, rti->timestamp, routnum_bloodbath_start);
+	lprintf(("cast bloodbath"));
+}
+#endif
+
 void anger_management_count(rtinfo_t* rti, float rage){
 	time_t t = FROM_SECONDS( rage / 30.0f );
 	if (rti->player.recklessness.cd > t)
@@ -1797,6 +1917,22 @@ void anger_management_count(rtinfo_t* rti, float rage){
 		rti->player.dragonroar.cd = max( rti->timestamp, FROM_SECONDS(0) );
 	if (rti->player.dragonroar.cd == rti->timestamp)
 		eq_enqueue(rti, rti->player.dragonroar.cd, routnum_dragonroar_cd);
+#endif
+#if (TALENT_TIER6 == 1)
+	if (rti->player.avatar.cd > t)
+		rti->player.avatar.cd = max( rti->timestamp, rti->player.avatar.cd - t );
+	else
+		rti->player.avatar.cd = max( rti->timestamp, FROM_SECONDS(0) );
+	if (rti->player.avatar.cd == rti->timestamp)
+		eq_enqueue(rti, rti->player.avatar.cd, routnum_avatar_cd);
+#endif
+#if (TALENT_TIER6 == 2)
+	if (rti->player.bloodbath.cd > t)
+		rti->player.bloodbath.cd = max( rti->timestamp, rti->player.bloodbath.cd - t );
+	else
+		rti->player.bloodbath.cd = max( rti->timestamp, FROM_SECONDS(0) );
+	if (rti->player.bloodbath.cd == rti->timestamp)
+		eq_enqueue(rti, rti->player.bloodbath.cd, routnum_bloodbath_cd);
 #endif
 #if (TALENT_TIER6 == 3)
 	if (rti->player.bladestorm.cd > t)
@@ -1849,10 +1985,12 @@ void routine_entries( rtinfo_t* rti, _event_t e ) {
 #endif
 #if (TALENT_TIER6 == 1)
 		HOOK_EVENT( avatar_start );
+		HOOK_EVENT( avatar_expire );
 		HOOK_EVENT( avatar_cd );
 #endif
 #if (TALENT_TIER6 == 2)
 		HOOK_EVENT( bloodbath_start );
+		HOOK_EVENT( bloodbath_expire );
 		HOOK_EVENT( bloodbath_cd );
 		HOOK_EVENT( bloodbath_tick );
 #endif
@@ -1932,11 +2070,10 @@ void module_init( rtinfo_t* rti ) {
 #if !defined(__OPENCL_VERSION__)
 void scan_apl( rtinfo_t* rti ) {
 	SPELL( recklessness );
-//    SPELL( bloodthirst );
-//    SPELL( execute );
-//    SPELL( ragingblow );
-//    SPELL( wildstrike );
-	SPELL( bladestorm );
+    SPELL( bloodthirst );
+    SPELL( execute );
+    SPELL( ragingblow );
+    SPELL( wildstrike );
 }
 
 

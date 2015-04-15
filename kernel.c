@@ -458,7 +458,7 @@ typedef struct stat_t {
 } stat_t;
 
 /* Player struct, filled by the class module. */
-typedef struct kdeclspec( packed ) {
+typedef struct {
     float power;
     float power_regen;
     stat_t stat;
@@ -508,7 +508,7 @@ typedef struct kdeclspec( packed ) {
 player_t;
 
 /* Runtime info struct, each thread preserves its own. */
-typedef struct kdeclspec( packed ) {
+typedef struct {
     seed_t seed;
     time_t timestamp;
     event_queue_t eq;
@@ -1944,7 +1944,7 @@ void host_kernel_entry() {
     float result;
     sim_iterate( &result, 5171, 3945, 1714, 917, 1282, 478, 0 );
 
-    printf( "result: %.3f\nmax queue length: %d\n", result, maxqueuelength );
+    printf( "result: %.3f\nmax queue length: %d\nruntime state size: %d\n", result, maxqueuelength, sizeof(rtinfo_t) );
 }
 #endif /* !defined(__OPENCL_VERSION__) */
 

@@ -36,10 +36,10 @@
 #define OH_HIGH 1514
 #define OH_SPEED 2.6f
 #define OH_TYPE WEAPON_1H
-#define TALENT_TIER3 1
-#define TALENT_TIER4 3
-#define TALENT_TIER6 1
-#define TALENT_TIER7 3
+#define TALENT_TIER3 2
+#define TALENT_TIER4 1
+#define TALENT_TIER6 3
+#define TALENT_TIER7 1
 #endif /* !defined(__OPENCL_VERSION__) */
 
 /* Debug on Host! */
@@ -338,6 +338,28 @@ typedef struct {
     time_t cd;
 } dragonroar_t;
 #endif
+#if (TALENT_TIER6 == 1)
+typedef struct{
+	time_t cd;
+	time_t expire;
+} avatar_t;
+#endif
+#if (TALENT_TIER6 == 2)
+typedef struct{
+	time_t cd;
+	time_t expire;
+	float pool;
+	float ticks;
+	time_t dot_start;
+} bloodbath_t;
+#endif
+#if (TALENT_TIER6 == 3)
+typedef struct{
+	time_t cd;
+	time_t expire;
+} bladestorm_t;
+#endif
+
 #if (TALENT_TIER7 == 2)
 typedef struct{
 	time_t cd;
@@ -460,6 +482,15 @@ typedef struct kdeclspec( packed ) {
 #endif
 #if (TALENT_TIER4 == 3)
 	dragonroar_t	dragonroar;
+#endif
+#if (TALENT_TIER6 == 1)
+	avatar_t		avatar;
+#endif
+#if (TALENT_TIER6 == 2)
+	bloodbath_t		bloodbath;
+#endif
+#if (TALENT_TIER6 == 3)
+	bladestorm_t	bladestorm;
 #endif
 #if (TALENT_TIER7 == 2)
 	ravager_t		ravager;
@@ -1036,6 +1067,19 @@ enum {
 	routnum_dragonroar_execute,
 	routnum_dragonroar_cd,
 #endif
+#if (TALENT_TIER6 == 1)
+	routnum_avatar_start,
+	routnum_avatar_cd,
+#endif
+#if (TALENT_TIER6 == 2)
+	routnum_bloodbath_start,
+	routnum_bloodbath_cd,
+	routnum_bloodbath_tick,
+#endif
+#if (TALENT_TIER6 == 3)
+	routnum_bladestorm_tick,
+	routnum_bladestorm_cd,
+#endif
 #if (TALENT_TIER7 == 2)
 	routnum_ravager_tick,
 	routnum_ravager_cd,
@@ -1313,6 +1357,9 @@ DECL_EVENT(potion_start){
 }
 DECL_SPELL(potion){
 	if ( rti->player.potion.cd > rti->timestamp ) return;
+#if (TALENT_TIER6 == 3)
+	if (UP(bladestorm.expire)) return;
+#endif
 	eq_enqueue( rti, rti->timestamp, routnum_potion_start );
 }
 #endif
@@ -1322,6 +1369,9 @@ DECL_EVENT(berserkerrage_cd){
 }
 DECL_SPELL(berserkerrage){
 	if ( rti->player.berserkerrage.cd > rti->timestamp ) return;
+#if (TALENT_TIER6 == 3)
+	if (UP(bladestorm.expire)) return;
+#endif
 	rti->player.berserkerrage.cd = TIME_OFFSET(FROM_SECONDS(30));
 	eq_enqueue(rti, rti->player.berserkerrage.cd, routnum_berserkerrage_cd);
 	eq_enqueue(rti, rti->timestamp, routnum_enrage_trigger);
@@ -1355,6 +1405,9 @@ DECL_EVENT(recklessness_execute){
 }
 DECL_SPELL(recklessness){
 	if ( rti->player.recklessness.cd > rti->timestamp ) return;
+#if (TALENT_TIER6 == 3)
+	if (UP(bladestorm.expire)) return;
+#endif
 	rti->player.recklessness.cd = TIME_OFFSET(FROM_SECONDS(180));
 #if (TALENT_TIER7 == 1)
 	eq_enqueue(rti, (rti->player.recklessness.cd + rti->timestamp) / 2, routnum_recklessness_cd);
@@ -1653,6 +1706,65 @@ DECL_SPELL(siegebreaker){
 }
 #endif
 
+#if (TALENT_TIER6 == 3)
+DECL_EVENT(bladestorm_cd){
+#if (TALENT_TIER7 == 1)
+	if (rti->player.bladestorm.cd < rti->timestamp){
+		return;
+	}
+	else
+#endif
+	if (rti->player.bladestorm.cd == rti->timestamp) {
+        lprintf(("bladestorm ready"));
+	}
+#if (TALENT_TIER7 == 1)
+	else if (rti->player.bladestorm.cd - rti->timestamp > FROM_MILLISECONDS(333)){
+		eq_enqueue(rti, (rti->player.bladestorm.cd + rti->timestamp) / 2, routnum_bladestorm_cd);
+	}
+	else {
+		eq_enqueue(rti, rti->player.bladestorm.cd, routnum_bladestorm_cd);
+	}
+#endif
+}
+DECL_EVENT(bladestorm_tick){
+	float d = weapon_dmg(rti, 1.6f, 1, 0);
+
+    if (deal_damage( rti, d, DMGTYPE_SPECIAL, 0 ) ) {
+        /* Crit */
+        lprintf(("bladestorm crit"));
+
+    } else {
+        /* Hit */
+        lprintf(("bladestorm hit"));
+    }
+	d = weapon_dmg(rti, 1.6f, 1, 1);
+
+    if (deal_damage( rti, d, DMGTYPE_SPECIAL, 0 ) ) {
+        /* Crit */
+        lprintf(("bladestorm_oh crit"));
+
+    } else {
+        /* Hit */
+        lprintf(("bladestorm_oh hit"));
+    }
+	if ( rti->player.bladestorm.expire > rti->timestamp )
+		eq_enqueue(rti, TIME_OFFSET(FROM_SECONDS(1)), routnum_bladestorm_tick);
+}
+DECL_SPELL(bladestorm){
+	if ( rti->player.gcd > rti->timestamp ) return;
+	if ( rti->player.bladestorm.cd > rti->timestamp ) return;
+	rti->player.bladestorm.cd = TIME_OFFSET(FROM_SECONDS(60));
+	rti->player.bladestorm.expire = TIME_OFFSET(FROM_SECONDS(6));
+	gcd_start( rti, FROM_SECONDS( 6 ) ); /* stuck gcd during bladestorm to avoid additional checks. */
+#if (TALENT_TIER7 == 1)
+	eq_enqueue(rti, (rti->timestamp + rti->player.bladestorm.cd) / 2, routnum_bladestorm_cd);
+#else
+	eq_enqueue(rti, rti->player.bladestorm.cd, routnum_bladestorm_cd);
+#endif
+	eq_enqueue(rti, rti->timestamp, routnum_bladestorm_tick);
+	lprintf(("cast bladestorm"));
+}
+#endif
 
 void anger_management_count(rtinfo_t* rti, float rage){
 	time_t t = FROM_SECONDS( rage / 30.0f );
@@ -1727,6 +1839,19 @@ void routine_entries( rtinfo_t* rti, _event_t e ) {
 		HOOK_EVENT( dragonroar_execute );
 		HOOK_EVENT( dragonroar_cd );
 #endif
+#if (TALENT_TIER6 == 1)
+		HOOK_EVENT( avatar_start );
+		HOOK_EVENT( avatar_cd );
+#endif
+#if (TALENT_TIER6 == 2)
+		HOOK_EVENT( bloodbath_start );
+		HOOK_EVENT( bloodbath_cd );
+		HOOK_EVENT( bloodbath_tick );
+#endif
+#if (TALENT_TIER6 == 3)
+		HOOK_EVENT( bladestorm_tick );
+		HOOK_EVENT( bladestorm_cd );
+#endif
 #if (TALENT_TIER7 == 2)
 		HOOK_EVENT( ravager_tick );
 		HOOK_EVENT( ravager_cd );
@@ -1799,10 +1924,11 @@ void module_init( rtinfo_t* rti ) {
 #if !defined(__OPENCL_VERSION__)
 void scan_apl( rtinfo_t* rti ) {
 	SPELL( recklessness );
-    SPELL( bloodthirst );
-    SPELL( execute );
-    SPELL( ragingblow );
-    SPELL( wildstrike );
+//    SPELL( bloodthirst );
+//    SPELL( execute );
+//    SPELL( ragingblow );
+//    SPELL( wildstrike );
+	SPELL( bladestorm );
 }
 
 

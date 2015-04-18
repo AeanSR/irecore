@@ -313,6 +313,13 @@ hostonly(
 )
 
 /* Declarations from class modules. */
+typedef struct {
+    time_t cd;
+} ICD_t;
+typedef struct {
+    time_t lasttimeattemps;
+    time_t lasttimeprocs;
+} RPPM_t;
 #if (TALENT_TIER3 != 3)
 typedef struct {
     time_t cd;
@@ -331,6 +338,7 @@ typedef struct {
 } bloodsurge_t;
 typedef struct {
     time_t expire;
+	RPPM_t proc;
 } suddendeath_t;
 typedef struct {
     time_t cd;
@@ -402,13 +410,12 @@ typedef struct {
 	k32u stack;
 } rampage_t;
 #endif
+#if (archmages_incandescence || archmages_greater_incandescence)
 typedef struct {
-    time_t cd;
-} ICD_t;
-typedef struct {
-    time_t lasttimeattemps;
-    time_t lasttimeprocs;
-} RPPM_t;
+	time_t expire;
+	RPPM_t proc;
+} incandescence_t;
+#endif
 
 typedef struct weapon_t {
     float speed;
@@ -495,7 +502,6 @@ typedef struct {
     recklessness_t	recklessness;
 #if (TALENT_TIER3 == 2)
     suddendeath_t	suddendeath;
-    RPPM_t			suddendeath_proc;
 #endif
 #if (TALENT_TIER4 == 1)
     stormbolt_t		stormbolt;
@@ -526,6 +532,9 @@ typedef struct {
 #endif
 #if (t17_4pc)
 	rampage_t		rampage;
+#endif
+#if (archmages_incandescence || archmages_greater_incandescence)
+	incandescence_t incandescence;
 #endif
     time_t gcd;
 }
@@ -888,6 +897,9 @@ void refresh_str( rtinfo_t* rti ) {
     float coeff = 1.0f;
     if ( PLATE_SPECIALIZATION ) coeff *= 1.05f;
     if ( BUFF_STR_AGI_INT ) coeff *= 1.05f;
+#if (archmages_incandescence || archmages_greater_incandescence)
+	if (UP(incandescence.expire)) coeff *= archmages_greater_incandescence ? 1.15f : 1.1f;
+#endif
     str = convert_uint_rtz( fstr * coeff );
     fstr = 1455; /* Base str @lvl 100. */
     fstr += racial_base_str[RACE]; /* Racial str. */
@@ -1058,6 +1070,10 @@ enum {
 	routnum_rampage_refresh,
 	routnum_rampage_expire,
 #endif
+#if (archmages_incandescence || archmages_greater_incandescence)
+	routnum_incandescence_trigger,
+	routnum_incandescence_expire,
+#endif
 };
 
 enum {
@@ -1148,7 +1164,11 @@ kbool deal_damage( rtinfo_t* rti, float dmg, k32u dmgtype, float extra_crit_rate
             }
         }
 #endif
-
+#if (archmages_incandescence || archmages_greater_incandescence)
+		if (!UP(incandescence.expire)){
+			proc_RPPM(rti, &rti->player.incandescence.proc, 0.92f, routnum_incandescence_trigger);
+		}
+#endif
         return ret;
     }
     break;
@@ -1176,7 +1196,7 @@ DECL_EVENT( auto_attack_mh ) {
     } else {
         power_gain( rti, 3.5f * weapon[0].speed );
 #if (TALENT_TIER3 == 2)
-        proc_RPPM( rti, &rti->player.suddendeath_proc, 2.5f * ( 1.0f + rti->player.stat.haste ), routnum_suddendeath_trigger );
+        proc_RPPM( rti, &rti->player.suddendeath.proc, 2.5f * ( 1.0f + rti->player.stat.haste ), routnum_suddendeath_trigger );
 #endif
         if( deal_damage( rti, d, DMGTYPE_MELEE, 0 ) ) {
             /* Crit */
@@ -1204,7 +1224,7 @@ DECL_EVENT( auto_attack_oh ) {
     } else {
         power_gain( rti, 3.5f * weapon[1].speed * 0.5f );
 #if (TALENT_TIER3 == 2)
-        proc_RPPM( rti, &rti->player.suddendeath_proc, 2.5f * ( 1.0f + rti->player.stat.haste ), routnum_suddendeath_trigger );
+        proc_RPPM( rti, &rti->player.suddendeath.proc, 2.5f * ( 1.0f + rti->player.stat.haste ), routnum_suddendeath_trigger );
 #endif
         if( deal_damage( rti, d, DMGTYPE_MELEE, 0 ) ) {
             /* Crit */
@@ -1992,6 +2012,23 @@ DECL_SPELL( bloodbath ) {
 }
 #endif
 
+#if (archmages_incandescence || archmages_greater_incandescence)
+DECL_EVENT(incandescence_trigger){
+	rti->player.incandescence.expire = TIME_OFFSET(FROM_SECONDS(10));
+	eq_enqueue(rti, rti->player.incandescence.expire, routnum_incandescence_expire);
+	refresh_str(rti);
+	refresh_ap(rti);
+	lprintf(("incandescence trigger"));
+}
+DECL_EVENT(incandescence_expire){
+	if (rti->player.incandescence.expire == rti->timestamp){
+		lprintf(("incandescence expire"));
+		refresh_str(rti);
+		refresh_ap(rti);
+	}
+}
+#endif
+
 // === anger_management =======================================================
 void anger_management_count( rtinfo_t* rti, float rage ) {
     time_t t = FROM_SECONDS( rage / 30.0f );
@@ -2126,6 +2163,10 @@ void routine_entries( rtinfo_t* rti, _event_t e ) {
 		HOOK_EVENT( rampage_refresh );
 		HOOK_EVENT( rampage_expire );
 #endif
+#if (archmages_incandescence || archmages_greater_incandescence)
+		HOOK_EVENT( incandescence_trigger );
+		HOOK_EVENT( incandescence_expire );
+#endif
     default:
         assert( 0 );
     }
@@ -2164,14 +2205,18 @@ void module_init( rtinfo_t* rti ) {
     lprintf( ( "Raid buffed vers %f", rti->player.stat.vers ) );
 
 #if (TALENT_TIER3 == 2)
-    rti->player.suddendeath_proc.lasttimeattemps = FROM_SECONDS( 10 );
-    rti->player.suddendeath_proc.lasttimeprocs = FROM_SECONDS( 180 );
+    rti->player.suddendeath.proc.lasttimeattemps = (time_t)-(k32s)FROM_SECONDS( 10 );
+    rti->player.suddendeath.proc.lasttimeprocs = (time_t)-(k32s)FROM_SECONDS( 180 );
 #endif
 #if (BUFF_BLOODLUST == 1)
     eq_enqueue( rti, rti->timestamp, routnum_bloodlust_start );
 #endif
 #if (BUFF_POTION == 1)
     eq_enqueue( rti, rti->timestamp, routnum_potion_start );
+#endif
+#if (archmages_incandescence || archmages_greater_incandescence)
+	rti->player.incandescence.proc.lasttimeattemps = (time_t)-(k32s)FROM_SECONDS(10);
+	rti->player.incandescence.proc.lasttimeprocs = (time_t)-(k32s)FROM_SECONDS(180);
 #endif
 
 }

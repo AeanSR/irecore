@@ -1,6 +1,13 @@
 /**
 	IreCore kernel, Aean <v#aean.net>
 	based on LuaCL kernel https://github.com/llxibo/LuaCL
+
+	*** EDIT AT YOUR OWN RISK! ***
+	All kernel source goes here exposed to the air, for your conveinence to edit.
+	But it is NOT recommended if you are not definitely sure how to edit.
+
+	IreCore is distributed under the terms of The MIT License.
+	Free to use for any purpose. No warranty given.
 */
 
 #define SHOW_LOG
@@ -40,6 +47,16 @@
 #define TALENT_TIER4 1
 #define TALENT_TIER6 2
 #define TALENT_TIER7 1
+#define archmages_incandescence 1
+#define archmages_greater_incandescence 0
+#define t17_2pc 1
+#define t17_4pc 1
+#define thunderlord_mh 1
+#define thunderlord_oh 1
+#define bleedinghollow_mh 0
+#define bleedinghollow_oh 0
+#define shatteredhand_mh 0
+#define shatteredhand_oh 0
 #endif /* !defined(__OPENCL_VERSION__) */
 
 /* Debug on Host! */
@@ -379,6 +396,12 @@ typedef struct {
 } potion_t;
 #endif
 
+#if (t17_4pc)
+typedef struct {
+	time_t expire;
+	k32u stack;
+} rampage_t;
+#endif
 typedef struct {
     time_t cd;
 } ICD_t;
@@ -498,11 +521,12 @@ typedef struct {
 #if (TALENT_TIER7 == 3)
     siegebreaker_t	siegebreaker;
 #endif
-
 #if (BUFF_POTION == 1)
     potion_t potion;
 #endif
-
+#if (t17_4pc)
+	rampage_t		rampage;
+#endif
     time_t gcd;
 }
 player_t;
@@ -1029,6 +1053,11 @@ enum {
     routnum_potion_cd,
     routnum_potion_expire,
 #endif
+
+#if (t17_4pc)
+	routnum_rampage_refresh,
+	routnum_rampage_expire,
+#endif
 };
 
 enum {
@@ -1058,7 +1087,12 @@ kbool deal_damage( rtinfo_t* rti, float dmg, k32u dmgtype, float extra_crit_rate
             if( dmgtype == DMGTYPE_SPECIAL ) cr += 0.3f;
             cdb *= 1.1f;
         }
-        if ( dmgtype == DMGTYPE_DRAGONROAR ) cr = 1.0f;
+#if (t17_4pc)
+		if (UP(rampage.expire)){
+			cr += 0.06f * rti->player.rampage.stack;
+		}
+#endif
+		if ( dmgtype == DMGTYPE_DRAGONROAR ) cr = 1.0f;
         else dmg *= 0.650684f;
 #if (TALENT_TIER6 == 1)
         if ( UP( avatar.expire ) )
@@ -1152,8 +1186,13 @@ DECL_EVENT( auto_attack_mh ) {
             lprintf( ( "mh hit" ) );
         }
     }
-
-    eq_enqueue( rti, TIME_OFFSET( FROM_SECONDS( weapon[0].speed / ( 1.0f + rti->player.stat.haste ) ) ), routnum_auto_attack_mh );
+#if (t17_4pc)
+    eq_enqueue( rti, TIME_OFFSET( FROM_SECONDS( weapon[0].speed / ( 1.0f + rti->player.stat.haste
+		+ 0.06f * rti->player.rampage.stack
+		) ) ), routnum_auto_attack_mh );
+#else
+	eq_enqueue( rti, TIME_OFFSET( FROM_SECONDS( weapon[0].speed / ( 1.0f + rti->player.stat.haste ) ) ), routnum_auto_attack_mh );
+#endif
 }
 
 DECL_EVENT( auto_attack_oh ) {
@@ -1176,7 +1215,13 @@ DECL_EVENT( auto_attack_oh ) {
         }
     }
 
-    eq_enqueue( rti, TIME_OFFSET( FROM_SECONDS( weapon[1].speed / ( 1.0f + rti->player.stat.haste ) ) ), routnum_auto_attack_oh );
+#if (t17_4pc)
+    eq_enqueue( rti, TIME_OFFSET( FROM_SECONDS( weapon[1].speed / ( 1.0f + rti->player.stat.haste
+		+ 0.06f * rti->player.rampage.stack
+		) ) ), routnum_auto_attack_oh );
+#else
+	eq_enqueue( rti, TIME_OFFSET( FROM_SECONDS( weapon[1].speed / ( 1.0f + rti->player.stat.haste ) ) ), routnum_auto_attack_oh );
+#endif
 }
 
 // === enrage =================================================================
@@ -1250,7 +1295,11 @@ DECL_EVENT( ragingblow_execute ) {
     if ( deal_damage( rti, d, DMGTYPE_SPECIAL, 0 ) ) {
         /* Crit */
         lprintf( ( "ragingblow crit" ) );
-
+#if (t17_2pc)
+		if (uni_rng(rti) < 0.2){
+			eq_enqueue(rti, rti->timestamp, routnum_enrage_trigger);
+		}
+#endif
     } else {
         /* Hit */
         lprintf( ( "ragingblow hit" ) );
@@ -1261,7 +1310,11 @@ DECL_EVENT( ragingblow_execute ) {
     if ( deal_damage( rti, d, DMGTYPE_SPECIAL, 0 ) ) {
         /* Crit */
         lprintf( ( "ragingblow oh crit" ) );
-
+#if (t17_2pc)
+		if (uni_rng(rti) < 0.2){
+			eq_enqueue(rti, rti->timestamp, routnum_enrage_trigger);
+		}
+#endif
     } else {
         /* Hit */
         lprintf( ( "ragingblow oh hit" ) );
@@ -1506,7 +1559,27 @@ DECL_EVENT( recklessness_expire ) {
 
 DECL_EVENT( recklessness_execute ) {
     lprintf( ( "recklessness start" ) );
+#if (t17_4pc)
+	eq_enqueue(rti, TIME_OFFSET(FROM_SECONDS(1)), routnum_rampage_refresh);
+#endif
 }
+
+#if (t17_4pc)
+DECL_EVENT(rampage_expire) {
+	lprintf(("rampage expire"));
+	rti->player.rampage.stack = 0;
+}
+
+DECL_EVENT(rampage_refresh) {
+	if (rti->player.rampage.stack == 0){
+		rti->player.rampage.expire = TIME_OFFSET(FROM_SECONDS(14));
+		eq_enqueue( rti, rti->player.rampage.expire, routnum_rampage_expire);
+	}
+	rti->player.rampage.stack++;
+	if (rti->player.rampage.stack < 10)
+		eq_enqueue(rti, TIME_OFFSET(FROM_SECONDS(1)), routnum_rampage_refresh);
+}
+#endif
 
 DECL_SPELL( recklessness ) {
     if ( rti->player.recklessness.cd > rti->timestamp ) return;
@@ -2048,6 +2121,10 @@ void routine_entries( rtinfo_t* rti, _event_t e ) {
         HOOK_EVENT( potion_start );
         HOOK_EVENT( potion_cd );
         HOOK_EVENT( potion_expire );
+#endif
+#if (t17_4pc)
+		HOOK_EVENT( rampage_refresh );
+		HOOK_EVENT( rampage_expire );
 #endif
     default:
         assert( 0 );

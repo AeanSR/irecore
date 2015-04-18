@@ -24,6 +24,17 @@ int talent;
 const int base10[] = { 1000000, 100000, 10000, 1000, 100, 10, 1 };
 #define TALENT_TIER(tier) ((talent / base10[tier - 1]) % 10)
 
+int archmages_incandescence;
+int archmages_greater_incandescence;
+int t17_2pc;
+int t17_4pc;
+int thunderlord_mh;
+int thunderlord_oh;
+int bleeding_hollow_mh;
+int bleeding_hollow_oh;
+int shattered_hand_mh;
+int shattered_hand_oh;
+
 int developer_debug;
 int list_available_devices;
 
@@ -106,6 +117,17 @@ void set_default_parameters(){
 	oh_low = 814;
 	mh_type = 1;
 	oh_type = 1;
+
+	archmages_incandescence = 1;
+	archmages_greater_incandescence = 1;
+	t17_2pc = 1;
+	t17_4pc = 1;
+	thunderlord_mh = 1;
+	thunderlord_oh = 1;
+	bleeding_hollow_mh = 0;
+	bleeding_hollow_oh = 0;
+	shattered_hand_mh = 0;
+	shattered_hand_oh = 0;
 }
 
 typedef struct{
@@ -380,6 +402,34 @@ void parse_parameters(std::vector<kvpair_t>& arglist){
 				|| TALENT_TIER(6) > 3 || TALENT_TIER(7) > 3)
 				err("Talent set not vaild.");
 		}
+		else if (0 == i->key.compare("archmages_incandescence")){
+			archmages_incandescence = !!atoi(i->value.c_str());
+			if (archmages_incandescence) archmages_greater_incandescence = 0;
+		}
+		else if (0 == i->key.compare("archmages_greater_incandescence")){
+			archmages_greater_incandescence = !!atoi(i->value.c_str());
+			if (archmages_greater_incandescence) archmages_incandescence = 0;
+		}
+		else if (0 == i->key.compare("t17_2pc")){
+			t17_2pc = !!atoi(i->value.c_str());
+		}
+		else if (0 == i->key.compare("t17_4pc")){
+			t17_4pc = !!atoi(i->value.c_str());
+		}
+		else if (0 == i->key.compare("mh_enchant")){
+			thunderlord_mh = !i->value.compare("thunderlord");
+			bleeding_hollow_mh = !i->value.compare("bleedinghollow");
+			shattered_hand_mh = !i->value.compare("shatteredhand");
+			if (i->value.compare("none") && !thunderlord_mh && !bleeding_hollow_mh && !shattered_hand_mh)
+				err("No such weapon enchant\"%s\".", i->value.c_str());
+		}
+		else if (0 == i->key.compare("oh_enchant")){
+			thunderlord_oh = !i->value.compare("thunderlord");
+			bleeding_hollow_oh = !i->value.compare("bleedinghollow");
+			shattered_hand_oh = !i->value.compare("shatteredhand");
+			if (i->value.compare("none") && !thunderlord_oh && !bleeding_hollow_oh && !shattered_hand_oh)
+				err("No such weapon enchant\"%s\".", i->value.c_str());
+		}
 		else if (0 == i->key.compare("developer_debug")){
 			developer_debug = !!atoi(i->value.c_str());
 		}
@@ -518,6 +568,47 @@ void generate_predef(){
 	predef.append("#define TALENT_TIER7 ");
 	sprintf(buffer, "%d", TALENT_TIER(7));
 	predef.append(buffer); predef.append("\r\n");
+
+	predef.append("#define archmages_incandescence ");
+	sprintf(buffer, "%d", archmages_incandescence);
+	predef.append(buffer); predef.append("\r\n");
+
+	predef.append("#define archmages_greater_incandescence ");
+	sprintf(buffer, "%d", archmages_greater_incandescence);
+	predef.append(buffer); predef.append("\r\n");
+
+	predef.append("#define t17_2pc ");
+	sprintf(buffer, "%d", t17_2pc);
+	predef.append(buffer); predef.append("\r\n");
+
+	predef.append("#define t17_4pc ");
+	sprintf(buffer, "%d", t17_4pc);
+	predef.append(buffer); predef.append("\r\n");
+
+	predef.append("#define thunderlord_mh ");
+	sprintf(buffer, "%d", thunderlord_mh);
+	predef.append(buffer); predef.append("\r\n");
+
+	predef.append("#define thunderlord_oh ");
+	sprintf(buffer, "%d", thunderlord_oh);
+	predef.append(buffer); predef.append("\r\n");
+
+	predef.append("#define bleedinghollow_mh ");
+	sprintf(buffer, "%d", bleeding_hollow_mh);
+	predef.append(buffer); predef.append("\r\n");
+
+	predef.append("#define bleedinghollow_oh ");
+	sprintf(buffer, "%d", bleeding_hollow_oh);
+	predef.append(buffer); predef.append("\r\n");
+
+	predef.append("#define shatteredhand_mh ");
+	sprintf(buffer, "%d", shattered_hand_mh);
+	predef.append(buffer); predef.append("\r\n");
+
+	predef.append("#define shatteredhand_oh ");
+	sprintf(buffer, "%d", shattered_hand_oh);
+	predef.append(buffer); predef.append("\r\n");
+
 }
 
 int main(int argc, char** argv){

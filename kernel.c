@@ -22,8 +22,8 @@
 #define death_pct 0.0f
 #define iterations 1
 #define power_max 120.0f
-#define PLATE_SPECIALIZATION 0
-#define SINGLE_MINDED 1
+#define PLATE_SPECIALIZATION 1
+#define SINGLE_MINDED 0
 #define BUFF_STR_AGI_INT 1
 #define BUFF_AP 1
 #define BUFF_CRIT 1
@@ -35,21 +35,21 @@
 #define BUFF_STA 1
 #define BUFF_POTION 1
 #define BUFF_BLOODLUST 1
-#define RACE RACE_NONE
-#define MH_LOW 814
-#define MH_HIGH 1514
-#define MH_SPEED 2.6f
-#define MH_TYPE WEAPON_1H
-#define OH_LOW 814
-#define OH_HIGH 1514
-#define OH_SPEED 2.6f
-#define OH_TYPE WEAPON_1H
+#define RACE RACE_TAUREN
+#define MH_LOW 1659
+#define MH_HIGH 2490
+#define MH_SPEED 3.6f
+#define MH_TYPE WEAPON_2H
+#define OH_LOW 1659
+#define OH_HIGH 2490
+#define OH_SPEED 3.6f
+#define OH_TYPE WEAPON_2H
 #define TALENT_TIER3 2
 #define TALENT_TIER4 1
 #define TALENT_TIER6 2
 #define TALENT_TIER7 1
-#define archmages_incandescence 1
-#define archmages_greater_incandescence 0
+#define archmages_incandescence 0
+#define archmages_greater_incandescence 1
 #define t17_2pc 1
 #define t17_4pc 1
 #define thunderlord_mh 1
@@ -523,8 +523,10 @@ typedef struct stat_t {
 /* Player struct, filled by the class module. */
 typedef struct {
     float power;
+#if (passive_power_regen)
     float power_regen;
-    stat_t stat;
+#endif
+	stat_t stat;
 #if (TALENT_TIER3 != 3)
     bloodthirst_t   bloodthirst;
 #endif
@@ -779,9 +781,11 @@ void power_gain( rtinfo_t* rti, float power ) {
 /* Power check. */
 kbool power_check( rtinfo_t* rti, float cost ) {
     if ( cost <= rti->player.power ) return 1;
-    if ( passive_power_regen && rti->player.power_regen > 0 )
+#if (passive_power_regen)
+    if ( rti->player.power_regen > 0 )
         eq_enqueue_ps( rti, TIME_OFFSET( FROM_SECONDS( ( cost - rti->player.power ) / rti->player.power_regen ) ) );
-    return 0;
+#endif
+	return 0;
 }
 
 #if (TALENT_TIER7 == 1)
@@ -844,8 +848,9 @@ int eq_execute( rtinfo_t* rti ) {
         p[i] = last;
 
         /* Now 'min' contains the top priority. Execute it. */
-        if ( passive_power_regen )
-            power_gain( rti, TO_SECONDS( min.time - rti->timestamp ) * rti->player.power_regen );
+#if ( passive_power_regen )
+        power_gain( rti, TO_SECONDS( min.time - rti->timestamp ) * rti->player.power_regen );
+#endif
         rti->timestamp = min.time;
 
         if ( min.routine == EVENT_END_SIMULATION ) /* Finish the simulation here. */
@@ -857,8 +862,9 @@ int eq_execute( rtinfo_t* rti ) {
 
     } else {
         /* Invoke power suffice routine. */
-        if ( passive_power_regen )
-            power_gain( rti, TO_SECONDS( rti->eq.power_suffice - rti->timestamp ) * rti->player.power_regen );
+#if ( passive_power_regen )
+        power_gain( rti, TO_SECONDS( rti->eq.power_suffice - rti->timestamp ) * rti->player.power_regen );
+#endif
         rti->timestamp = rti->eq.power_suffice;
         rti->eq.power_suffice = 0;
         /*
@@ -1048,7 +1054,7 @@ void refresh_haste( rtinfo_t* rti ) {
     if ( BUFF_HASTE ) haste *= 1.05f;
     if ( ( RACE == RACE_NIGHTELF_NIGHT ) || ( RACE == RACE_GOBLIN ) || ( RACE == RACE_GNOME ) )
         haste *= 1.01f;
-    if ( BUFF_BLOODLUST ) if ( ( rti->timestamp % FROM_SECONDS( 600 ) ) < FROM_SECONDS( 30 ) ) haste *= 1.3f;
+    if ( BUFF_BLOODLUST && rti->timestamp ) if ( ( rti->timestamp % FROM_SECONDS( 600 ) ) < FROM_SECONDS( 30 ) ) haste *= 1.3f;
     rti->player.stat.haste = haste - 1.0f;
 }
 
@@ -1647,7 +1653,7 @@ DECL_EVENT( bloodlust_start ) {
 DECL_EVENT( bloodlust_end ) {
     lprintf( ( "bloodlust end" ) );
     refresh_haste( rti );
-    eq_enqueue( rti, TIME_OFFSET( FROM_SECONDS( 570 ) ), routnum_bloodlust_end );
+    eq_enqueue( rti, TIME_OFFSET( FROM_SECONDS( 570 ) ), routnum_bloodlust_start );
 }
 #endif
 
@@ -1671,12 +1677,7 @@ DECL_EVENT( potion_start ) {
     refresh_ap( rti );
     rti->player.potion.expire = TIME_OFFSET( FROM_SECONDS( 25 ) );
     eq_enqueue( rti, rti->player.potion.expire, routnum_potion_expire );
-    if ( rti->timestamp == FROM_SECONDS( 0 ) ) {
-        rti->player.potion.cd = TIME_OFFSET( FROM_SECONDS( 60 ) );
-        eq_enqueue( rti, rti->player.potion.cd, routnum_potion_cd );
-    } else {
-        rti->player.potion.cd = rti->expected_combat_length + 1;
-    }
+    
 }
 
 DECL_SPELL( potion ) {
@@ -1685,6 +1686,12 @@ DECL_SPELL( potion ) {
     if ( UP( bladestorm.expire ) ) return;
 #endif
     eq_enqueue( rti, rti->timestamp, routnum_potion_start );
+	if ( rti->timestamp == FROM_SECONDS( 0 ) ) {
+        rti->player.potion.cd = TIME_OFFSET( FROM_SECONDS( 60 ) );
+        eq_enqueue( rti, rti->player.potion.cd, routnum_potion_cd );
+    } else {
+        rti->player.potion.cd = rti->expected_combat_length + 1;
+    }
 }
 #endif
 
@@ -2419,8 +2426,10 @@ void routine_entries( rtinfo_t* rti, _event_t e ) {
 }
 
 void module_init( rtinfo_t* rti ) {
+#if (passive_power_regen)
     rti->player.power_regen = 0.0f;
-    rti->player.power = 0.0f;
+#endif
+	rti->player.power = 0.0f;
     eq_enqueue( rti, rti->timestamp, routnum_auto_attack_mh );
     eq_enqueue( rti, TIME_OFFSET( FROM_SECONDS( 0.5 ) ), routnum_auto_attack_oh );
 
@@ -2445,10 +2454,10 @@ void module_init( rtinfo_t* rti ) {
     rti->player.suddendeath.proc.lasttimeprocs = (time_t)-(k32s)FROM_SECONDS( 180 );
 #endif
 #if (BUFF_BLOODLUST == 1)
-    eq_enqueue( rti, rti->timestamp, routnum_bloodlust_start );
+    eq_enqueue( rti, FROM_MILLISECONDS(1), routnum_bloodlust_start );
 #endif
 #if (BUFF_POTION == 1)
-    eq_enqueue( rti, rti->timestamp, routnum_potion_start );
+	SPELL(potion);
 #endif
 #if (archmages_incandescence || archmages_greater_incandescence)
 	rti->player.incandescence.proc.lasttimeattemps = (time_t)-(k32s)FROM_SECONDS(10);
@@ -2468,16 +2477,16 @@ void module_init( rtinfo_t* rti ) {
 #if !defined(__OPENCL_VERSION__)
 void scan_apl( rtinfo_t* rti ) {
     SPELL( recklessness );
-    SPELL( bloodbath );
-    SPELL( bloodthirst );
-    SPELL( execute );
-    SPELL( ragingblow );
-    SPELL( wildstrike );
+    //SPELL( bloodbath );
+    //SPELL( bloodthirst );
+    //SPELL( execute );
+    //SPELL( ragingblow );
+    //SPELL( wildstrike );
 }
 
 void host_kernel_entry() {
     float result;
-    sim_iterate( &result, 5171, 3945, 1714, 917, 1282, 478, 0 );
+    sim_iterate( &result, 5171, 4313 + 250, 2148 + 125, 751, 1504, 478, 0 );
 
     printf( "result: %.3f\nmax queue length: %d\nruntime state size: %d\n", result, maxqueuelength, sizeof( rtinfo_t ) );
 }

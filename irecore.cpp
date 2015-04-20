@@ -213,11 +213,13 @@ void parse_parameters(std::vector<kvpair_t>& arglist){
 			stat.gear_str = atoi(i->value.c_str());
 			if (stat.gear_str < 0) stat.gear_str = 0;
 			stat_not_pushed = 1;
+			if (raidbuff.flask) stat.gear_str += 250;
 		}
 		else if (0 == i->key.compare("gear_crit")){
 			stat.gear_crit = atoi(i->value.c_str());
 			if (stat.gear_crit < 0) stat.gear_crit = 0;
 			stat_not_pushed = 1;
+			if (raidbuff.food) stat.gear_crit += 125;
 		}
 		else if (0 == i->key.compare("gear_mastery")){
 			stat.gear_mastery = atoi(i->value.c_str());
@@ -239,7 +241,7 @@ void parse_parameters(std::vector<kvpair_t>& arglist){
 			if (stat.gear_vers < 0) stat.gear_vers = 0;
 			stat_not_pushed = 1;
 		}
-		if (0 == i->key.compare("gear_str+")){
+		else if (0 == i->key.compare("gear_str+")){
 			stat.gear_str += atoi(i->value.c_str());
 			if (stat.gear_str < 0) stat.gear_str = 0;
 			stat_not_pushed = 1;
@@ -337,16 +339,24 @@ void parse_parameters(std::vector<kvpair_t>& arglist){
 			raidbuff.bloodlust = !!atoi(i->value.c_str());
 		}
 		else if (0 == i->key.compare("raidbuff_all")){
+			int t1 = raidbuff.flask;
+			int t2 = raidbuff.food;
 			raidbuff.str = atoi(i->value.c_str());
 			raidbuff.str = !!raidbuff.str;
 			raidbuff.bloodlust = raidbuff.flask = raidbuff.food = raidbuff.potion = raidbuff.ap = raidbuff.crit = raidbuff.haste = raidbuff.mastery = raidbuff.mult = raidbuff.vers = raidbuff.sp = raidbuff.sta = raidbuff.str;
 			raidbuff.vers = 1; /* This cannot be cancelled ingame. */
+			if (!t1 && raidbuff.flask) stat.gear_str += 250;
+			else if (t1 && !raidbuff.flask) stat.gear_str -= 250;
+			if (!t2 && raidbuff.food) stat.gear_crit += 125;
+			else if (t2 && !raidbuff.food) stat.gear_crit -= 125;
 		}
 		else if (0 == i->key.compare("actions")){
 			apl = i->value;
+			apl.append("\n");
 		}
 		else if (0 == i->key.compare("actions+")){
 			apl.append(i->value);
+			apl.append("\n");
 		}
 		else if (0 == i->key.compare("vary_combat_length")){
 			vary_combat_length = atof(i->value.c_str());
@@ -430,16 +440,16 @@ void parse_parameters(std::vector<kvpair_t>& arglist){
 			}
 		}
 		else if (0 == i->key.compare("mh_type")){
-			if (i->value.compare("2h")) mh_type = 0;
-			else if (i->value.compare("1h")) mh_type = 1;
-			else if (i->value.compare("dagger")) mh_type = 2;
+			if (0 == i->value.compare("2h")) mh_type = 0;
+			else if (0 == i->value.compare("1h")) mh_type = 1;
+			else if (0 == i->value.compare("dagger")) mh_type = 2;
 			else err("No such weapon type \"%s\".", i->value.c_str());
 			single_minded = (mh_type == 1 && oh_type == 1);
 		}
 		else if (0 == i->key.compare("oh_type")){
-			if (i->value.compare("2h")) oh_type = 0;
-			else if (i->value.compare("1h")) oh_type = 1;
-			else if (i->value.compare("dagger")) oh_type = 2;
+			if (0 == i->value.compare("2h")) oh_type = 0;
+			else if (0 == i->value.compare("1h")) oh_type = 1;
+			else if (0 == i->value.compare("dagger")) oh_type = 2;
 			else err("No such weapon type \"%s\".", i->value.c_str());
 			single_minded = (mh_type == 1 && oh_type == 1);
 		}

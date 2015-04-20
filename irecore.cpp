@@ -1,6 +1,8 @@
 #include "irecore.h"
 
 stat_t stat;
+std::vector<stat_t> stat_array;
+int stat_not_pushed = 1;
 raidbuff_t raidbuff;
 cl_uint seed;
 std::string apl;
@@ -92,12 +94,15 @@ void set_default_parameters(){
 	developer_debug = 0;
 	list_available_devices = 0;
 	stat = {
+		"",
 		3945, 1714, 917, 1282, 478, 0,
 	};
+	stat_not_pushed = 1;
 	raidbuff = {
 		1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1
 	};
-	seed = (cl_uint)time(NULL);
+	seed = 0;
+	srand((unsigned int)time(NULL));
 	apl = "SPELL(recklessness); SPELL(bloodthirst); SPELL(execute); SPELL(ragingblow); SPELL(wildstrike);";
 	iterations = 50000;
 	vary_combat_length = 20.0f;
@@ -118,7 +123,7 @@ void set_default_parameters(){
 	mh_type = 1;
 	oh_type = 1;
 
-	archmages_incandescence = 1;
+	archmages_incandescence = 0;
 	archmages_greater_incandescence = 1;
 	t17_2pc = 1;
 	t17_4pc = 1;
@@ -205,26 +210,68 @@ void parse_parameters(std::vector<kvpair_t>& arglist){
 		if (0 == i->key.compare("gear_str")){
 			stat.gear_str = atoi(i->value.c_str());
 			if (stat.gear_str < 0) stat.gear_str = 0;
+			stat_not_pushed = 1;
 		}
 		else if (0 == i->key.compare("gear_crit")){
 			stat.gear_crit = atoi(i->value.c_str());
 			if (stat.gear_crit < 0) stat.gear_crit = 0;
+			stat_not_pushed = 1;
 		}
 		else if (0 == i->key.compare("gear_mastery")){
 			stat.gear_mastery = atoi(i->value.c_str());
 			if (stat.gear_mastery < 0) stat.gear_mastery = 0;
+			stat_not_pushed = 1;
 		}
 		else if (0 == i->key.compare("gear_haste")){
 			stat.gear_haste = atoi(i->value.c_str());
 			if (stat.gear_haste < 0) stat.gear_haste = 0;
+			stat_not_pushed = 1;
 		}
 		else if (0 == i->key.compare("gear_mult")){
 			stat.gear_mult = atoi(i->value.c_str());
 			if (stat.gear_mult < 0) stat.gear_mult = 0;
+			stat_not_pushed = 1;
 		}
 		else if (0 == i->key.compare("gear_vers")){
 			stat.gear_vers = atoi(i->value.c_str());
 			if (stat.gear_vers < 0) stat.gear_vers = 0;
+			stat_not_pushed = 1;
+		}
+		if (0 == i->key.compare("gear_str+")){
+			stat.gear_str += atoi(i->value.c_str());
+			if (stat.gear_str < 0) stat.gear_str = 0;
+			stat_not_pushed = 1;
+		}
+		else if (0 == i->key.compare("gear_crit+")){
+			stat.gear_crit += atoi(i->value.c_str());
+			if (stat.gear_crit < 0) stat.gear_crit = 0;
+			stat_not_pushed = 1;
+		}
+		else if (0 == i->key.compare("gear_mastery+")){
+			stat.gear_mastery += atoi(i->value.c_str());
+			if (stat.gear_mastery < 0) stat.gear_mastery = 0;
+			stat_not_pushed = 1;
+		}
+		else if (0 == i->key.compare("gear_haste+")){
+			stat.gear_haste += atoi(i->value.c_str());
+			if (stat.gear_haste < 0) stat.gear_haste = 0;
+			stat_not_pushed = 1;
+		}
+		else if (0 == i->key.compare("gear_mult+")){
+			stat.gear_mult += atoi(i->value.c_str());
+			if (stat.gear_mult < 0) stat.gear_mult = 0;
+			stat_not_pushed = 1;
+		}
+		else if (0 == i->key.compare("gear_vers+")){
+			stat.gear_vers += atoi(i->value.c_str());
+			if (stat.gear_vers < 0) stat.gear_vers = 0;
+			stat_not_pushed = 1;
+		}
+		else if (0 == i->key.compare("push_stats")){
+			stat.name = i->value;
+			if (stat.name.empty()) stat.name = "<unnamed stat set>";
+			stat_array.push_back(stat);
+			stat_not_pushed = 0;
 		}
 		else if (0 == i->key.compare("deterministic_seed")){
 			seed = atoi(i->value.c_str());
@@ -617,6 +664,12 @@ int main(int argc, char** argv){
 	build_arglist(arglist, argc, argv);
 	parse_parameters(arglist);
 	generate_predef();
+	
+	if (stat_not_pushed) {
+		if (stat.name.empty()) stat.name = "<unnamed stat set>";
+		stat_array.push_back(stat);
+	}
+
 	if (developer_debug){
 		host_kernel_entry();
 	}
@@ -624,7 +677,7 @@ int main(int argc, char** argv){
 		ocl().init();
 	}
 	else{
-		std::cout << ocl().run(apl, predef) << std::endl;
+		ocl().run(apl, predef);
 	}
 	return 0;
 }

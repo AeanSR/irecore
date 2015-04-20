@@ -15,6 +15,7 @@
 #endif
 
 typedef struct {
+	std::string name;
 	cl_uint gear_str;
 	cl_uint gear_crit;
 	cl_uint gear_haste;
@@ -38,8 +39,10 @@ typedef struct{
 	int bloodlust;
 } raidbuff_t;
 extern stat_t stat;
+extern std::vector<stat_t> stat_array;
 extern cl_uint seed;
 extern int iterations;
+extern float max_length;
 extern int list_available_devices;
 
 class ocl_t{

@@ -824,6 +824,7 @@ void proc_PPM( rtinfo_t* rti, float PPM, weapon_t* weapon, k32u routnum ) {
     }
 }
 void proc_RPPM( rtinfo_t* rti, RPPM_t* state, float RPPM, k32u routnum ) {
+	if (state->lasttimeattemps == rti->timestamp) return;
     float proc = RPPM * min( TO_SECONDS( rti->timestamp - state->lasttimeattemps ), 10.0f ) / 60.0f;
     state->lasttimeattemps = rti->timestamp;
     proc *= max( 1.0f, 1.0f + ( min( TO_SECONDS( rti->timestamp - state->lasttimeprocs ), 1000.0f ) / ( 60.0f / RPPM ) - 1.5f ) * 3.0f );

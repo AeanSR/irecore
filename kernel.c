@@ -15,6 +15,7 @@
 
 #if !defined(__OPENCL_VERSION__)
 /* Front-end gives these defines. */
+#define RNG_MWC64X
 #define vary_combat_length 20.0f
 #define max_length 450.0f
 #define initial_health_percentage 100.0f
@@ -279,13 +280,25 @@ double clamp( double val, double min, double max ) {
 #define max(a, b) ((a) > (b) ? (a) : (b))
 #define min(a, b) ((a) < (b) ? (a) : (b))
 #define mix(x, y, a) ((x) + (( (y) - (x) ) * (a)))
+#define mad_hi(x,y,c) ((k32u)(((k64u)(x) * (k64u)(y)) >> 32) + (c))
 #endif /* !defined(__OPENCL_VERSION__) */
 
 /* Seed struct which holds the current state. */
+#if defined(RNG_MT127)
 typedef struct {
     k32u mt[4]; /* State words. */
     k32u mti;   /* State counter: must be within [0,3]. */
 } seed_t;
+#elif defined(RNG_MWC64X)
+typedef struct {
+    k32u x;
+    k32u c;
+} seed_t;
+#else
+typedef struct {
+    k32u holdrand;
+} seed_t;
+#endif
 
 typedef k32u time_t;
 #define FROM_SECONDS( sec ) ((time_t)convert_uint_rtp((float)(sec) * 1000.0f))
@@ -582,6 +595,7 @@ void routine_entries( rtinfo_t* rti, _event_t e );
 void module_init( rtinfo_t* rti );
 
 /* Initialize RNG */
+#if defined(RNG_MT127)
 void rng_init( rtinfo_t* rti, k32u seed ) {
     rti->seed.mti = 0; /* Reset counter */
     /* Use a LCG to fill state matrix. See Knuth TAOCP Vol2. 3rd Ed. P.106 for multiplier. */
@@ -595,8 +609,25 @@ void rng_init( rtinfo_t* rti, k32u seed ) {
     seed = ( 1812433253UL * ( seed ^ ( seed >> 30 ) ) ) + 3;
     rti->seed.mt[3] = seed & 0xffffffffUL;
 }
-
+#elif defined(RNG_MWC64X)
+void rng_init( rtinfo_t* rti, k32u seed ) {
+    rti->seed.x = seed;
+    /* Due to multiple run for same kernel, set thread id into state words to avoid seed overlapping. */
+    rti->seed.c = ( k32u )get_global_id( 0 );
+}
+#else
+void rng_init( rtinfo_t* rti, k32u seed ) {
+	seed = ( 1812433253UL * ( seed ^ ( seed >> 30 ) ) ) + 1;
+    /* Due to multiple run for same kernel, set thread id into state words to avoid seed overlapping. */
+    rti->seed.holdrand = seed + ( k32u )get_global_id( 0 );
+}
+#endif
 /* Generate one IEEE-754 single precision float point uniformally distributed in the interval [.0f, 1.0f). */
+#if defined(RNG_MT127)
+/*
+	Minimalist Mersenne Twister for OpenCL
+	MT by Makoto Matsumoto, See http://www.math.sci.hiroshima-u.ac.jp/~m-mat/MT/emt.html
+*/
 float uni_rng( rtinfo_t* rti ) {
     k32u y; /* Should be a register. */
     assert( rti->seed.mti < 4 ); /* If not, RNG is uninitialized. */
@@ -616,6 +647,34 @@ float uni_rng( rtinfo_t* rti ) {
     y = ( ( y & 0x3fffffffU ) | 0x3f800000U );
     return ( *( float* )&y ) - 1.0f; /* Decrease to [.0f, 1.0f). */
 }
+#elif defined(RNG_MWC64X)
+/*
+	Part of MWC64X by David Thomas, dt10@imperial.ac.uk
+	This is provided under BSD, full license is with the main package.
+	See http://www.doc.ic.ac.uk/~dt10/research
+*/
+float uni_rng( rtinfo_t* rti ) {
+    k32u Xn = 4294883355U * rti->seed.x + rti->seed.c;
+	k32u Cn = mad_hi(4294883355U, rti->seed.x, (k32u)(Xn<rti->seed.c));
+	rti->seed.x = Xn;
+	rti->seed.c = Cn;
+	k32u y = Xn ^ Cn;
+    /* Mask to IEEE-754 format [1.0f, 2.0f). */
+    y = ( ( y & 0x3fffffffU ) | 0x3f800000U );
+    return ( *( float* )&y ) - 1.0f; /* Decrease to [.0f, 1.0f). */
+}
+#else
+/*
+	Classic 32-bit LCG known as "rand".
+*/
+float uni_rng( rtinfo_t* rti ) {
+	rti->seed.holdrand = rti->seed.holdrand * 214013 + 2531011;
+    k32u y = rti->seed.holdrand;
+    /* Mask to IEEE-754 format [1.0f, 2.0f). */
+    y = ( ( y & 0x3fffffffU ) | 0x3f800000U );
+    return ( *( float* )&y ) - 1.0f; /* Decrease to [.0f, 1.0f). */
+}
+#endif
 
 /* Generate one IEEE-754 single precision float point with standard normal distribution. */
 float stdnor_rng( rtinfo_t* rti ) {
@@ -716,8 +775,9 @@ int eq_execute( rtinfo_t* rti ) {
     //    rti->eq.power_suffice = TIME_OFFSET( FROM_SECONDS( 1 ) );
 
     /* When time elapse, trigger a full scanning at APL. */
-    if ( rti->timestamp < p[1].time &&
-            ( !rti->eq.power_suffice || rti->timestamp < rti->eq.power_suffice ) ) {
+    if ( rti->timestamp < p[1].time 
+		 && ( !rti->eq.power_suffice || rti->timestamp < rti->eq.power_suffice ) 
+		) {
         scan_apl( rti ); /* This may change p[1]. */
 
         /* Check again. */

@@ -23,6 +23,7 @@ int oh_low, oh_high;
 int mh_type;
 int oh_type;
 int talent;
+int rng_engine;
 const int base10[] = { 1000000, 100000, 10000, 1000, 100, 10, 1 };
 #define TALENT_TIER(tier) ((talent / base10[tier - 1]) % 10)
 
@@ -103,6 +104,7 @@ void set_default_parameters(){
 	};
 	seed = 0;
 	srand((unsigned int)time(NULL));
+	rng_engine = 127;
 	apl = "SPELL(recklessness); SPELL(bloodthirst); SPELL(execute); SPELL(ragingblow); SPELL(wildstrike);";
 	iterations = 50000;
 	vary_combat_length = 20.0f;
@@ -477,6 +479,12 @@ void parse_parameters(std::vector<kvpair_t>& arglist){
 			if (i->value.compare("none") && !thunderlord_oh && !bleeding_hollow_oh && !shattered_hand_oh)
 				err("No such weapon enchant\"%s\".", i->value.c_str());
 		}
+		else if (0 == i->key.compare("rng_engine")){
+			if (0 == i->value.compare("mt127")) rng_engine = 127;
+			else if (0 == i->value.compare("mwc64x")) rng_engine = 64;
+			else if (0 == i->value.compare("lcg32")) rng_engine = 32;
+			else err("No such rng engine \"%s\".", i->value.c_str());
+		}
 		else if (0 == i->key.compare("developer_debug")){
 			developer_debug = !!atoi(i->value.c_str());
 		}
@@ -655,6 +663,9 @@ void generate_predef(){
 	predef.append("#define shatteredhand_oh ");
 	sprintf(buffer, "%d", shattered_hand_oh);
 	predef.append(buffer); predef.append("\r\n");
+
+	if(rng_engine == 127) predef.append("#define RNG_MT127\r\n");
+	else if(rng_engine == 64) predef.append("#define RNG_MWC64X\r\n");
 
 }
 

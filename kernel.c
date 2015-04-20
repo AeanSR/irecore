@@ -429,6 +429,26 @@ typedef struct {
 	RPPM_t proc;
 } incandescence_t;
 #endif
+#if (thunderlord_mh || thunderlord_oh)
+typedef struct{
+	time_t expire;
+	k32u extend;
+	RPPM_t proc;
+} thunderlord_t;
+#endif
+#if (bleedinghollow_mh || bleedinghollow_oh)
+typedef struct{
+	time_t expire;
+	RPPM_t proc;
+} bleedinghollow_t;
+#endif
+#if (shatteredhand_mh || shatteredhand_oh)
+typedef struct{
+	time_t expire;
+	float ticks;
+	RPPM_t proc;
+} shatteredhand_t;
+#endif
 
 typedef struct weapon_t {
     float speed;
@@ -549,7 +569,26 @@ typedef struct {
 #if (archmages_incandescence || archmages_greater_incandescence)
 	incandescence_t incandescence;
 #endif
-    time_t gcd;
+#if (thunderlord_mh)
+	thunderlord_t	enchant_mh;
+#endif
+#if (thunderlord_oh)
+	thunderlord_t	enchant_oh;
+#endif
+#if (bleedinghollow_mh)
+	bleedinghollow_t enchant_mh;
+#endif
+#if (bleedinghollow_oh)
+	bleedinghollow_t enchant_oh;
+#endif
+#if (shatteredhand_mh)
+	shatteredhand_t enchant_mh;
+#endif
+#if (shatteredhand_oh)
+	shatteredhand_t enchant_oh;
+#endif
+
+	time_t gcd;
 }
 player_t;
 
@@ -953,7 +992,7 @@ deviceonly( __kernel ) void sim_iterate(
 
 /* Class module. */
 void refresh_str( rtinfo_t* rti ) {
-    float fstr = rti->player.stat.gear_str;
+    float fstr = (float)rti->player.stat.gear_str;
     k32u str;
     float coeff = 1.0f;
     if ( PLATE_SPECIALIZATION ) coeff *= 1.05f;
@@ -975,14 +1014,26 @@ void refresh_ap( rtinfo_t* rti ) {
 }
 
 void refresh_mastery( rtinfo_t* rti ) {
-    float mastery = rti->player.stat.gear_mastery;
+    float mastery = (float)rti->player.stat.gear_mastery;
+#if (bleedinghollow_mh)
+	if (UP(enchant_mh.expire)) mastery += 500.0f;
+#endif
+#if (bleedinghollow_oh)
+	if (UP(enchant_oh.expire)) mastery += 500.0f;
+#endif
     if ( BUFF_MASTERY ) mastery += 550;
     mastery = 1.4f * ( 0.08f + mastery / 11000 );
     rti->player.stat.mastery = mastery;
 }
 
 void refresh_crit( rtinfo_t* rti ) {
-    float crit = rti->player.stat.gear_crit;
+    float crit = (float)rti->player.stat.gear_crit;
+#if (thunderlord_mh)
+	if (UP(enchant_mh.expire)) crit += 500.0f;
+#endif
+#if (thunderlord_oh)
+	if (UP(enchant_oh.expire)) crit += 500.0f;
+#endif
     crit *= 1.05f;
     crit = 0.05f + crit / 11000;
     if ( BUFF_CRIT ) crit += 0.05f;
@@ -992,7 +1043,7 @@ void refresh_crit( rtinfo_t* rti ) {
 }
 
 void refresh_haste( rtinfo_t* rti ) {
-    float haste = rti->player.stat.gear_haste;
+    float haste = (float)rti->player.stat.gear_haste;
     haste = 1.0f + haste / 9000;
     if ( BUFF_HASTE ) haste *= 1.05f;
     if ( ( RACE == RACE_NIGHTELF_NIGHT ) || ( RACE == RACE_GOBLIN ) || ( RACE == RACE_GNOME ) )
@@ -1002,26 +1053,22 @@ void refresh_haste( rtinfo_t* rti ) {
 }
 
 void refresh_mult( rtinfo_t* rti ) {
-    float mult = rti->player.stat.gear_mult;
+    float mult = (float)rti->player.stat.gear_mult;
     mult = mult / 6600;
     if ( BUFF_MULT ) mult += 0.05f;
     rti->player.stat.mult = mult;
 }
 
 void refresh_vers( rtinfo_t* rti ) {
-    float vers = rti->player.stat.gear_vers;
+    float vers = (float)rti->player.stat.gear_vers;
     if ( RACE == RACE_HUMAN ) vers += 100;
     vers = vers / 13000;
     if ( BUFF_VERS ) vers += 0.03f;
     rti->player.stat.vers = vers;
 }
 
-void mhproc( rtinfo_t* rti );
-void ohproc( rtinfo_t* rti );
-void approc( rtinfo_t* rti );
-
 float weapon_dmg( rtinfo_t* rti, float weapon_multiplier, kbool normalized, kbool offhand ) {
-    float dmg = weapon[offhand].low;
+    float dmg = (float)weapon[offhand].low;
     dmg += uni_rng( rti ) * ( weapon[offhand].high - weapon[offhand].low );
     dmg += ( normalized ? normalized_weapon_speed[weapon[offhand].type] : weapon[offhand].speed ) * rti->player.stat.ap / 3.5f;
     dmg *= weapon_multiplier;
@@ -1033,8 +1080,6 @@ float weapon_dmg( rtinfo_t* rti, float weapon_multiplier, kbool normalized, kboo
         dmg *= 1.0f + rti->player.stat.mastery;
     }
     dmg *= 1.0f + rti->player.stat.vers;
-    if ( offhand ) ohproc( rti );
-    else mhproc( rti );
     return dmg;
 }
 
@@ -1046,7 +1091,6 @@ float ap_dmg( rtinfo_t* rti, float ap_multiplier ) {
         dmg *= 1.0f + rti->player.stat.mastery;
     }
     dmg *= 1.0f + rti->player.stat.vers;
-    approc( rti );
     return dmg;
 }
 
@@ -1135,6 +1179,21 @@ enum {
 	routnum_incandescence_trigger,
 	routnum_incandescence_expire,
 #endif
+#if (thunderlord_mh || bleedinghollow_mh || shatteredhand_mh)
+	routnum_enchant_mh_trigger,
+	routnum_enchant_mh_expire,
+#endif
+#if (shatteredhand_mh)
+	routnum_enchant_mh_tick,
+#endif
+#if (thunderlord_oh || bleedinghollow_oh || shatteredhand_oh)
+	routnum_enchant_oh_trigger,
+	routnum_enchant_oh_expire,
+#endif
+#if (shatteredhand_oh)
+	routnum_enchant_oh_tick,
+#endif
+
 };
 
 enum {
@@ -1181,6 +1240,20 @@ kbool deal_damage( rtinfo_t* rti, float dmg, k32u dmgtype, float extra_crit_rate
             ret = 1;
             fdmg *= ( RACE == RACE_DWARF || RACE == RACE_TAUREN ) ? 2.04f : 2.0f;
             lprintf( ( "damage *%.0f*", fdmg ) );
+#if (thunderlord_mh)
+			if (UP(enchant_mh.expire) && rti->player.enchant_mh.extend){
+				rti->player.enchant_mh.extend --;
+				rti->player.enchant_mh.expire += FROM_SECONDS(2);
+				eq_enqueue(rti, rti->player.enchant_mh.expire, routnum_enchant_mh_expire);
+			}
+#endif
+#if (thunderlord_oh)
+			if (UP(enchant_oh.expire) && rti->player.enchant_oh.extend){
+				rti->player.enchant_oh.extend --;
+				rti->player.enchant_oh.expire += FROM_SECONDS(2);
+				eq_enqueue(rti, rti->player.enchant_oh.expire, routnum_enchant_oh_expire);
+			}
+#endif
         } else {
             ret = 0;
             lprintf( ( "damage %.0f", fdmg ) );
@@ -1230,6 +1303,22 @@ kbool deal_damage( rtinfo_t* rti, float dmg, k32u dmgtype, float extra_crit_rate
 			proc_RPPM(rti, &rti->player.incandescence.proc, 0.92f, routnum_incandescence_trigger);
 		}
 #endif
+
+#if (thunderlord_mh)
+		proc_RPPM(rti, &rti->player.enchant_mh.proc, 2.5f, routnum_enchant_mh_trigger);
+#elif (bleedinghollow_mh)
+		proc_RPPM(rti, &rti->player.enchant_mh.proc, 2.3f, routnum_enchant_mh_trigger);
+#elif (shatteredhand_mh)
+		proc_RPPM(rti, &rti->player.enchant_mh.proc, 3.5f * ( 1.0f + rti->player.stat.haste ), routnum_enchant_mh_trigger);
+#endif
+#if (thunderlord_oh)
+		proc_RPPM(rti, &rti->player.enchant_oh.proc, 2.5f, routnum_enchant_oh_trigger);
+#elif (bleedinghollow_oh)
+		proc_RPPM(rti, &rti->player.enchant_oh.proc, 2.3f, routnum_enchant_oh_trigger);
+#elif (shatteredhand_oh)
+		proc_RPPM(rti, &rti->player.enchant_oh.proc, 3.5f * ( 1.0f + rti->player.stat.haste ), routnum_enchant_oh_trigger);
+#endif
+
         return ret;
     }
     break;
@@ -2073,6 +2162,7 @@ DECL_SPELL( bloodbath ) {
 }
 #endif
 
+// === legendary ring =========================================================
 #if (archmages_incandescence || archmages_greater_incandescence)
 DECL_EVENT(incandescence_trigger){
 	rti->player.incandescence.expire = TIME_OFFSET(FROM_SECONDS(10));
@@ -2086,6 +2176,86 @@ DECL_EVENT(incandescence_expire){
 		lprintf(("incandescence expire"));
 		refresh_str(rti);
 		refresh_ap(rti);
+	}
+}
+#endif
+
+// === enchants ===============================================================
+#if (thunderlord_mh || bleedinghollow_mh || shatteredhand_mh)
+DECL_EVENT(enchant_mh_expire){
+	if (rti->player.enchant_mh.expire == rti->timestamp){
+		lprintf(("mh enchant expire"));
+		if (thunderlord_mh) refresh_crit(rti);
+		if (bleedinghollow_mh) refresh_mastery(rti);
+	}
+}
+
+DECL_EVENT(enchant_mh_trigger){
+#if (thunderlord_mh)
+	rti->player.enchant_mh.expire = TIME_OFFSET(FROM_SECONDS(6));
+	rti->player.enchant_mh.extend = 3;
+	refresh_crit(rti);
+#endif
+#if (bleedinghollow_mh)
+	rti->player.enchant_mh.expire = TIME_OFFSET(FROM_SECONDS(12));
+	refresh_mastery(rti);
+#endif
+#if (shatteredhand_mh)
+	deal_damage(rti, 1500.0f, DMGTYPE_NONE, .0f);	
+	rti->player.enchant_mh.expire = TIME_OFFSET(FROM_SECONDS(6));
+	rti->player.enchant_mh.ticks = 6.0f;
+	eq_enqueue(rti, TIME_OFFSET(FROM_SECONDS(1)), routnum_enchant_mh_tick);
+#endif
+	eq_enqueue(rti, rti->player.enchant_mh.expire, routnum_enchant_mh_expire);
+}
+#endif
+
+#if (thunderlord_oh || bleedinghollow_oh || shatteredhand_oh)
+DECL_EVENT(enchant_oh_expire){
+	if (rti->player.enchant_oh.expire == rti->timestamp){
+		lprintf(("oh enchant expire"));
+		if (thunderlord_oh) refresh_crit(rti);
+		if (bleedinghollow_oh) refresh_mastery(rti);
+	}
+}
+
+DECL_EVENT(enchant_oh_trigger){
+#if (thunderlord_oh)
+	rti->player.enchant_oh.expire = TIME_OFFSET(FROM_SECONDS(6));
+	rti->player.enchant_oh.extend = 3;
+	refresh_crit(rti);
+#endif
+#if (bleedinghollow_oh)
+	rti->player.enchant_oh.expire = TIME_OFFSET(FROM_SECONDS(12));
+	refresh_mastery(rti);
+#endif
+#if (shatteredhand_oh)
+	deal_damage(rti, 1500.0f, DMGTYPE_NONE, .0f);
+	rti->player.enchant_oh.expire = TIME_OFFSET(FROM_SECONDS(6));
+	rti->player.enchant_oh.ticks = 6.0f;
+	eq_enqueue(rti, TIME_OFFSET(FROM_SECONDS(1)), routnum_enchant_oh_tick);
+#endif
+	eq_enqueue(rti, rti->player.enchant_oh.expire, routnum_enchant_oh_expire);
+}
+#endif
+
+#if (shatteredhand_mh)
+DECL_EVENT(enchant_mh_tick){
+	if ( TIME_OFFSET(FROM_SECONDS(rti->player.enchant_mh.ticks - 1.0f)) == rti->player.enchant_mh.expire ){
+		rti->player.enchant_mh.ticks -= 1.0f;
+		deal_damage(rti, 750.0f, DMGTYPE_NONE, .0f);
+		if (rti->player.enchant_mh.ticks >= 1.0f)
+			eq_enqueue(rti, TIME_OFFSET(FROM_SECONDS(1)), routnum_enchant_mh_tick);
+	}
+}
+#endif
+#if (shatteredhand_oh)
+DECL_EVENT(enchant_oh_tick){
+	if ( TIME_OFFSET(FROM_SECONDS(rti->player.enchant_oh.ticks - 1.0f)) == rti->player.enchant_oh.expire ){
+		rti->player.enchant_oh.ticks -= 1.0f;
+		deal_damage(rti, 750.0f, DMGTYPE_NONE, .0f);
+		if (rti->player.enchant_oh.ticks >= 1.0f)
+			eq_enqueue(rti, TIME_OFFSET(FROM_SECONDS(1)), routnum_enchant_oh_tick);
 	}
 }
 #endif
@@ -2228,19 +2398,24 @@ void routine_entries( rtinfo_t* rti, _event_t e ) {
 		HOOK_EVENT( incandescence_trigger );
 		HOOK_EVENT( incandescence_expire );
 #endif
+#if (thunderlord_mh || bleedinghollow_mh || shatteredhand_mh)
+		HOOK_EVENT( enchant_mh_trigger );
+		HOOK_EVENT( enchant_mh_expire );
+#endif
+#if (shatteredhand_mh)
+		HOOK_EVENT( enchant_mh_tick );
+#endif
+#if (thunderlord_oh || bleedinghollow_oh || shatteredhand_oh)
+		HOOK_EVENT( enchant_oh_trigger );
+		HOOK_EVENT( enchant_oh_expire );
+#endif
+#if (shatteredhand_oh)
+		HOOK_EVENT( enchant_oh_tick );
+#endif
+
     default:
         assert( 0 );
     }
-}
-
-void mhproc( rtinfo_t* rti ) {
-
-}
-void ohproc( rtinfo_t* rti ) {
-
-}
-void approc( rtinfo_t* rti ) {
-
 }
 
 void module_init( rtinfo_t* rti ) {
@@ -2279,9 +2454,15 @@ void module_init( rtinfo_t* rti ) {
 	rti->player.incandescence.proc.lasttimeattemps = (time_t)-(k32s)FROM_SECONDS(10);
 	rti->player.incandescence.proc.lasttimeprocs = (time_t)-(k32s)FROM_SECONDS(180);
 #endif
-
+#if (thunderlord_mh || bleedinghollow_mh || shatteredhand_mh)
+	rti->player.enchant_mh.proc.lasttimeattemps = (time_t)-(k32s)FROM_SECONDS(10);
+	rti->player.enchant_mh.proc.lasttimeprocs = (time_t)-(k32s)FROM_SECONDS(180);
+#endif
+#if (thunderlord_oh || bleedinghollow_oh || shatteredhand_oh)
+	rti->player.enchant_oh.proc.lasttimeattemps = (time_t)-(k32s)FROM_SECONDS(10);
+	rti->player.enchant_oh.proc.lasttimeprocs = (time_t)-(k32s)FROM_SECONDS(180);
+#endif
 }
-
 
 /* Debug build. */
 #if !defined(__OPENCL_VERSION__)
@@ -2293,7 +2474,6 @@ void scan_apl( rtinfo_t* rti ) {
     SPELL( ragingblow );
     SPELL( wildstrike );
 }
-
 
 void host_kernel_entry() {
     float result;

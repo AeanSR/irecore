@@ -164,9 +164,9 @@ void build_arglist(std::vector<kvpair_t>& arglist, int argc, char** argv){
 		else{
 			FILE* f = fopen(kv.key.c_str(), "rb");
 			if (!f) { err("Parameter \"%s\" is neither a valid key-value pair, nor a exist configuration file.", kv.key.c_str()); }
-			char ** rargv = (char**)calloc(1024, sizeof(char*));
+			char ** rargv = (char**)calloc(65536, sizeof(char*));
 			int rargc = 1;
-			char buffer[1024];
+			char buffer[4096];
 			size_t buffer_i = 0;
 			char ch;
 			int comment = 0;
@@ -180,7 +180,7 @@ void build_arglist(std::vector<kvpair_t>& arglist, int argc, char** argv){
 							memcpy(rargv[rargc], buffer, buffer_i);
 							rargc++;
 							buffer_i = 0;
-							if (rargc >= 1024) { err("Configuration file too long."); }
+							if (rargc >= 65536) { err("Configuration file too long."); }
 						}
 					}
 					else if (ch == '#' && buffer_i == 0){
@@ -188,7 +188,7 @@ void build_arglist(std::vector<kvpair_t>& arglist, int argc, char** argv){
 					}
 					else{
 						buffer[buffer_i++] = ch;
-						if (buffer_i >= 1024) { err("Configuration line too long."); }
+						if (buffer_i >= 4096) { err("Configuration line too long."); }
 					}
 				}
 				else{

@@ -325,6 +325,26 @@ hostonly(
     static k32u maxqueuelength = 0;
 )
 
+#define RACE_NONE 0
+#define RACE_HUMAN 1
+#define RACE_DWARF 2
+#define RACE_GNOME 3
+#define RACE_NIGHTELF_DAY 4
+#define RACE_NIGHTELF_NIGHT 5
+#define RACE_DRAENEI 6
+#define RACE_WORGEN 7
+#define RACE_ORC 8
+#define RACE_TROLL 9
+#define RACE_TAUREN 10
+#define RACE_UNDEAD 11
+#define RACE_BLOODELF 12
+#define RACE_GOBLIN 13
+#define RACE_PANDAREN 14
+
+deviceonly( __constant ) k32s racial_base_str[] = {
+    0, 0, 5, -5, -4, -4, 66, 3, 3, 1, 5, -1, -3, -3, 0,
+};
+
 /* Declarations from class modules. */
 typedef struct {
     time_t cd;
@@ -409,14 +429,12 @@ typedef struct {
     time_t cd;
 } siegebreaker_t;
 #endif
-
 #if (BUFF_POTION == 1)
 typedef struct {
     time_t expire;
     time_t cd;
 } potion_t;
 #endif
-
 #if (t17_4pc)
 typedef struct {
 	time_t expire;
@@ -448,6 +466,23 @@ typedef struct{
 	float ticks;
 	RPPM_t proc;
 } shatteredhand_t;
+#endif
+#if (RACE == RACE_BLOODELF)
+typedef struct{
+	time_t cd;
+} arcanetorrent_t;
+#endif
+#if (RACE == RACE_TROLL)
+typedef struct{
+	time_t cd;
+	time_t expire;
+} berserking_t;
+#endif
+#if (RACE == RACE_ORC)
+typedef struct{
+	time_t cd;
+	time_t expire;
+} bloodfury_t;
 #endif
 
 typedef struct weapon_t {
@@ -481,28 +516,6 @@ deviceonly( __constant ) float normalized_weapon_speed[] = {
     2.4f,
     1.7f,
 };
-
-
-#define RACE_NONE 0
-#define RACE_HUMAN 1
-#define RACE_DWARF 2
-#define RACE_GNOME 3
-#define RACE_NIGHTELF_DAY 4
-#define RACE_NIGHTELF_NIGHT 5
-#define RACE_DRAENEI 6
-#define RACE_WORGEN 7
-#define RACE_ORC 8
-#define RACE_TROLL 9
-#define RACE_TAUREN 10
-#define RACE_UNDEAD 11
-#define RACE_BLOODELF 12
-#define RACE_GOBLIN 13
-#define RACE_PANDAREN 14
-
-deviceonly( __constant ) k32s racial_base_str[] = {
-    0, 0, 5, -5, -4, -4, 66, 3, 3, 1, 5, -1, -3, -3, 0,
-};
-
 
 typedef struct stat_t {
     k32u gear_str;
@@ -588,6 +601,15 @@ typedef struct {
 #endif
 #if (shatteredhand_oh)
 	shatteredhand_t enchant_oh;
+#endif
+#if (RACE == RACE_BLOODELF)
+	arcanetorrent_t arcanetorrent;
+#endif
+#if (RACE == RACE_TROLL)
+	berserking_t	berserking;
+#endif
+#if (RACE == RACE_ORC)
+	bloodfury_t		bloodfury;
 #endif
 
 	time_t gcd;
@@ -1015,6 +1037,9 @@ void refresh_str( rtinfo_t* rti ) {
 
 void refresh_ap( rtinfo_t* rti ) {
     k32u ap = rti->player.stat.str;
+#if (RACE == RACE_ORC)
+	if (UP(bloodfury.expire)) ap += 345;
+#endif
     if ( BUFF_AP ) ap = convert_uint_rtz( ap * 1.1f + 0.5f );
     rti->player.stat.ap = ap;
 }
@@ -1054,6 +1079,9 @@ void refresh_haste( rtinfo_t* rti ) {
     if ( BUFF_HASTE ) haste *= 1.05f;
     if ( ( RACE == RACE_NIGHTELF_NIGHT ) || ( RACE == RACE_GOBLIN ) || ( RACE == RACE_GNOME ) )
         haste *= 1.01f;
+#if (RACE == RACE_TROLL)
+	if (UP(berserking.expire)) haste *= 1.15f;
+#endif
     if ( BUFF_BLOODLUST && rti->timestamp ) if ( ( rti->timestamp % FROM_SECONDS( 600 ) ) < FROM_SECONDS( 30 ) ) haste *= 1.3f;
     rti->player.stat.haste = haste - 1.0f;
 }
@@ -1199,7 +1227,19 @@ enum {
 #if (shatteredhand_oh)
 	routnum_enchant_oh_tick,
 #endif
-
+#if (RACE == RACE_BLOODELF)
+	routnum_arcanetorrent_cd,
+#endif
+#if (RACE == RACE_TROLL)
+	routnum_berserking_start,
+	routnum_berserking_expire,
+	routnum_berserking_cd,
+#endif
+#if (RACE == RACE_ORC)
+	routnum_bloodfury_start,
+	routnum_bloodfury_expire,
+	routnum_bloodfury_cd,
+#endif
 };
 
 enum {
@@ -2267,6 +2307,78 @@ DECL_EVENT(enchant_oh_tick){
 }
 #endif
 
+// === racial traits ==========================================================
+#if (RACE == RACE_BLOODELF)
+DECL_EVENT(arcanetorrent_cd){
+	lprintf(("arcanetorrent ready"));
+}
+
+DECL_SPELL(arcanetorrent){
+    if ( rti->player.arcanetorrent.cd > rti->timestamp ) return;
+#if (TALENT_TIER6 == 3)
+    if ( UP( bladestorm.expire ) ) return;
+#endif
+    rti->player.arcanetorrent.cd = TIME_OFFSET( FROM_SECONDS( 120 ) );
+    eq_enqueue( rti, rti->player.arcanetorrent.cd, routnum_arcanetorrent_cd );
+	power_gain(rti, 15.0f);
+    lprintf( ( "cast arcanetorrent" ) );
+}
+#endif
+
+#if (RACE == RACE_TROLL)
+DECL_EVENT(berserking_cd){
+	lprintf(("berserking ready"));
+}
+DECL_EVENT(berserking_start){
+	lprintf(("berserking start"));
+	refresh_haste(rti);
+}
+DECL_EVENT(berserking_expire){
+	lprintf(("berserking expire"));
+	refresh_haste(rti);
+}
+
+DECL_SPELL(berserking){
+    if ( rti->player.berserking.cd > rti->timestamp ) return;
+#if (TALENT_TIER6 == 3)
+    if ( UP( bladestorm.expire ) ) return;
+#endif
+	eq_enqueue( rti, rti->timestamp, routnum_berserking_start );
+	rti->player.berserking.expire = TIME_OFFSET( FROM_SECONDS( 10 ) );
+	eq_enqueue( rti, rti->player.berserking.expire, routnum_berserking_expire );
+    rti->player.berserking.cd = TIME_OFFSET( FROM_SECONDS( 180 ) );
+    eq_enqueue( rti, rti->player.berserking.cd, routnum_berserking_cd );
+    lprintf( ( "cast berserking" ) );
+}
+#endif
+
+#if (RACE == RACE_ORC)
+DECL_EVENT(bloodfury_cd){
+	lprintf(("bloodfury ready"));
+}
+DECL_EVENT(bloodfury_start){
+	lprintf(("bloodfury start"));
+	refresh_ap(rti);
+}
+DECL_EVENT(bloodfury_expire){
+	lprintf(("bloodfury expire"));
+	refresh_ap(rti);
+}
+
+DECL_SPELL(bloodfury){
+    if ( rti->player.bloodfury.cd > rti->timestamp ) return;
+#if (TALENT_TIER6 == 3)
+    if ( UP( bladestorm.expire ) ) return;
+#endif
+	eq_enqueue( rti, rti->timestamp, routnum_bloodfury_start );
+	rti->player.bloodfury.expire = TIME_OFFSET( FROM_SECONDS( 15 ) );
+	eq_enqueue( rti, rti->player.bloodfury.expire, routnum_bloodfury_expire );
+    rti->player.bloodfury.cd = TIME_OFFSET( FROM_SECONDS( 120 ) );
+    eq_enqueue( rti, rti->player.bloodfury.cd, routnum_bloodfury_cd );
+    lprintf( ( "cast bloodfury" ) );
+}
+#endif
+
 // === anger_management =======================================================
 void anger_management_count( rtinfo_t* rti, float rage ) {
     time_t t = FROM_SECONDS( rage / 30.0f );
@@ -2419,7 +2531,19 @@ void routine_entries( rtinfo_t* rti, _event_t e ) {
 #if (shatteredhand_oh)
 		HOOK_EVENT( enchant_oh_tick );
 #endif
-
+#if (RACE == RACE_BLOODELF)
+		HOOK_EVENT( arcanetorrent_cd );
+#endif
+#if (RACE == RACE_TROLL)
+		HOOK_EVENT( berserking_start );
+		HOOK_EVENT( berserking_expire );
+		HOOK_EVENT( berserking_cd );
+#endif
+#if (RACE == RACE_ORC)
+		HOOK_EVENT( bloodfury_start );
+		HOOK_EVENT( bloodfury_expire );
+		HOOK_EVENT( bloodfury_cd );
+#endif
     default:
         assert( 0 );
     }

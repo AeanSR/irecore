@@ -58,6 +58,10 @@
 #define bleedinghollow_oh 0
 #define shatteredhand_mh 0
 #define shatteredhand_oh 0
+//#define trinket_vial_of_convulsive_shadows 2033
+//#define trinket_forgemasters_insignia 181
+#define trinket_horn_of_screaming_spirits 2652
+#define trinket_scabbard_of_kyanos 2200
 #endif /* !defined(__OPENCL_VERSION__) */
 
 /* Debug on Host! */
@@ -611,7 +615,31 @@ typedef struct {
 #if (RACE == RACE_ORC)
 	bloodfury_t		bloodfury;
 #endif
-
+#if defined(trinket_vial_of_convulsive_shadows)
+	struct{
+		time_t cd;
+		time_t expire;
+	} vial_of_convulsive_shadows;
+#endif
+#if defined(trinket_forgemasters_insignia)
+	struct{
+		time_t expire;
+		k32u stack;
+		RPPM_t proc;
+	} forgemasters_insignia;
+#endif
+#if defined(trinket_horn_of_screaming_spirits)
+	struct{
+		time_t expire;
+		RPPM_t proc;
+	} horn_of_screaming_spirits;
+#endif
+#if defined(trinket_scabbard_of_kyanos)
+	struct{
+		time_t cd;
+		time_t expire;
+	} scabbard_of_kyanos;
+#endif
 	time_t gcd;
 }
 player_t;
@@ -1240,6 +1268,23 @@ enum {
 	routnum_bloodfury_expire,
 	routnum_bloodfury_cd,
 #endif
+#if defined(trinket_vial_of_convulsive_shadows)
+	routnum_vial_of_convulsive_shadows_expire,
+	routnum_vial_of_convulsive_shadows_start,
+	routnum_vial_of_convulsive_shadows_cd,
+#endif
+#if defined(trinket_forgemasters_insignia)
+	routnum_forgemasters_insignia_tick,
+#endif
+#if defined(trinket_horn_of_screaming_spirits)
+	routnum_horn_of_screaming_spirits_trigger,
+	routnum_horn_of_screaming_spirits_expire,
+#endif
+#if defined(trinket_scabbard_of_kyanos)
+	routnum_scabbard_of_kyanos_expire,
+	routnum_scabbard_of_kyanos_start,
+	routnum_scabbard_of_kyanos_cd,
+#endif
 };
 
 enum {
@@ -1248,6 +1293,9 @@ enum {
     DMGTYPE_SPECIAL,
     DMGTYPE_DRAGONROAR,
 };
+
+void special_procs(rtinfo_t* rti);
+
 kbool deal_damage( rtinfo_t* rti, float dmg, k32u dmgtype, float extra_crit_rate ) {
     switch( dmgtype ) {
     case DMGTYPE_NONE:
@@ -1344,26 +1392,7 @@ kbool deal_damage( rtinfo_t* rti, float dmg, k32u dmgtype, float extra_crit_rate
             }
         }
 #endif
-#if (archmages_incandescence || archmages_greater_incandescence)
-		if (!UP(incandescence.expire)){
-			proc_RPPM(rti, &rti->player.incandescence.proc, 0.92f, routnum_incandescence_trigger);
-		}
-#endif
-
-#if (thunderlord_mh)
-		proc_RPPM(rti, &rti->player.enchant_mh.proc, 2.5f, routnum_enchant_mh_trigger);
-#elif (bleedinghollow_mh)
-		proc_RPPM(rti, &rti->player.enchant_mh.proc, 2.3f, routnum_enchant_mh_trigger);
-#elif (shatteredhand_mh)
-		proc_RPPM(rti, &rti->player.enchant_mh.proc, 3.5f * ( 1.0f + rti->player.stat.haste ), routnum_enchant_mh_trigger);
-#endif
-#if (thunderlord_oh)
-		proc_RPPM(rti, &rti->player.enchant_oh.proc, 2.5f, routnum_enchant_oh_trigger);
-#elif (bleedinghollow_oh)
-		proc_RPPM(rti, &rti->player.enchant_oh.proc, 2.3f, routnum_enchant_oh_trigger);
-#elif (shatteredhand_oh)
-		proc_RPPM(rti, &rti->player.enchant_oh.proc, 3.5f * ( 1.0f + rti->player.stat.haste ), routnum_enchant_oh_trigger);
-#endif
+		special_procs(rti);
 
         return ret;
     }
@@ -2379,6 +2408,110 @@ DECL_SPELL(bloodfury){
 }
 #endif
 
+// === trinkets ===============================================================
+#if defined(trinket_vial_of_convulsive_shadows)
+DECL_EVENT(vial_of_convulsive_shadows_cd){
+	lprintf(("convulsiveshadows ready"));
+}
+DECL_EVENT(vial_of_convulsive_shadows_start){
+	lprintf(("convulsiveshadows start"));
+	rti->player.stat.gear_mult += trinket_vial_of_convulsive_shadows;
+	refresh_mult(rti);
+}
+DECL_EVENT(vial_of_convulsive_shadows_expire){
+	lprintf(("convulsiveshadows expire"));
+	rti->player.stat.gear_mult -= trinket_vial_of_convulsive_shadows;
+	refresh_mult(rti);
+}
+
+DECL_SPELL(vial_of_convulsive_shadows){
+    if ( rti->player.vial_of_convulsive_shadows.cd > rti->timestamp ) return;
+#if defined(trinket_scabbard_of_kyanos)
+	if ( UP(scabbard_of_kyanos.expire) ) return;
+#endif
+#if (TALENT_TIER6 == 3)
+    if ( UP( bladestorm.expire ) ) return;
+#endif
+	eq_enqueue( rti, rti->timestamp, routnum_vial_of_convulsive_shadows_start );
+	rti->player.vial_of_convulsive_shadows.expire = TIME_OFFSET( FROM_SECONDS( 20 ) );
+	eq_enqueue( rti, rti->player.vial_of_convulsive_shadows.expire, routnum_vial_of_convulsive_shadows_expire );
+    rti->player.vial_of_convulsive_shadows.cd = TIME_OFFSET( FROM_SECONDS( 120 ) );
+    eq_enqueue( rti, rti->player.vial_of_convulsive_shadows.cd, routnum_vial_of_convulsive_shadows_cd );
+    lprintf( ( "cast vial_of_convulsive_shadows" ) );
+}
+#endif
+
+#if defined(trinket_forgemasters_insignia)
+DECL_EVENT(forgemasters_insignia_tick){
+	if (rti->player.forgemasters_insignia.stack < 20){
+		if (rti->player.forgemasters_insignia.stack == 0){
+			rti->player.forgemasters_insignia.expire = TIME_OFFSET(FROM_SECONDS(10));
+			lprintf(("forgemasters_insignia start"));
+		}
+		rti->player.forgemasters_insignia.stack++;
+		rti->player.stat.gear_mult += trinket_forgemasters_insignia;
+		refresh_mult(rti);
+		eq_enqueue( rti, TIME_OFFSET( FROM_SECONDS(0.5) ), routnum_forgemasters_insignia_tick);
+	}
+	else {
+		rti->player.forgemasters_insignia.stack = 0;
+		rti->player.stat.gear_mult -= 20 * trinket_forgemasters_insignia;
+		refresh_mult(rti);
+		lprintf(("forgemasters_insignia expire"));
+	}
+}
+
+#endif
+
+#if defined(trinket_horn_of_screaming_spirits)
+DECL_EVENT(horn_of_screaming_spirits_trigger){
+	lprintf(("horn_of_screaming_spirits start"));
+	rti->player.stat.gear_mastery += trinket_horn_of_screaming_spirits;
+	refresh_mastery(rti);
+	rti->player.horn_of_screaming_spirits.expire = TIME_OFFSET(FROM_SECONDS(10));
+	eq_enqueue(rti, rti->player.horn_of_screaming_spirits.expire, routnum_horn_of_screaming_spirits_expire);
+}
+DECL_EVENT(horn_of_screaming_spirits_expire){
+	lprintf(("horn_of_screaming_spirits expire"));
+	rti->player.stat.gear_mastery -= trinket_horn_of_screaming_spirits;
+	refresh_mastery(rti);
+}
+#endif
+
+#if defined(trinket_scabbard_of_kyanos)
+DECL_EVENT(scabbard_of_kyanos_cd){
+	lprintf(("scabbard_of_kyanos ready"));
+}
+DECL_EVENT(scabbard_of_kyanos_start){
+	lprintf(("scabbard_of_kyanos start"));
+	rti->player.stat.gear_str += trinket_scabbard_of_kyanos;
+	refresh_str(rti);
+	refresh_ap(rti);
+}
+DECL_EVENT(scabbard_of_kyanos_expire){
+	lprintf(("scabbard_of_kyanos expire"));
+	rti->player.stat.gear_str -= trinket_scabbard_of_kyanos;
+	refresh_str(rti);
+	refresh_ap(rti);
+}
+
+DECL_SPELL(scabbard_of_kyanos){
+    if ( rti->player.scabbard_of_kyanos.cd > rti->timestamp ) return;
+#if defined(trinket_vial_of_convulsive_shadows)
+	if ( UP(vial_of_convulsive_shadows.expire) ) return;
+#endif
+#if (TALENT_TIER6 == 3)
+    if ( UP( bladestorm.expire ) ) return;
+#endif
+	eq_enqueue( rti, rti->timestamp, routnum_scabbard_of_kyanos_start );
+	rti->player.scabbard_of_kyanos.expire = TIME_OFFSET( FROM_SECONDS( 15 ) );
+	eq_enqueue( rti, rti->player.scabbard_of_kyanos.expire, routnum_scabbard_of_kyanos_expire );
+    rti->player.scabbard_of_kyanos.cd = TIME_OFFSET( FROM_SECONDS( 90 ) );
+    eq_enqueue( rti, rti->player.scabbard_of_kyanos.cd, routnum_scabbard_of_kyanos_cd );
+    lprintf( ( "cast scabbard_of_kyanos" ) );
+}
+#endif
+
 // === anger_management =======================================================
 void anger_management_count( rtinfo_t* rti, float rage ) {
     time_t t = FROM_SECONDS( rage / 30.0f );
@@ -2544,6 +2677,23 @@ void routine_entries( rtinfo_t* rti, _event_t e ) {
 		HOOK_EVENT( bloodfury_expire );
 		HOOK_EVENT( bloodfury_cd );
 #endif
+#if defined(trinket_vial_of_convulsive_shadows)
+		HOOK_EVENT( vial_of_convulsive_shadows_expire );
+		HOOK_EVENT( vial_of_convulsive_shadows_start );
+		HOOK_EVENT( vial_of_convulsive_shadows_cd );
+#endif
+#if defined(trinket_forgemasters_insignia)
+		HOOK_EVENT( forgemasters_insignia_tick );
+#endif
+#if defined(trinket_horn_of_screaming_spirits)
+		HOOK_EVENT( horn_of_screaming_spirits_trigger );
+		HOOK_EVENT( horn_of_screaming_spirits_expire );
+#endif
+#if defined(trinket_scabbard_of_kyanos)
+		HOOK_EVENT( scabbard_of_kyanos_expire );
+		HOOK_EVENT( scabbard_of_kyanos_start );
+		HOOK_EVENT( scabbard_of_kyanos_cd );
+#endif
     default:
         assert( 0 );
     }
@@ -2594,6 +2744,46 @@ void module_init( rtinfo_t* rti ) {
 #if (thunderlord_oh || bleedinghollow_oh || shatteredhand_oh)
 	rti->player.enchant_oh.proc.lasttimeattemps = (time_t)-(k32s)FROM_SECONDS(10);
 	rti->player.enchant_oh.proc.lasttimeprocs = (time_t)-(k32s)FROM_SECONDS(180);
+#endif
+#if defined(trinket_forgemasters_insignia)
+	rti->player.forgemasters_insignia.proc.lasttimeattemps = (time_t)-(k32s)FROM_SECONDS(10);
+	rti->player.forgemasters_insignia.proc.lasttimeprocs = (time_t)-(k32s)FROM_SECONDS(180);
+#endif
+#if defined(trinket_horn_of_screaming_spirits)
+	rti->player.horn_of_screaming_spirits.proc.lasttimeattemps = (time_t)-(k32s)FROM_SECONDS(10);
+	rti->player.horn_of_screaming_spirits.proc.lasttimeprocs = (time_t)-(k32s)FROM_SECONDS(180);
+#endif
+}
+
+void special_procs(rtinfo_t* rti){
+#if (archmages_incandescence || archmages_greater_incandescence)
+	if (!UP(incandescence.expire)){
+		proc_RPPM(rti, &rti->player.incandescence.proc, 0.92f, routnum_incandescence_trigger);
+	}
+#endif
+#if (thunderlord_mh)
+	proc_RPPM(rti, &rti->player.enchant_mh.proc, 2.5f, routnum_enchant_mh_trigger);
+#elif (bleedinghollow_mh)
+	proc_RPPM(rti, &rti->player.enchant_mh.proc, 2.3f, routnum_enchant_mh_trigger);
+#elif (shatteredhand_mh)
+	proc_RPPM(rti, &rti->player.enchant_mh.proc, 3.5f * ( 1.0f + rti->player.stat.haste ), routnum_enchant_mh_trigger);
+#endif
+#if (thunderlord_oh)
+	proc_RPPM(rti, &rti->player.enchant_oh.proc, 2.5f, routnum_enchant_oh_trigger);
+#elif (bleedinghollow_oh)
+	proc_RPPM(rti, &rti->player.enchant_oh.proc, 2.3f, routnum_enchant_oh_trigger);
+#elif (shatteredhand_oh)
+	proc_RPPM(rti, &rti->player.enchant_oh.proc, 3.5f * ( 1.0f + rti->player.stat.haste ), routnum_enchant_oh_trigger);
+#endif
+#if defined(trinket_forgemasters_insignia)
+	if (!UP(forgemasters_insignia.expire)){
+		proc_RPPM(rti, &rti->player.forgemasters_insignia.proc, 0.92f, routnum_forgemasters_insignia_tick);
+	}
+#endif
+#if defined(trinket_horn_of_screaming_spirits)
+	if (!UP(horn_of_screaming_spirits.expire)){
+		proc_RPPM(rti, &rti->player.horn_of_screaming_spirits.proc, 0.92f, routnum_horn_of_screaming_spirits_trigger);
+	}
 #endif
 }
 

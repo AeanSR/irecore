@@ -60,8 +60,9 @@
 #define shatteredhand_oh 0
 //#define trinket_vial_of_convulsive_shadows 2033
 //#define trinket_forgemasters_insignia 181
-#define trinket_horn_of_screaming_spirits 2652
+//#define trinket_horn_of_screaming_spirits 2652
 #define trinket_scabbard_of_kyanos 2200
+#define trinket_insignia_of_victory 867
 #endif /* !defined(__OPENCL_VERSION__) */
 
 /* Debug on Host! */
@@ -639,6 +640,12 @@ typedef struct {
 		time_t cd;
 		time_t expire;
 	} scabbard_of_kyanos;
+#endif
+#if defined(trinket_insignia_of_victory)
+	struct{
+		time_t expire;
+		ICD_t proc;
+	} insignia_of_victory;
 #endif
 	time_t gcd;
 }
@@ -1284,6 +1291,10 @@ enum {
 	routnum_scabbard_of_kyanos_expire,
 	routnum_scabbard_of_kyanos_start,
 	routnum_scabbard_of_kyanos_cd,
+#endif
+#if defined(trinket_insignia_of_victory)
+	routnum_insignia_of_victory_expire,
+	routnum_insignia_of_victory_trigger,
 #endif
 };
 
@@ -2512,6 +2523,23 @@ DECL_SPELL(scabbard_of_kyanos){
 }
 #endif
 
+#if defined(trinket_insignia_of_victory)
+DECL_EVENT(insignia_of_victory_trigger){
+	lprintf(("insignia_of_victory start"));
+	rti->player.stat.gear_str += trinket_insignia_of_victory;
+	refresh_str(rti);
+	refresh_ap(rti);
+	rti->player.insignia_of_victory.expire = TIME_OFFSET(FROM_SECONDS(20));
+	eq_enqueue(rti, rti->player.insignia_of_victory.expire, routnum_insignia_of_victory_expire);
+}
+DECL_EVENT(insignia_of_victory_expire){
+	lprintf(("insignia_of_victory expire"));
+	rti->player.stat.gear_str -= trinket_insignia_of_victory;
+	refresh_str(rti);
+	refresh_ap(rti);
+}
+#endif
+
 // === anger_management =======================================================
 void anger_management_count( rtinfo_t* rti, float rage ) {
     time_t t = FROM_SECONDS( rage / 30.0f );
@@ -2694,6 +2722,10 @@ void routine_entries( rtinfo_t* rti, _event_t e ) {
 		HOOK_EVENT( scabbard_of_kyanos_start );
 		HOOK_EVENT( scabbard_of_kyanos_cd );
 #endif
+#if defined(trinket_insignia_of_victory)
+		HOOK_EVENT( insignia_of_victory_expire );
+		HOOK_EVENT( insignia_of_victory_trigger );
+#endif
     default:
         assert( 0 );
     }
@@ -2784,6 +2816,9 @@ void special_procs(rtinfo_t* rti){
 	if (!UP(horn_of_screaming_spirits.expire)){
 		proc_RPPM(rti, &rti->player.horn_of_screaming_spirits.proc, 0.92f, routnum_horn_of_screaming_spirits_trigger);
 	}
+#endif
+#if defined(trinket_insignia_of_victory)
+	proc_ICD(rti, &rti->player.insignia_of_victory.proc, 0.15f, FROM_SECONDS(55), routnum_insignia_of_victory_trigger);
 #endif
 }
 

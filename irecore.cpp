@@ -40,6 +40,20 @@ int shattered_hand_oh;
 
 int developer_debug;
 int list_available_devices;
+std::string trinket1_name;
+std::string trinket2_name;
+int trinket1_value;
+int trinket2_value;
+
+const char* trinket_list[] = {
+	"none",
+	"vial_of_convulsive_shadows",
+	"forgemasters_insignia",
+	"horn_of_screaming_spirits",
+	"scabbard_of_kyanos",
+	"insignia_of_victory",
+	NULL
+};
 
 const char* race_str_kernel[] = {
 	"RACE_NONE",
@@ -135,6 +149,9 @@ void set_default_parameters(){
 	bleeding_hollow_oh = 0;
 	shattered_hand_mh = 0;
 	shattered_hand_oh = 0;
+
+	trinket1_name = "none";
+	trinket2_name = "none";
 }
 
 typedef struct{
@@ -489,6 +506,52 @@ void parse_parameters(std::vector<kvpair_t>& arglist){
 			if (i->value.compare("none") && !thunderlord_oh && !bleeding_hollow_oh && !shattered_hand_oh)
 				err("No such weapon enchant\"%s\".", i->value.c_str());
 		}
+		else if (0 == i->key.compare("trinket1")){
+			char* buf = new char[i->value.size()+6];
+			char* p;
+			strcpy(buf, i->value.c_str());
+			for (p = buf; *p; p++){
+				if (*p == ','){
+					*p++ = 0;
+					break;
+				}
+			}
+			if (!*p || p[0]!='v' || p[1]!='a' || p[2]!='l' || p[3]!='u' || p[4]!='e' || p[5]!='=')
+				if(strcmp(buf,"none")) err("Unexpected trinket grammar. Correct grammar:\n\ttrinket1=trinket_name,value=123\n\ttrinket1=none");
+			trinket1_name = buf;
+			if(strcmp(buf,"none"))
+				trinket1_value = atoi(p+6);
+			int x;
+			for (x = 0; trinket_list[x]; x++){
+				if ( 0 == trinket1_name.compare(trinket_list[x]) ) break;
+			}
+			if (!trinket_list[x]) err("No such trinket \"%s\".", trinket1_name.c_str());
+			if (0 == trinket1_name.compare(trinket2_name) && 0 != trinket1_name.compare("none")) err("Duplicated trinkets \"%s\" not allowed.", trinket1_name.c_str());
+			delete[] buf;
+		}
+		else if (0 == i->key.compare("trinket2")){
+			char* buf = new char[i->value.size()+6];
+			char* p;
+			strcpy(buf, i->value.c_str());
+			for (p = buf; *p; p++){
+				if (*p == ','){
+					*p++ = 0;
+					break;
+				}
+			}
+			if (!*p || p[0]!='v' || p[1]!='a' || p[2]!='l' || p[3]!='u' || p[4]!='e' || p[5]!='=')
+				if(strcmp(buf,"none")) err("Unexpected trinket grammar. Correct grammar:\n\ttrinket2=trinket_name,value=123\n\ttrinket2=none");
+			trinket2_name = buf;
+			if(strcmp(buf,"none"))
+				trinket2_value = atoi(p+6);
+			int x;
+			for (x = 0; trinket_list[x]; x++){
+				if ( 0 == trinket2_name.compare(trinket_list[x]) ) break;
+			}
+			if (!trinket_list[x]) err("No such trinket \"%s\".", trinket2_name.c_str());
+			if (0 == trinket1_name.compare(trinket2_name) && 0 != trinket1_name.compare("none")) err("Duplicated trinkets \"%s\" not allowed.", trinket1_name.c_str());
+			delete[] buf;
+		}
 		else if (0 == i->key.compare("rng_engine")){
 			if (0 == i->value.compare("mt127")) rng_engine = 127;
 			else if (0 == i->value.compare("mwc64x")) rng_engine = 64;
@@ -677,9 +740,26 @@ void generate_predef(){
 	if(rng_engine == 127) predef.append("#define RNG_MT127\r\n");
 	else if(rng_engine == 64) predef.append("#define RNG_MWC64X\r\n");
 
+	if (trinket1_name.compare("none")){
+		predef.append("#define trinket_");
+		predef.append(trinket1_name);
+		predef.append(" ");
+		sprintf(buffer, "%d", trinket1_value);
+		predef.append(buffer);
+		predef.append("\r\n");
+	}
+	if (trinket2_name.compare("none")){
+		predef.append("#define trinket_");
+		predef.append(trinket2_name);
+		predef.append(" ");
+		sprintf(buffer, "%d", trinket2_value);
+		predef.append(buffer);
+		predef.append("\r\n");
+	}
 }
 
 int main(int argc, char** argv){
+	std::cout << "IreCore " << STRFILEVER << " " << __DATE__ << std::endl;
 	set_default_parameters();
 	std::vector<kvpair_t> arglist;
 	build_arglist(arglist, argc, argv);

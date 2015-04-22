@@ -7,6 +7,7 @@
 #include <algorithm>
 #include <chrono>
 #include <cstdarg>
+#include "VersionNo.h"
 
 #ifdef __APPLE__
 #include <OpenCL/opencl.h>

@@ -51,7 +51,13 @@ const char* trinket_list[] = {
 	"forgemasters_insignia",
 	"horn_of_screaming_spirits",
 	"scabbard_of_kyanos",
+	"badge_of_victory",
 	"insignia_of_victory",
+	"tectus_beating_heart",
+	"formidable_fang",
+	"draenic_stone",
+	"skull_of_war",
+	"mote_of_the_mountain",
 	NULL
 };
 
@@ -759,7 +765,7 @@ void generate_predef(){
 }
 
 int main(int argc, char** argv){
-	std::cout << "IreCore " << STRFILEVER << " " << __DATE__ << std::endl;
+	std::cout << "IreCore " << STRFILEVER << " " << __DATE__ << "\n" << std::endl;
 	set_default_parameters();
 	std::vector<kvpair_t> arglist;
 	build_arglist(arglist, argc, argv);

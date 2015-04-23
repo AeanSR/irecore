@@ -61,8 +61,14 @@
 //#define trinket_vial_of_convulsive_shadows 2033
 //#define trinket_forgemasters_insignia 181
 //#define trinket_horn_of_screaming_spirits 2652
-#define trinket_scabbard_of_kyanos 2200
-#define trinket_insignia_of_victory 867
+//#define trinket_scabbard_of_kyanos 2200
+//#define trinket_badge_of_victory 1456
+//#define trinket_insignia_of_victory 867
+//#define trinket_tectus_beating_heart 2304
+//#define trinket_formidable_fang 1743
+//#define trinket_draenic_stone 1414
+//#define trinket_skull_of_war 2120
+#define trinket_mote_of_the_mountain 1517
 #endif /* !defined(__OPENCL_VERSION__) */
 
 /* Debug on Host! */
@@ -641,11 +647,47 @@ typedef struct {
 		time_t expire;
 	} scabbard_of_kyanos;
 #endif
+#if defined(trinket_badge_of_victory)
+	struct{
+		time_t cd;
+		time_t expire;
+	} badge_of_victory;
+#endif
 #if defined(trinket_insignia_of_victory)
 	struct{
 		time_t expire;
 		ICD_t proc;
 	} insignia_of_victory;
+#endif
+#if defined(trinket_tectus_beating_heart)
+	struct{
+		time_t expire;
+		RPPM_t proc;
+	} tectus_beating_heart;
+#endif
+#if defined(trinket_formidable_fang)
+	struct{
+		time_t expire;
+		RPPM_t proc;
+	} formidable_fang;
+#endif
+#if defined(trinket_draenic_stone)
+	struct{
+		time_t expire;
+		ICD_t proc;
+	} draenic_stone;
+#endif
+#if defined(trinket_skull_of_war)
+	struct{
+		time_t expire;
+		ICD_t proc;
+	} skull_of_war;
+#endif
+#if defined(trinket_mote_of_the_mountain)
+	struct{
+		time_t expire;
+		RPPM_t proc;
+	} mote_of_the_mountain;
 #endif
 	time_t gcd;
 }
@@ -1292,9 +1334,34 @@ enum {
 	routnum_scabbard_of_kyanos_start,
 	routnum_scabbard_of_kyanos_cd,
 #endif
+#if defined(trinket_badge_of_victory)
+	routnum_badge_of_victory_expire,
+	routnum_badge_of_victory_start,
+	routnum_badge_of_victory_cd,
+#endif
 #if defined(trinket_insignia_of_victory)
 	routnum_insignia_of_victory_expire,
 	routnum_insignia_of_victory_trigger,
+#endif
+#if defined(trinket_tectus_beating_heart)
+	routnum_tectus_beating_heart_trigger,
+	routnum_tectus_beating_heart_expire,
+#endif
+#if defined(trinket_formidable_fang)
+	routnum_formidable_fang_trigger,
+	routnum_formidable_fang_expire,
+#endif
+#if defined(trinket_draenic_stone)
+	routnum_draenic_stone_expire,
+	routnum_draenic_stone_trigger,
+#endif
+#if defined(trinket_skull_of_war)
+	routnum_skull_of_war_expire,
+	routnum_skull_of_war_trigger,
+#endif
+#if defined(trinket_mote_of_the_mountain)
+	routnum_mote_of_the_mountain_trigger,
+	routnum_mote_of_the_mountain_expire,
 #endif
 };
 
@@ -2440,6 +2507,9 @@ DECL_SPELL(vial_of_convulsive_shadows){
 #if defined(trinket_scabbard_of_kyanos)
 	if ( UP(scabbard_of_kyanos.expire) ) return;
 #endif
+#if defined(trinket_badge_of_victory)
+	if ( UP(badge_of_victory.expire) ) return;
+#endif
 #if (TALENT_TIER6 == 3)
     if ( UP( bladestorm.expire ) ) return;
 #endif
@@ -2511,6 +2581,9 @@ DECL_SPELL(scabbard_of_kyanos){
 #if defined(trinket_vial_of_convulsive_shadows)
 	if ( UP(vial_of_convulsive_shadows.expire) ) return;
 #endif
+#if defined(trinket_badge_of_victory)
+	if ( UP(badge_of_victory.expire) ) return;
+#endif
 #if (TALENT_TIER6 == 3)
     if ( UP( bladestorm.expire ) ) return;
 #endif
@@ -2520,6 +2593,41 @@ DECL_SPELL(scabbard_of_kyanos){
     rti->player.scabbard_of_kyanos.cd = TIME_OFFSET( FROM_SECONDS( 90 ) );
     eq_enqueue( rti, rti->player.scabbard_of_kyanos.cd, routnum_scabbard_of_kyanos_cd );
     lprintf( ( "cast scabbard_of_kyanos" ) );
+}
+#endif
+
+#if defined(trinket_badge_of_victory)
+DECL_EVENT(badge_of_victory_cd){
+	lprintf(("badge_of_victory ready"));
+}
+DECL_EVENT(badge_of_victory_start){
+	lprintf(("badge_of_victory start"));
+	rti->player.stat.gear_vers += trinket_badge_of_victory;
+	refresh_vers(rti);
+}
+DECL_EVENT(badge_of_victory_expire){
+	lprintf(("badge_of_victory expire"));
+	rti->player.stat.gear_vers -= trinket_badge_of_victory;
+	refresh_vers(rti);
+}
+
+DECL_SPELL(badge_of_victory){
+    if ( rti->player.badge_of_victory.cd > rti->timestamp ) return;
+#if defined(trinket_vial_of_convulsive_shadows)
+	if ( UP(vial_of_convulsive_shadows.expire) ) return;
+#endif
+#if defined(trinket_scabbard_of_kyanos)
+	if ( UP(scabbard_of_kyanos.expire) ) return;
+#endif
+#if (TALENT_TIER6 == 3)
+    if ( UP( bladestorm.expire ) ) return;
+#endif
+	eq_enqueue( rti, rti->timestamp, routnum_badge_of_victory_start );
+	rti->player.badge_of_victory.expire = TIME_OFFSET( FROM_SECONDS( 20 ) );
+	eq_enqueue( rti, rti->player.badge_of_victory.expire, routnum_badge_of_victory_expire );
+    rti->player.badge_of_victory.cd = TIME_OFFSET( FROM_SECONDS( 120 ) );
+    eq_enqueue( rti, rti->player.badge_of_victory.cd, routnum_badge_of_victory_cd );
+    lprintf( ( "cast badge_of_victory" ) );
 }
 #endif
 
@@ -2537,6 +2645,83 @@ DECL_EVENT(insignia_of_victory_expire){
 	rti->player.stat.gear_str -= trinket_insignia_of_victory;
 	refresh_str(rti);
 	refresh_ap(rti);
+}
+#endif
+
+#if defined(trinket_tectus_beating_heart)
+DECL_EVENT(tectus_beating_heart_trigger){
+	lprintf(("tectus_beating_heart start"));
+	rti->player.stat.gear_crit += trinket_tectus_beating_heart;
+	refresh_crit(rti);
+	rti->player.tectus_beating_heart.expire = TIME_OFFSET(FROM_SECONDS(10));
+	eq_enqueue(rti, rti->player.tectus_beating_heart.expire, routnum_tectus_beating_heart_expire);
+}
+DECL_EVENT(tectus_beating_heart_expire){
+	lprintf(("tectus_beating_heart expire"));
+	rti->player.stat.gear_crit -= trinket_tectus_beating_heart;
+	refresh_crit(rti);
+}
+#endif
+
+#if defined(trinket_formidable_fang)
+DECL_EVENT(formidable_fang_trigger){
+	lprintf(("formidable_fang start"));
+	rti->player.stat.gear_mult += trinket_formidable_fang;
+	refresh_mult(rti);
+	rti->player.formidable_fang.expire = TIME_OFFSET(FROM_SECONDS(10));
+	eq_enqueue(rti, rti->player.formidable_fang.expire, routnum_formidable_fang_expire);
+}
+DECL_EVENT(formidable_fang_expire){
+	lprintf(("formidable_fang expire"));
+	rti->player.stat.gear_mult -= trinket_formidable_fang;
+	refresh_mult(rti);
+}
+#endif
+
+#if defined(trinket_draenic_stone)
+DECL_EVENT(draenic_stone_trigger){
+	lprintf(("draenic_stone start"));
+	rti->player.stat.gear_str += trinket_draenic_stone;
+	refresh_str(rti);
+	refresh_ap(rti);
+	rti->player.draenic_stone.expire = TIME_OFFSET(FROM_SECONDS(15));
+	eq_enqueue(rti, rti->player.draenic_stone.expire, routnum_draenic_stone_expire);
+}
+DECL_EVENT(draenic_stone_expire){
+	lprintf(("draenic_stone expire"));
+	rti->player.stat.gear_str -= trinket_draenic_stone;
+	refresh_str(rti);
+	refresh_ap(rti);
+}
+#endif
+
+#if defined(trinket_skull_of_war)
+DECL_EVENT(skull_of_war_trigger){
+	lprintf(("skull_of_war start"));
+	rti->player.stat.gear_crit += trinket_skull_of_war;
+	refresh_crit(rti);
+	rti->player.skull_of_war.expire = TIME_OFFSET(FROM_SECONDS(20));
+	eq_enqueue(rti, rti->player.skull_of_war.expire, routnum_skull_of_war_expire);
+}
+DECL_EVENT(skull_of_war_expire){
+	lprintf(("skull_of_war expire"));
+	rti->player.stat.gear_crit -= trinket_skull_of_war;
+	refresh_crit(rti);
+}
+#endif
+
+#if defined(trinket_mote_of_the_mountain)
+DECL_EVENT(mote_of_the_mountain_trigger){
+	lprintf(("mote_of_the_mountain start"));
+	rti->player.stat.gear_vers += trinket_mote_of_the_mountain;
+	refresh_vers(rti);
+	rti->player.mote_of_the_mountain.expire = TIME_OFFSET(FROM_SECONDS(10));
+	eq_enqueue(rti, rti->player.mote_of_the_mountain.expire, routnum_mote_of_the_mountain_expire);
+}
+DECL_EVENT(mote_of_the_mountain_expire){
+	lprintf(("mote_of_the_mountain expire"));
+	rti->player.stat.gear_vers -= trinket_mote_of_the_mountain;
+	refresh_vers(rti);
 }
 #endif
 
@@ -2722,9 +2907,34 @@ void routine_entries( rtinfo_t* rti, _event_t e ) {
 		HOOK_EVENT( scabbard_of_kyanos_start );
 		HOOK_EVENT( scabbard_of_kyanos_cd );
 #endif
+#if defined(trinket_badge_of_victory)
+		HOOK_EVENT( badge_of_victory_expire );
+		HOOK_EVENT( badge_of_victory_start );
+		HOOK_EVENT( badge_of_victory_cd );
+#endif
 #if defined(trinket_insignia_of_victory)
 		HOOK_EVENT( insignia_of_victory_expire );
 		HOOK_EVENT( insignia_of_victory_trigger );
+#endif
+#if defined(trinket_tectus_beating_heart)
+		HOOK_EVENT( tectus_beating_heart_trigger );
+		HOOK_EVENT( tectus_beating_heart_expire );
+#endif
+#if defined(trinket_formidable_fang)
+		HOOK_EVENT( formidable_fang_trigger );
+		HOOK_EVENT( formidable_fang_expire );
+#endif
+#if defined(trinket_draenic_stone)
+		HOOK_EVENT( draenic_stone_expire );
+		HOOK_EVENT( draenic_stone_trigger );
+#endif
+#if defined(trinket_skull_of_war)
+		HOOK_EVENT( skull_of_war_expire );
+		HOOK_EVENT( skull_of_war_trigger );
+#endif
+#if defined(trinket_mote_of_the_mountain)
+		HOOK_EVENT( mote_of_the_mountain_trigger );
+		HOOK_EVENT( mote_of_the_mountain_expire );
 #endif
     default:
         assert( 0 );
@@ -2785,6 +2995,18 @@ void module_init( rtinfo_t* rti ) {
 	rti->player.horn_of_screaming_spirits.proc.lasttimeattemps = (time_t)-(k32s)FROM_SECONDS(10);
 	rti->player.horn_of_screaming_spirits.proc.lasttimeprocs = (time_t)-(k32s)FROM_SECONDS(180);
 #endif
+#if defined(trinket_tectus_beating_heart)
+	rti->player.tectus_beating_heart.proc.lasttimeattemps = (time_t)-(k32s)FROM_SECONDS(10);
+	rti->player.tectus_beating_heart.proc.lasttimeprocs = (time_t)-(k32s)FROM_SECONDS(180);
+#endif
+#if defined(trinket_formidable_fang)
+	rti->player.formidable_fang.proc.lasttimeattemps = (time_t)-(k32s)FROM_SECONDS(10);
+	rti->player.formidable_fang.proc.lasttimeprocs = (time_t)-(k32s)FROM_SECONDS(180);
+#endif
+#if defined(trinket_mote_of_the_mountain)
+	rti->player.mote_of_the_mountain.proc.lasttimeattemps = (time_t)-(k32s)FROM_SECONDS(10);
+	rti->player.mote_of_the_mountain.proc.lasttimeprocs = (time_t)-(k32s)FROM_SECONDS(180);
+#endif
 }
 
 void special_procs(rtinfo_t* rti){
@@ -2819,6 +3041,27 @@ void special_procs(rtinfo_t* rti){
 #endif
 #if defined(trinket_insignia_of_victory)
 	proc_ICD(rti, &rti->player.insignia_of_victory.proc, 0.15f, FROM_SECONDS(55), routnum_insignia_of_victory_trigger);
+#endif
+#if defined(trinket_tectus_beating_heart)
+	if (!UP(tectus_beating_heart.expire)){
+		proc_RPPM(rti, &rti->player.tectus_beating_heart.proc, 0.92f, routnum_tectus_beating_heart_trigger);
+	}
+#endif
+#if defined(trinket_formidable_fang)
+	if (!UP(formidable_fang.expire)){
+		proc_RPPM(rti, &rti->player.formidable_fang.proc, 0.92f, routnum_formidable_fang_trigger);
+	}
+#endif
+#if defined(trinket_draenic_stone)
+	proc_ICD(rti, &rti->player.draenic_stone.proc, 0.35f, FROM_SECONDS(55), routnum_draenic_stone_trigger);
+#endif
+#if defined(trinket_skull_of_war)
+	proc_ICD(rti, &rti->player.skull_of_war.proc, 0.15f, FROM_SECONDS(115), routnum_skull_of_war_trigger);
+#endif
+#if defined(trinket_mote_of_the_mountain)
+	if (!UP(mote_of_the_mountain.expire)){
+		proc_RPPM(rti, &rti->player.mote_of_the_mountain.proc, 0.92f, routnum_mote_of_the_mountain_trigger);
+	}
 #endif
 }
 

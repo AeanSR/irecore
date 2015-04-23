@@ -1405,7 +1405,7 @@ kbool deal_damage( rtinfo_t* rti, float dmg, k32u dmgtype, float extra_crit_rate
         fdmg = dmg;
         if ( c < cr ) {
             ret = 1;
-            fdmg *= ( RACE == RACE_DWARF || RACE == RACE_TAUREN ) ? 2.04f : 2.0f;
+            fdmg *= cdb;
             lprintf( ( "damage *%.0f*", fdmg ) );
 #if (thunderlord_mh)
 			if (UP(enchant_mh.expire) && rti->player.enchant_mh.extend){

@@ -125,8 +125,10 @@ bump_not_ready -&gt; wait
 <p>Next step, IreCore takes the nearest event out of the queue, and try to executes it.</p>
 
 <blockquote>
-<p>Wwwww...wait, are you going to end the simulation? Kyla just bumped once!
-Don't worry. The current time is about to <strong>jump</strong> from <code>0:01.500</code> to <code>7:31.250</code>. When time jumps, IreCore scans APL immediately before the jump. APL told us to bump, so <code>bump_exec</code> and <code>gcd_ready</code> event is scheduled again, at <code>0:01.500</code> and <code>0:03:000</code> respectively. Now the event queue looks like:</p>
+<p>Wwwww...wait, are you going to end the simulation? Kyla just bumped one time!</p>
+</blockquote>
+
+<p>Don't worry. The current time is about to <strong>jump</strong> from <code>0:01.500</code> to <code>7:31.250</code>. When time jumps, IreCore scans APL immediately before the jump. APL told us to bump, so <code>bump_exec</code> and <code>gcd_ready</code> event is scheduled again, at <code>0:01.500</code> and <code>0:03:000</code> respectively. Now the event queue looks like:</p>
 
 <pre><code>0:01.500 bump_exec
 0:03.000 gcd_ready
@@ -134,7 +136,6 @@ Don't worry. The current time is about to <strong>jump</strong> from <code>0:01.
 </code></pre>
 
 <p>So Kyla is going to bump, bump and bump, until the expected combat length exceeded (<code>7:31.250</code>).</p>
-</blockquote>
       </section>
     </div>
 

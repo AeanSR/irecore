@@ -47,8 +47,17 @@
 <h3>
 <a id="irecore-philosophy" class="anchor" href="#irecore-philosophy" aria-hidden="true"><span class="octicon octicon-link"></span></a>IreCore Philosophy</h3>
 
-<p>Damage dealing process in World of Warcraft is a <em>Fully Observable Markov Process</em>. That means an APL without internal states (Hereinafter referred to as <em>sAPL</em>) can be one of the optimal policy.
-sAPL is a mapping from the state set <em><strong>S</strong></em> to the action set <em><strong>A</strong></em>. So if we are at the same state <em>s</em> at different time <em>t1</em> and <em>t2</em>, we get the same action <em>a</em> from a sAPL.</p>
+<p>Damage dealing process in World of Warcraft is a <em>Fully Observable Markov Process</em>. That means an APL without internal states (Hereinafter referred to as <em>sAPL</em>) can be one of the optimal policy.</p>
+
+<p>sAPL is a mapping from the state set <em><strong>S</strong></em> to the action set <em><strong>A</strong></em>. So if we are at the same state <em>s</em> at different time <em>t1</em> and <em>t2</em>, we will get exactly the same action <em>a</em> from a sAPL.</p>
+
+<p>So, if we scanned APL at moment <em>t1</em>, and executed nothing, and nothing happened to change system state, at the next moment <em>t2</em> we will execute nothing, same for the next moment <em>t3</em>, and same for the next moment <em>t4</em>... Until something happened and the system state changed, we may get a different action from APL.</p>
+
+<p>Let's see some example. Here stands a warrior "Kylaciela" and she uses a spell called "bump". "bump" has no cooldown, no cost, and have a 1.5 seconds GCD. We designed a cool policy for Kyla, described as sAPL:</p>
+
+<pre><code>bump, if bump is ready.
+otherwise, wait.
+</code></pre>
       </section>
     </div>
 

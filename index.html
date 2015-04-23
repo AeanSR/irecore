@@ -78,7 +78,7 @@ enum {
 bump_not_ready -&gt; wait
 </code></pre>
 
-<p>Now let's start the simulation. At initial time <code>0:00.000</code>, bump is ready, we scanned the APL and bumped. The state shifted from <code>bump_ready</code> to <code>bump_not_ready</code>, and will shift back to <code>bump_ready</code> at time <code>0:01.500</code>.</p>
+<p>Now let's start the simulation. At initial time <code>0:00.000</code>, Kyla's bump is ready, we scanned the APL and bumped. The state shifted from <code>bump_ready</code> to <code>bump_not_ready</code>, and will shift back to <code>bump_ready</code> at time <code>0:01.500</code>.</p>
 
 <p>Time elapsed. The atomic timespan size of SimC is 31ms, so we arrived at <code>0:00.031</code>, scanned the APL and waited.</p>
 
@@ -87,6 +87,54 @@ bump_not_ready -&gt; wait
 <p>Time elapsed. We arrived at <code>0:00.093</code>, scanned and waited.</p>
 
 <p>......</p>
+
+<p>Stupid simulation. But SimC is brilliant enough to avoid such repeated meaningless APL scanning. SimC will find Kyla is not ready until <code>0:01.500</code>, so the next scanning is directly scheduled at <code>0:01.500</code>.</p>
+
+<p>Time elapsed. We arrived at <code>0:00.031</code> and do nothing.</p>
+
+<p>Time elapsed. We arrived at <code>0:00.062</code>, do nothing.</p>
+
+<p>Time elapsed. We arrived at <code>0:00.093</code>, do nothing.</p>
+
+<p>......</p>
+
+<p>Time elapsed. We arrived at <code>0:01.500</code>, <code>player_ready_event</code> occured, scanned and bumped.</p>
+
+<p>If we already know the next bump may occur at <code>0:01.500</code>, why we have to wait for time elapsing? Have a look at how IreCore deals with Kyla.</p>
+
+<p>At initial time <code>0:00.000</code>, we scanned the APL and APL told us to bump. So a <code>bump_exec</code> event is scheduled at <code>0:00.000</code>, and a <code>gcd_ready</code> event is scheduled at <code>0:01.500</code>. Now we have a event queue looks like:</p>
+
+<pre><code>0:00.000 bump_exec
+0:01.500 gcd_ready
+7:31.250 simulation_end
+</code></pre>
+
+<p><code>bump_exec</code> event is not simply a registered bump, it represents a shifting from state <code>bump_ready</code> to state <code>bump_not_ready</code>. While <code>gcd_ready</code> represents a shifting from <code>bump_not_ready</code> back to <code>bump_ready</code>.</p>
+
+<p>Next step, IreCore takes the nearest event out of the queue, and try to executes it. Kyla bumped, and no new events scheduled. Now the event queue looks like:</p>
+
+<pre><code>0:01.500 gcd_ready
+7:31.250 simulation_end
+</code></pre>
+
+<p>Next step, IreCore takes the nearest event out of the queue, and try to executes it. So the current time is about to <strong>jump</strong> from <code>0:00.000</code> to <code>0:01.500</code>. When time jumps, IreCore scans APL immediately before the jump. APL told us to wait, so the current time jumps to <code>0:01.500</code> and IreCore executes <code>gcd_ready</code>. <code>gcd_ready</code> is just a dummy event, nothing really happened, no new events scheduled. Now the event queue looks like:</p>
+
+<pre><code>7:31.250 simulation_end
+</code></pre>
+
+<p>Next step, IreCore takes the nearest event out of the queue, and try to executes it.</p>
+
+<blockquote>
+<p>Wwwww...wait, are you going to end the simulation? Kyla just bumped once!
+Don't worry. The current time is about to <strong>jump</strong> from <code>0:01.500</code> to <code>7:31.250</code>. When time jumps, IreCore scans APL immediately before the jump. APL told us to bump, so <code>bump_exec</code> and <code>gcd_ready</code> event is scheduled again, at <code>0:01.500</code> and <code>0:03:000</code> respectively. Now the event queue looks like:</p>
+
+<pre><code>0:01.500 bump_exec
+0:03.000 gcd_ready
+7:31.250 simulation_end
+</code></pre>
+
+<p>So Kyla is going to bump, bump and bump, until the expected combat length exceeded (<code>7:31.250</code>).</p>
+</blockquote>
       </section>
     </div>
 

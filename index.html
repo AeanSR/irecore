@@ -53,11 +53,40 @@
 
 <p>So, if we scanned APL at moment <em>t1</em>, and executed nothing, and nothing happened to change system state, at the next moment <em>t2</em> we will execute nothing, same for the next moment <em>t3</em>, and same for the next moment <em>t4</em>... Until something happened and the system state changed, we may get a different action from APL.</p>
 
-<p>Let's see some example. Here stands a warrior "Kylaciela" and she uses a spell called "bump". "bump" has no cooldown, no cost, and have a 1.5 seconds GCD. We designed a cool policy for Kyla, described as sAPL:</p>
+<p>Let's see some example. Here stands a warrior "Kylaciela" and she uses a spell called "bump". "bump" has no cooldown, no cost, and have a GCD. We designed a cool policy for Kyla, described as sAPL:</p>
 
 <pre><code>bump, if bump is ready.
 otherwise, wait.
 </code></pre>
+
+<p>We concluded the system states and actions as something like this:</p>
+
+<pre><code>enum {
+    bump_ready,
+    bump_not_ready,
+} state_set;
+
+enum {
+    bump,
+    wait,
+} action_set;
+</code></pre>
+
+<p>And the cool sAPL is a mapping from state set to action set:</p>
+
+<pre><code>bump_ready     -&gt; bump
+bump_not_ready -&gt; wait
+</code></pre>
+
+<p>Now let's start the simulation. At initial time <code>0:00.000</code>, bump is ready, we scanned the APL and bumped. The state shifted from <code>bump_ready</code> to <code>bump_not_ready</code>, and will shift back to <code>bump_ready</code> at time <code>0:01.500</code>.</p>
+
+<p>Time elapsed. The atomic timespan size of SimC is 31ms, so we arrived at <code>0:00.031</code>, scanned the APL and waited.</p>
+
+<p>Time elapsed. We arrived at <code>0:00.062</code>, scanned and waited.</p>
+
+<p>Time elapsed. We arrived at <code>0:00.093</code>, scanned and waited.</p>
+
+<p>......</p>
       </section>
     </div>
 

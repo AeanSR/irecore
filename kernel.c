@@ -1159,7 +1159,7 @@ void refresh_haste( rtinfo_t* rti ) {
 #if (RACE == RACE_TROLL)
 	if (UP(berserking.expire)) haste *= 1.15f;
 #endif
-    if ( BUFF_BLOODLUST && rti->timestamp ) if ( ( rti->timestamp % FROM_SECONDS( 600 ) ) < FROM_SECONDS( 30 ) ) haste *= 1.3f;
+    if ( BUFF_BLOODLUST hostonly( && rti->timestamp ) ) if ( ( rti->timestamp % FROM_SECONDS( 600 ) ) < FROM_SECONDS( 30 ) ) haste *= 1.3f;
     rti->player.stat.haste = haste - 1.0f;
 }
 
@@ -1185,23 +1185,11 @@ float weapon_dmg( rtinfo_t* rti, float weapon_multiplier, kbool normalized, kboo
     dmg *= weapon_multiplier;
     /* Crazed Berserker */
     if ( offhand ) dmg *= 0.5f * ( SINGLE_MINDED ? 1.5f : 1.25f );
-    if ( SINGLE_MINDED ) dmg *= 1.3f;
-    if ( UP( enrage.expire ) ) {
-        dmg *= 1.1f;
-        dmg *= 1.0f + rti->player.stat.mastery;
-    }
-    dmg *= 1.0f + rti->player.stat.vers;
     return dmg;
 }
 
 float ap_dmg( rtinfo_t* rti, float ap_multiplier ) {
     float dmg = ap_multiplier * rti->player.stat.ap;
-    if ( SINGLE_MINDED ) dmg *= 1.3f;
-    if ( UP( enrage.expire ) ) {
-        dmg *= 1.1f;
-        dmg *= 1.0f + rti->player.stat.mastery;
-    }
-    dmg *= 1.0f + rti->player.stat.vers;
     return dmg;
 }
 
@@ -1390,6 +1378,13 @@ kbool deal_damage( rtinfo_t* rti, float dmg, k32u dmgtype, float extra_crit_rate
 #if (TALENT_TIER6 == 2)
         float bbcounter = rti->damage_collected;
 #endif
+
+		if ( SINGLE_MINDED ) dmg *= 1.3f;
+		if ( UP( enrage.expire ) ) {
+			dmg *= 1.1f;
+			dmg *= 1.0f + rti->player.stat.mastery;
+		}
+		dmg *= 1.0f + rti->player.stat.vers;
 
         if ( UP( recklessness.expire ) ) {
             if( dmgtype == DMGTYPE_SPECIAL ) cr += 0.3f;
@@ -1611,7 +1606,6 @@ DECL_EVENT( ragingblow_execute ) {
     rti->player.ragingblow.stack --;
     if ( rti->player.ragingblow.stack == 0 ) {
         rti->player.ragingblow.expire = 0;
-        eq_enqueue( rti, rti->timestamp, routnum_ragingblow_expire );
         lprintf( ( "ragingblow expire" ) );
     }
 
@@ -1780,7 +1774,6 @@ DECL_SPELL( wildstrike ) {
         rti->player.bloodsurge.stack --;
         if ( rti->player.bloodsurge.stack == 0 ) {
             rti->player.bloodsurge.expire = 0;
-            eq_enqueue( rti, rti->timestamp, routnum_bloodsurge_expire );
             lprintf( ( "bloodsurge expire" ) );
         }
     }
@@ -2728,59 +2721,52 @@ DECL_EVENT(mote_of_the_mountain_expire){
 // === anger_management =======================================================
 void anger_management_count( rtinfo_t* rti, float rage ) {
     time_t t = FROM_SECONDS( rage / 30.0f );
-    if ( rti->player.recklessness.cd > t )
-        rti->player.recklessness.cd = max( rti->timestamp, rti->player.recklessness.cd - t );
-    else
-        rti->player.recklessness.cd = max( rti->timestamp, FROM_SECONDS( 0 ) );
-    if ( rti->player.recklessness.cd == rti->timestamp )
-        eq_enqueue( rti, rti->timestamp, routnum_recklessness_cd );
+	if (UP(recklessness.cd)){
+		rti->player.recklessness.cd = max(rti->timestamp, rti->player.recklessness.cd - t);
+		if (rti->player.recklessness.cd == rti->timestamp)
+			eq_enqueue(rti, rti->timestamp, routnum_recklessness_cd);
+	}
 #if (TALENT_TIER4 == 1)
-    if ( rti->player.stormbolt.cd > t )
-        rti->player.stormbolt.cd = max( rti->timestamp, rti->player.stormbolt.cd - t );
-    else
-        rti->player.stormbolt.cd = max( rti->timestamp, FROM_SECONDS( 0 ) );
-    if ( rti->player.stormbolt.cd == rti->timestamp )
-        eq_enqueue( rti, rti->player.stormbolt.cd, routnum_stormbolt_cd );
+	if (UP(stormbolt.cd)){
+		rti->player.stormbolt.cd = max(rti->timestamp, rti->player.stormbolt.cd - t);
+		if (rti->player.stormbolt.cd == rti->timestamp)
+			eq_enqueue(rti, rti->player.stormbolt.cd, routnum_stormbolt_cd);
+	}
 #endif
 #if (TALENT_TIER4 == 2)
-    if ( rti->player.shockwave.cd > t )
-        rti->player.shockwave.cd = max( rti->timestamp, rti->player.shockwave.cd - t );
-    else
-        rti->player.shockwave.cd = max( rti->timestamp, FROM_SECONDS( 0 ) );
-    if ( rti->player.shockwave.cd == rti->timestamp )
-        eq_enqueue( rti, rti->player.shockwave.cd, routnum_shockwave_cd );
+	if ( UP(shockwave.cd) ){
+		rti->player.shockwave.cd = max( rti->timestamp, rti->player.shockwave.cd - t );
+		if ( rti->player.shockwave.cd == rti->timestamp )
+			eq_enqueue( rti, rti->player.shockwave.cd, routnum_shockwave_cd );
+	}
 #endif
 #if (TALENT_TIER4 == 3)
-    if ( rti->player.dragonroar.cd > t )
-        rti->player.dragonroar.cd = max( rti->timestamp, rti->player.dragonroar.cd - t );
-    else
-        rti->player.dragonroar.cd = max( rti->timestamp, FROM_SECONDS( 0 ) );
-    if ( rti->player.dragonroar.cd == rti->timestamp )
-        eq_enqueue( rti, rti->player.dragonroar.cd, routnum_dragonroar_cd );
+	if ( UP(dragonroar.cd) ){
+		rti->player.dragonroar.cd = max( rti->timestamp, rti->player.dragonroar.cd - t );
+		if ( rti->player.dragonroar.cd == rti->timestamp )
+			eq_enqueue( rti, rti->player.dragonroar.cd, routnum_dragonroar_cd );
+	}
 #endif
 #if (TALENT_TIER6 == 1)
-    if ( rti->player.avatar.cd > t )
-        rti->player.avatar.cd = max( rti->timestamp, rti->player.avatar.cd - t );
-    else
-        rti->player.avatar.cd = max( rti->timestamp, FROM_SECONDS( 0 ) );
-    if ( rti->player.avatar.cd == rti->timestamp )
-        eq_enqueue( rti, rti->player.avatar.cd, routnum_avatar_cd );
+	if ( UP(avatar.cd) ){
+		rti->player.avatar.cd = max( rti->timestamp, rti->player.avatar.cd - t );
+		if ( rti->player.avatar.cd == rti->timestamp )
+			eq_enqueue( rti, rti->player.avatar.cd, routnum_avatar_cd );
+	}
 #endif
 #if (TALENT_TIER6 == 2)
-    if ( rti->player.bloodbath.cd > t )
-        rti->player.bloodbath.cd = max( rti->timestamp, rti->player.bloodbath.cd - t );
-    else
-        rti->player.bloodbath.cd = max( rti->timestamp, FROM_SECONDS( 0 ) );
-    if ( rti->player.bloodbath.cd == rti->timestamp )
-        eq_enqueue( rti, rti->player.bloodbath.cd, routnum_bloodbath_cd );
+	if (UP(bloodbath.cd)){
+		rti->player.bloodbath.cd = max(rti->timestamp, rti->player.bloodbath.cd - t);
+		if (rti->player.bloodbath.cd == rti->timestamp)
+			eq_enqueue(rti, rti->player.bloodbath.cd, routnum_bloodbath_cd);
+	}
 #endif
 #if (TALENT_TIER6 == 3)
-    if ( rti->player.bladestorm.cd > t )
-        rti->player.bladestorm.cd = max( rti->timestamp, rti->player.bladestorm.cd - t );
-    else
-        rti->player.bladestorm.cd = max( rti->timestamp, FROM_SECONDS( 0 ) );
-    if ( rti->player.bladestorm.cd == rti->timestamp )
-        eq_enqueue( rti, rti->player.bladestorm.cd, routnum_bladestorm_cd );
+	if ( UP(bladestorm.cd) ){
+		rti->player.bladestorm.cd = max( rti->timestamp, rti->player.bladestorm.cd - t );
+		if ( rti->player.bladestorm.cd == rti->timestamp )
+			eq_enqueue( rti, rti->player.bladestorm.cd, routnum_bladestorm_cd );
+	}
 #endif
 }
 
@@ -2947,7 +2933,7 @@ void module_init( rtinfo_t* rti ) {
 #endif
 	rti->player.power = 0.0f;
     eq_enqueue( rti, rti->timestamp, routnum_auto_attack_mh );
-    eq_enqueue( rti, TIME_OFFSET( FROM_SECONDS( 0.5 ) ), routnum_auto_attack_oh );
+    eq_enqueue( rti, rti->timestamp, routnum_auto_attack_oh );
 
     refresh_str( rti );
     refresh_ap( rti );
@@ -2970,7 +2956,7 @@ void module_init( rtinfo_t* rti ) {
     rti->player.suddendeath.proc.lasttimeprocs = (time_t)-(k32s)FROM_SECONDS( 180 );
 #endif
 #if (BUFF_BLOODLUST == 1)
-    eq_enqueue( rti, FROM_MILLISECONDS(1), routnum_bloodlust_start );
+    eq_enqueue( rti, hostonly( FROM_MILLISECONDS(1) ) deviceonly( rti->timestamp ), routnum_bloodlust_start );
 #endif
 #if (BUFF_POTION == 1)
 	SPELL(potion);

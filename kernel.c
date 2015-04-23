@@ -1357,7 +1357,9 @@ enum {
     DMGTYPE_NONE,
     DMGTYPE_MELEE,
     DMGTYPE_SPECIAL,
+#if (TALENT_TIER4 == 3)
     DMGTYPE_DRAGONROAR,
+#endif
 };
 
 void special_procs(rtinfo_t* rti);
@@ -1395,8 +1397,10 @@ kbool deal_damage( rtinfo_t* rti, float dmg, k32u dmgtype, float extra_crit_rate
 			cr += 0.06f * rti->player.rampage.stack;
 		}
 #endif
-		if ( dmgtype == DMGTYPE_DRAGONROAR ) cr = 1.0f;
-        else dmg *= 0.650684f;
+#if (TALENT_TIER4 == 3)
+		if ( dmgtype == DMGTYPE_DRAGONROAR ) cr = 1.0f; else
+#endif
+			dmg *= 0.650684f;
 #if (TALENT_TIER6 == 1)
         if ( UP( avatar.expire ) )
             dmg *= 1.2f;
@@ -1455,9 +1459,7 @@ kbool deal_damage( rtinfo_t* rti, float dmg, k32u dmgtype, float extra_crit_rate
 
 #if (TALENT_TIER6 == 2)
         if ( dmgtype != DMGTYPE_MELEE && UP( bloodbath.expire ) ) {
-            bbcounter = rti->damage_collected - bbcounter;
-            bbcounter *= 0.3f;
-            rti->player.bloodbath.pool += bbcounter;
+            rti->player.bloodbath.pool += (rti->damage_collected - bbcounter) * 0.3f;
             rti->player.bloodbath.ticks = 6.0f;
             if ( rti->player.bloodbath.dot_start < rti->timestamp ) {
                 rti->player.bloodbath.dot_start = rti->timestamp;

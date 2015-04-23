@@ -32,7 +32,7 @@
     <div id="main_content_wrap" class="outer">
       <section id="main_content" class="inner">
         <h3>
-<a id="getting-started" class="anchor" href="#getting-started" aria-hidden="true"><span class="octicon octicon-link"></span></a>Getting Started</h3>
+<a id="downloads-drivers--runtimes" class="anchor" href="#downloads-drivers--runtimes" aria-hidden="true"><span class="octicon octicon-link"></span></a>Downloads, Drivers &amp; Runtimes</h3>
 
 <p><strong>Get released executable from <a href="https://github.com/AeanSR/irecore/releases/latest">here</a>.</strong></p>
 
@@ -54,6 +54,60 @@
 <p>With IreCore, the simulation speedup for common configurations skyrocketed 20x relatively, and even faster for simplified configurations. What's more, IreCore is able to run on CPU, or GPU, or whatever compute devices support OpenCL, such as Intel Xeon Phi coprocessors. If you run two IreCore process simutaneously on both CPU and GPU, you would get even 2x more faster.</p>
 
 <p>APLGA needs approximately 50 hours CPU time with IreCore as its evaluation function. If we run on both CPU and GPU, it needs just 1 day to get result. Sounds pretty good.</p>
+
+<h3>
+<a id="getting-started" class="anchor" href="#getting-started" aria-hidden="true"><span class="octicon octicon-link"></span></a>Getting Started</h3>
+
+<p>IreCore is a console simulator without graphic user interface. All configurations is done by passing parameters to the command line. Extract the release archive into your working directory (e.g. <code>E:\working_dir\</code>), and you will get 4 files and 1 folder.</p>
+
+<ul>
+<li>
+<strong>irecore.exe</strong>: The simulator frontend. Main executable. </li>
+<li>
+<strong>kernel.c</strong>: The kernel source. The kernel includes the whole simulator architecture and the fury spec defines. It is loaded dynamically so you can modify it, to achieve your special simulation goal.</li>
+<li>
+<strong>msvcr120.dll</strong> &amp; <strong>msvcp120.dll</strong>: C++ runtime library. If you already installed 32-bit VC++ 2013 Redistributable, these files is not needed.</li>
+<li>
+<strong>profile\</strong>: There is a completed configuration file in this folder. You can write your own configuration files with reference of it.</li>
+</ul>
+
+<p>IreCore is a heterogeneous simulator, so you may want to assign an appropriate compute device (your CPU most of the times) before the simulation start. Run <code>irecore list_available_devices=1</code> to see the list of available compute devices in your computer.</p>
+
+<pre><code>E:\working_dir\&gt;irecore list_available_devices=1
+IreCore 612.1-1-g913360 Apr 23 2015
+
+Query available compute devices ...
+Platform :NVIDIA CUDA
+        Device 0: GeForce GTX 980M
+Platform :Intel(R) OpenCL
+        Device 1: Intel(R) Core(TM) i7-4710HQ CPU @ 2.50GHz
+</code></pre>
+
+<p>If you have setup your runtime environment successfully, you should see your CPU &amp; GPU listed. If not, go back to the top of this page, and download your runtime via links given in <strong>Downloads, Drivers &amp; Runtimes</strong>.</p>
+
+<p>When you are ready to start your simulation, add parameter <code>opencl_device_id</code> to the command line to assign a compute device. For example, I want to use CPU as my compute device, and it is listed as "Device 1", so I add <code>opencl_device_id=1</code> into my command line.</p>
+
+<pre><code>E:\working_dir\&gt;irecore opencl_device_id=1
+IreCore 612.1-1-g913360 Apr 23 2015
+
+Query available compute devices ...
+Platform :NVIDIA CUDA
+        Device 0: GeForce GTX 980M
+Platform :Intel(R) OpenCL
+        Device 1: Intel(R) Core(TM) i7-4710HQ CPU @ 2.50GHz
+Execute on Device 1: Intel(R) Core(TM) i7-4710HQ CPU @ 2.50GHz
+OK!
+JIT ...
+Sim &lt;unnamed stat set&gt;...
+Report for Stat Set &lt;unnamed stat set&gt;
+DPS 34004.3
+DPS Range(stddev) 1165.6
+DPS Error(95% conf.) 10.4255
+
+......
+</code></pre>
+
+<p>And now you have your IreCore running on that device, enjoy it!</p>
 
 <h3>
 <a id="irecore-philosophy" class="anchor" href="#irecore-philosophy" aria-hidden="true"><span class="octicon octicon-link"></span></a>IreCore Philosophy</h3>

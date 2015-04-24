@@ -197,7 +197,7 @@ enum {
 <p>等等……你就这样打算结束模拟了？凯拉刚顶了一下啊。</p>
 </blockquote>
 
-<p>别着急。当前时间将要从 <code>0:00.000</code> <strong>越变</strong> 到 <code>0:01.500</code>。每当时间发生越变之前，IreCore立即执行一次APL扫描。APL让我们顶，于是一组新的 <code>bump_exec</code> 和 <code>gcd_ready</code> 事件又一次被安排进来，分别位于 <code>0:01.500</code> 和 <code>0:03:000</code>。现在事件队列是这样的：</p>
+<p>别着急。当前时间将要从 <code>0:01.500</code> <strong>越变</strong> 到 <code>7:31.250</code>。每当时间发生越变之前，IreCore立即执行一次APL扫描。APL让我们顶，于是一组新的 <code>bump_exec</code> 和 <code>gcd_ready</code> 事件又一次被安排进来，分别位于 <code>0:01.500</code> 和 <code>0:03:000</code>。现在事件队列是这样的：</p>
 
 <pre><code>0:01.500 bump_exec
 0:03.000 gcd_ready

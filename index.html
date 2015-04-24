@@ -4,7 +4,7 @@
   <head>
     <meta charset='utf-8'>
     <meta http-equiv="X-UA-Compatible" content="chrome=1">
-    <meta name="description" content="IreCore : 高性能狂暴战模拟器">
+    <meta name="description" content="IreCore : A High Performance Simulator for Fury Warriors.">
 
     <link rel="stylesheet" type="text/css" media="screen" href="stylesheets/stylesheet.css">
 
@@ -19,7 +19,7 @@
           <a id="forkme_banner" href="https://github.com/AeanSR/irecore">View on GitHub</a>
 
           <h1 id="project_title">IreCore</h1>
-          <h2 id="project_tagline">高性能狂暴战模拟器</h2>
+          <h2 id="project_tagline">A High Performance Simulator for Fury Warriors.</h2>
 
             <section id="downloads">
               <a class="zip_download_link" href="https://github.com/AeanSR/irecore/zipball/master">Download this project as a .zip file</a>
@@ -31,51 +31,51 @@
     <!-- MAIN CONTENT -->
     <div id="main_content_wrap" class="outer">
       <section id="main_content" class="inner">
-        <p><a href="http://sim.aean.net/">English Version</a></p>
+        <p><a href="http://sim.aean.net/zh-cn.html">切换到中文页面</a></p>
 
 <h3>
-<a id="下载安装驱动和运行时环境" class="anchor" href="#%E4%B8%8B%E8%BD%BD%E5%AE%89%E8%A3%85%E9%A9%B1%E5%8A%A8%E5%92%8C%E8%BF%90%E8%A1%8C%E6%97%B6%E7%8E%AF%E5%A2%83" aria-hidden="true"><span class="octicon octicon-link"></span></a>下载，安装驱动和运行时环境</h3>
+<a id="downloads-drivers--runtimes" class="anchor" href="#downloads-drivers--runtimes" aria-hidden="true"><span class="octicon octicon-link"></span></a>Downloads, Drivers &amp; Runtimes</h3>
 
-<p><strong>从<a href="https://github.com/AeanSR/irecore/releases/latest">这里</a>下载最新的IreCore可执行程序。</strong></p>
+<p><strong>Get released executable from <a href="https://github.com/AeanSR/irecore/releases/latest">here</a>.</strong></p>
 
-<p>如果你使用英特尔硬件，从<a href="https://software.intel.com/en-us/articles/opencl-drivers">这里</a>下载安装运行时环境。如果你使用AMD硬件，从<a href="http://developer.amd.com/tools-and-sdks/opencl-zone/amd-accelerated-parallel-processing-app-sdk/">这里</a>下载安装运行时环境。</p>
+<p>If you are using Intel hardware, get your runtime from <a href="https://software.intel.com/en-us/articles/opencl-drivers">here</a>. If you are using AMD hardware, get your runtime from <a href="http://developer.amd.com/tools-and-sdks/opencl-zone/amd-accelerated-parallel-processing-app-sdk/">here</a>.</p>
 
-<p>目前不建议在GPU上执行IreCore，特别是对于仍在使用Windows 7或者更早版本操作系统的用户来说。如果你想开启GPU运算支持，从英伟达或AMD处获取最新的显卡驱动即可。</p>
+<p>Running on GPU is not recommended currently, especially for users of Windows 7 or older operating system. If you want to get GPU support, just install latest graphic card driver from nVidia or AMD.</p>
 
-<p>如果在GPU上执行IreCore时出现错误“显示器驱动程序已停止响应，并且已恢复”，使用<a href="https://forums.geforce.com/default/topic/694754/geforce-drivers/tdr-manipulator-v1-1-02-23-2014-/">TDR Manipulator</a>暂时关闭Windows的TDR机制，然后重新启动。TDR是一种硬件保护机制，<strong>请不要长期关闭TDR</strong>否则有可能对硬件造成损害。</p>
+<p>If you are getting Video Driver Reset when running on GPU, use <a href="https://forums.geforce.com/default/topic/694754/geforce-drivers/tdr-manipulator-v1-1-02-23-2014-/">TDR Manipulator</a> to temporarily disable TDR mechanism of windows, then restart your computer. <strong>It is NOT RECOMMENDED to disable TDR for a long term</strong> since that may cause damage to your hardware.</p>
 
 <h3>
-<a id="为什么选择irecore" class="anchor" href="#%E4%B8%BA%E4%BB%80%E4%B9%88%E9%80%89%E6%8B%A9irecore" aria-hidden="true"><span class="octicon octicon-link"></span></a>为什么选择IreCore？</h3>
+<a id="why-irecore" class="anchor" href="#why-irecore" aria-hidden="true"><span class="octicon octicon-link"></span></a>Why IreCore?</h3>
 
-<p>IreCore是一个高性能、面向事件异构模拟器，采用OpenCL C编写，模拟一个狂暴战对单个团队副本首领进行输出的过程。</p>
+<p>IreCore is a high performance, event-oriented, heterogeneous simulator written in OpenCL C, models a fury warrior character dealing damage to a single raid boss.</p>
 
-<p>目前最好的模拟器<a href="https://github.com/simulationcraft/simc">SimulationCraft</a>的功能比IreCore完善得多。但在大规模理论研究应用当中（例如<a href="https://github.com/AeanSR/aplga">APLGA</a>和<a href="https://github.com/AeanSR/climb">Maxima Climb</a>），SimC的效率就无法满足我们的需求了。举例说明，APLGA需要运行<strong>数十亿计</strong>的模拟运算来实现APL自动生成和优化，对于SimC来说这大概需要1000小时的CPU时间，需要连续不间断运行41天。这是难以接受的。</p>
+<p>Currently the state-of-the-art simulator <a href="https://github.com/simulationcraft/simc">SimulationCraft</a> is far more functional than IreCore. But while large-scale theorycrafting (e.g. <a href="https://github.com/AeanSR/aplga">APLGA</a> &amp; <a href="https://github.com/AeanSR/climb">Maxima Climb</a>), the effeciency of SimC cannot meet our needs. For example, APLGA runs <strong>billions</strong> of sim iterations to generate APL from scratch, for SimC that means approximately 1000 hours CPU time, 41 days without a break. That seems unacceptable.</p>
 
 <p><img src="http://sim.aean.net/speedup_comp.png" alt="SpeedUp SimC versus IreCore"></p>
 
-<p>有了IreCore，对于通常的角色配置模拟加速比提升了20倍，对于简化后的角色配置还能提升更多。另外，IreCore能够在CPU或GPU或任何支持OpenCL的计算设备上运行，例如英特尔至强融核协处理器。如果你同时开启两个IreCore进程，分别在CPU和GPU上运行，运算速度会再提高大约一倍。</p>
+<p>With IreCore, the simulation speedup skyrocketed 20x relatively for common configurations, and even higher for simplified configurations. What's more, IreCore is able to run on CPU, or GPU, or whatever compute devices support OpenCL, such as Intel Xeon Phi coprocessors. If you run two IreCore processes simutaneously on both CPU and GPU, you would get even 2x more faster.</p>
 
-<p>使用IreCore之后APLGA大约需要50小时CPU时间。如果我们同时使用CPU和GPU，大约1天的时间就可以得到结果，这样就显得好多了。</p>
+<p>APLGA needs approximately 50 hours CPU time with IreCore. If we run on both CPU and GPU, it needs just 1 day to get result. Sounds pretty good.</p>
 
 <h3>
-<a id="初次接触" class="anchor" href="#%E5%88%9D%E6%AC%A1%E6%8E%A5%E8%A7%A6" aria-hidden="true"><span class="octicon octicon-link"></span></a>初次接触</h3>
+<a id="getting-started" class="anchor" href="#getting-started" aria-hidden="true"><span class="octicon octicon-link"></span></a>Getting Started</h3>
 
-<p>IreCore是一个命令行模拟器，没有图形界面，所有的配置都是通过向命令行当中传递参数来完成的。将下载的文档解压到工作目录（比如<code>E:\working_dir\</code>），你会得到5个文件和1个文件夹。</p>
+<p>IreCore is a console simulator without graphic user interface. All configurations is done by passing parameters to the command line. Extract the release archive into your working directory (e.g. <code>E:\working_dir\</code>), and you will get 5 files and 1 folder.</p>
 
 <ul>
 <li>
-<strong>irecore.exe</strong>: 模拟器前端，主程序。</li>
+<strong>irecore.exe</strong>: The simulator frontend. Main executable. </li>
 <li>
-<strong>kernel.c</strong>: 内核源码。内核包括了整个模拟器架构以及狂暴专精的模型描述。内核是动态加载的所以你可以直接修改它，来完成一些特殊的模拟任务。</li>
+<strong>kernel.c</strong>: The kernel source. The kernel includes the whole simulator architecture and the fury spec defines. It is loaded dynamically so you can modify it, to achieve your special simulation goal.</li>
 <li>
-<strong>msvcr120.dll</strong> &amp; <strong>msvcp120.dll</strong>: C++运行时链接库。如果你已经安装了32位 VC++ 2013 Redistributable，就不再需要这些文件。</li>
+<strong>msvcr120.dll</strong> &amp; <strong>msvcp120.dll</strong>: C++ runtime library. If you already installed 32-bit VC++ 2013 Redistributable, these files is not needed.</li>
 <li>
-<strong>LICENSE</strong>: IreCore的著作权遵循MIT许可协议进行授予，这是许可协议的一份拷贝。</li>
+<strong>LICENSE</strong>: IreCore is distributed under the terms of The MIT License, here is a copy of the license.</li>
 <li>
-<strong>profile\</strong>: 这个文件夹中有一份已经完成的配置文件，你可以参照它来写你自己的配置文件。</li>
+<strong>profile\</strong>: There is a completed configuration file in this folder. You can write your own configuration files with reference of it.</li>
 </ul>
 
-<p>IreCore是一个异构模拟器，所以在开始模拟之前，你可能希望指派一个合适的计算设备（大多数时候是你的CPU）。运行 <code>irecore list_available_devices=1</code> 查看你的计算机中当前可用的计算设备列表。</p>
+<p>IreCore is a heterogeneous simulator, so you may want to assign an appropriate compute device (your CPU most of the times) before the simulation start. Run <code>irecore list_available_devices=1</code> to see the list of available compute devices in your computer.</p>
 
 <pre><code>E:\working_dir\&gt;irecore list_available_devices=1
 IreCore 612.1-1-g913360 Apr 23 2015
@@ -87,9 +87,9 @@ Platform :Intel(R) OpenCL
         Device 1: Intel(R) Core(TM) i7-4710HQ CPU @ 2.50GHz
 </code></pre>
 
-<p>如果你已经设置好了运行时环境，你应该能够看到你的CPU和GPU。如果没有，请回到页面顶端，在<strong>下载，安装驱动和运行时环境</strong>部分给出了各个设备制造商的运行时下载链接。</p>
+<p>If you have setup your runtime environment successfully, you should see your CPU &amp; GPU listed. If not, go back to the top of this page, and download your runtime via links given in <strong>Downloads, Drivers &amp; Runtimes</strong>.</p>
 
-<p>当你准备好开始模拟的时候，将 <code>opencl_device_id</code> 参数加入命令行，来指派计算设备。例如，我希望使用CPU进行计算，CPU被列为“Device 1”，所以我在命令行中加入 <code>opencl_device_id=1</code> 。</p>
+<p>When you are ready to start your simulation, add parameter <code>opencl_device_id</code> to the command line to assign a compute device. For example, I want to use CPU as my compute device, and it is listed as "Device 1", so I add <code>opencl_device_id=1</code> into my command line.</p>
 
 <pre><code>E:\working_dir\&gt;irecore opencl_device_id=1 profile\ic_tg_t17m.txt
 IreCore 612.1-1-g913360 Apr 23 2015
@@ -111,100 +111,100 @@ DPS Error(95% conf.) 10.4255
 ......
 </code></pre>
 
-<p>现在IreCore已经执行在你指定的设备上了，祝你好运！</p>
+<p>Now you have your IreCore running on that device, enjoy it!</p>
 
 <h3>
-<a id="irecore的智慧" class="anchor" href="#irecore%E7%9A%84%E6%99%BA%E6%85%A7" aria-hidden="true"><span class="octicon octicon-link"></span></a>IreCore的智慧</h3>
+<a id="irecore-philosophy" class="anchor" href="#irecore-philosophy" aria-hidden="true"><span class="octicon octicon-link"></span></a>IreCore Philosophy</h3>
 
-<p>魔兽世界当中的伤害输出过程是一个<em>完全可观测马氏过程</em>，这意味着不包含内部状态量的APL（以下简称 <em>sAPL</em>）可以成为最优策略之一。</p>
+<p>Damage dealing process in World of Warcraft is a <em>Fully Observable Markov Process</em>. That means an APL without internal states (Hereinafter referred to as <em>sAPL</em>) can be one of the optimal policy.</p>
 
-<p>sAPL本质上是从系统的状态集合<em><strong>S</strong></em>到动作集合<em><strong>A</strong></em>的一个映射。所以如果我们在不同的时间<em>t1</em>和<em>t2</em>处于相同的状态<em>s</em>，我们会从sAPL当中得到相同的动作<em>a</em>。</p>
+<p>sAPL is a mapping from the state set <em><strong>S</strong></em> to the action set <em><strong>A</strong></em>. So if we are at the same state <em>s</em> at different time <em>t1</em> and <em>t2</em>, we will get exactly the same action <em>a</em> from a sAPL.</p>
 
-<p>那么，如果我们在<em>t1</em>时刻扫描了APL，但是什么动作也没做（APL让我们等待），而且什么事件都没发生，系统的状态不变，那么在下一时刻<em>t2</em>我们还是什么动作也不会做，再下一时刻<em>t3</em>也一样，<em>t4</em>也一样……直到发生了能够改变系统状态的事件，我们才有可能从sAPL当中获得一个不同的动作。</p>
+<p>So, if we scanned APL at moment <em>t1</em>, and executed nothing, and nothing happened to change system state, at the next moment <em>t2</em> we will execute nothing, same for the next moment <em>t3</em>, and same for the next moment <em>t4</em>... Until something happened and the system state changed, we may get a different action from sAPL.</p>
 
-<p>说点具体的。这有个战士“凯拉希雅”，她会用一个技能，叫做“大挽尊术”。"大挽尊术"没有冷却，没有消耗，但是有GCD。于是我们为凯拉设计了一个叼炸天的策略，用sAPL描述是这样的：</p>
+<p>Let's see some example. Here stands a warrior "Kylaciela" and she uses a spell called "bump". "bump" has no cooldown, no cost, and have a GCD. We designed a cool policy for Kyla, described as sAPL:</p>
 
-<pre><code>顶，如果可以顶。
-否则等待。
+<pre><code>bump, if bump is ready.
+otherwise, wait.
 </code></pre>
 
-<p>我们将系统的状态和动作归结如下：</p>
+<p>We concluded the system states and actions as something like this:</p>
 
 <pre><code>enum {
-    可以顶,
-    不可以顶,
-} 状态集合;
+    bump_ready,
+    bump_not_ready,
+} state_set;
 
 enum {
-    顶,
-    等,
-} 动作集合;
+    bump,
+    wait,
+} action_set;
 </code></pre>
 
-<p>于是这个叼炸天的sAPL可以表示为从状态集合到动作集合的一个映射：</p>
+<p>And the cool sAPL is a mapping from state set to action set:</p>
 
-<pre><code>可以顶     -&gt; 顶
-不可以顶   -&gt; 等
+<pre><code>bump_ready     -&gt; bump
+bump_not_ready -&gt; wait
 </code></pre>
 
-<p>好了，我们开始模拟吧。在初始时刻 <code>0:00.000</code> ，凯拉的可以顶，我们扫描了APL然后顶了一把。系统状态由 <code>可以顶</code> 转移到了 <code>不可以顶</code>，而且会在 <code>0:01.500</code> 的时候转移回到 <code>可以顶</code> 上来。</p>
+<p>Now let's start the simulation. At initial time <code>0:00.000</code>, Kyla's bump is ready, we scanned the APL and bumped. The state shifted from <code>bump_ready</code> to <code>bump_not_ready</code>, and will shift back to <code>bump_ready</code> at time <code>0:01.500</code>.</p>
 
-<p>时间流逝。SimC设定的原子时间片大小是31毫秒，所以我们现在来到了 <code>0:00.031</code>，扫描了APL，然后等待。</p>
+<p>Time elapsed. The atomic timespan size of SimC is 31ms, so we arrived at <code>0:00.031</code>, scanned the APL and waited.</p>
 
-<p>时间流逝。我们现在来到了 <code>0:00.062</code>，扫描了APL，然后等待。</p>
+<p>Time elapsed. We arrived at <code>0:00.062</code>, scanned and waited.</p>
 
-<p>时间流逝。我们现在来到了 <code>0:00.093</code>，扫描了APL，然后等待。</p>
+<p>Time elapsed. We arrived at <code>0:00.093</code>, scanned and waited.</p>
 
 <p>......</p>
 
-<p>真是脑残的模拟啊，好多时钟周期都浪费在了APL扫描上。但是SimC是足够聪明的，它可以避免这种反复无意义的APL扫描。SimC会发现凯拉直到 <code>0:01.500</code> 之前都在转GCD，所以下一次扫描会被直接安排在 <code>0:01.500</code>。</p>
+<p>Stupid simulation, lots of cycles wasted on APL scannning. But SimC is brilliant enough to avoid such repeated meaningless APL scanning. SimC will find Kyla is not ready until <code>0:01.500</code>, so the next scanning is directly scheduled at <code>0:01.500</code>.</p>
 
-<p>时间流逝。我们现在来到了 <code>0:00.031</code>，什么也没做。</p>
+<p>Time elapsed. We arrived at <code>0:00.031</code> and do nothing.</p>
 
-<p>时间流逝。我们现在来到了 <code>0:00.062</code>，什么也没做。</p>
+<p>Time elapsed. We arrived at <code>0:00.062</code>, do nothing.</p>
 
-<p>时间流逝。我们现在来到了 <code>0:00.093</code>，什么也没做。</p>
+<p>Time elapsed. We arrived at <code>0:00.093</code>, do nothing.</p>
 
 <p>......</p>
 
-<p>时间流逝。我们现在来到了 <code>0:01.500</code>， <code>player_ready_event</code> 触发，扫描了APL，顶。</p>
+<p>Time elapsed. We arrived at <code>0:01.500</code>, <code>player_ready_event</code> occured, scanned and bumped.</p>
 
-<p>我们已经知道下一次挽尊可能会在 <code>0:01.500</code>，为什么还要等时间慢慢流逝？来看看IreCore是怎么处理的。</p>
+<p>If we already know the next bump may occur at <code>0:01.500</code>, why we have to wait for time elapsing? Have a look at how IreCore deals with Kyla.</p>
 
-<p>在初始时刻 <code>0:00.000</code>，我们扫描了APL，APL告诉我们现在就顶。于是一个 <code>bump_exec</code> 事件被安排在了 <code>0:00.000</code>，还有一个 <code>gcd_ready</code> 事件被安排在了 <code>0:01.500</code>。现在我们有一个这样的事件队列：</p>
+<p>At initial time <code>0:00.000</code>, we scanned the APL and APL told us to bump. So a <code>bump_exec</code> event is scheduled at <code>0:00.000</code>, and a <code>gcd_ready</code> event is scheduled at <code>0:01.500</code>. Now we have a event queue looks like:</p>
 
 <pre><code>0:00.000 bump_exec
 0:01.500 gcd_ready
 7:31.250 simulation_end
 </code></pre>
 
-<p><code>bump_exec</code> 事件不单单只是顶一下，它代表了系统从 <code>可以顶</code> 到 <code>不可以顶</code> 的状态转移。 <code>gcd_ready</code> 则代表了从 <code>不可以顶</code> 回到 <code>可以顶</code> 的状态转移。</p>
+<p><code>bump_exec</code> event is not simply a registered bump, it represents a shifting from state <code>bump_ready</code> to state <code>bump_not_ready</code>. While <code>gcd_ready</code> represents a shifting from <code>bump_not_ready</code> back to <code>bump_ready</code>.</p>
 
-<p>接下来，IreCore将第一个事件取出，然后尝试执行它。于是凯拉顶了一下。没有新的事件安排。现在事件队列是这样的：</p>
+<p>Next step, IreCore takes the first event out of the queue, and try to executes it. Kyla bumped, and no new events scheduled. Now the event queue looks like:</p>
 
 <pre><code>0:01.500 gcd_ready
 7:31.250 simulation_end
 </code></pre>
 
-<p>接下来，IreCore将第一个事件取出，然后尝试执行它。所以当前时间将要从 <code>0:00.000</code> <strong>越变</strong> 到 <code>0:01.500</code>。每当时间发生越变之前，IreCore立即执行一次APL扫描。APL让我们等待，于是时间越变到 <code>0:01.500</code> 然后IreCore执行了事件 <code>gcd_ready</code>。 <code>gcd_ready</code> 是一个傀儡事件，实际上什么都没有发生，也没有新的事件安排。现在事件队列是这样的：</p>
+<p>Next step, IreCore takes the first event out of the queue, and try to executes it. So the current time is about to <strong>jump</strong> from <code>0:00.000</code> to <code>0:01.500</code>. When time jumps, IreCore scans APL immediately before the jump. APL told us to wait, so the current time jumps to <code>0:01.500</code> and IreCore executes <code>gcd_ready</code>. <code>gcd_ready</code> is just a dummy event, nothing really happened, no new events scheduled. Now the event queue looks like:</p>
 
 <pre><code>7:31.250 simulation_end
 </code></pre>
 
-<p>接下来，IreCore将第一个事件取出，然后尝试执行它。</p>
+<p>Next step, IreCore takes the first event out of the queue, and try to executes it.</p>
 
 <blockquote>
-<p>等等……你就这样打算结束模拟了？凯拉刚顶了一下啊。</p>
+<p>Wwwww...wait, are you going to end the simulation? Kyla just bumped once!</p>
 </blockquote>
 
-<p>别着急。当前时间将要从 <code>0:01.500</code> <strong>越变</strong> 到 <code>7:31.250</code>。每当时间发生越变之前，IreCore立即执行一次APL扫描。APL让我们顶，于是一组新的 <code>bump_exec</code> 和 <code>gcd_ready</code> 事件又一次被安排进来，分别位于 <code>0:01.500</code> 和 <code>0:03:000</code>。现在事件队列是这样的：</p>
+<p>Don't worry. The current time is about to <strong>jump</strong> from <code>0:01.500</code> to <code>7:31.250</code>. When time jumps, IreCore scans APL immediately before the jump. APL told us to bump, so <code>bump_exec</code> and <code>gcd_ready</code> event is scheduled again, at <code>0:01.500</code> and <code>0:03:000</code> respectively. Now the event queue looks like:</p>
 
 <pre><code>0:01.500 bump_exec
 0:03.000 gcd_ready
 7:31.250 simulation_end
 </code></pre>
 
-<p>如此反复，凯拉就会不停地顶顶顶，直到预期的战斗时间结束（<code>7:31.250</code>）。</p>
+<p>So Kyla will keep bumping, until the expected combat length exceeded (<code>7:31.250</code>).</p>
       </section>
     </div>
 

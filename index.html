@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html>
 
   <head>
@@ -180,18 +180,18 @@ bump_not_ready -&gt; wait
 
 <p><code>bump_exec</code> event is not simply a registered bump, it represents a shifting from state <code>bump_ready</code> to state <code>bump_not_ready</code>. While <code>gcd_ready</code> represents a shifting from <code>bump_not_ready</code> back to <code>bump_ready</code>.</p>
 
-<p>Next step, IreCore takes the first event out of the queue, and try to executes it. Kyla bumped, and no new events scheduled. Now the event queue looks like:</p>
+<p>Next step, IreCore takes the first event out of the queue, and tries to execute it. Kyla bumped, and no new events scheduled. Now the event queue looks like:</p>
 
 <pre><code>0:01.500 gcd_ready
 7:31.250 simulation_end
 </code></pre>
 
-<p>Next step, IreCore takes the first event out of the queue, and try to executes it. So the current time is about to <strong>jump</strong> from <code>0:00.000</code> to <code>0:01.500</code>. When time jumps, IreCore scans APL immediately before the jump. APL told us to wait, so the current time jumps to <code>0:01.500</code> and IreCore executes <code>gcd_ready</code>. <code>gcd_ready</code> is just a dummy event, nothing really happened, no new events scheduled. Now the event queue looks like:</p>
+<p>Next step, IreCore takes the first event out of the queue, and tries to execute it. So the current time is about to <strong>jump</strong> from <code>0:00.000</code> to <code>0:01.500</code>. When time jumps, IreCore scans APL immediately before the jump. APL told us to wait, so the current time jumps to <code>0:01.500</code> and IreCore executes <code>gcd_ready</code>. <code>gcd_ready</code> is just a dummy event, nothing really happened, no new events scheduled. Now the event queue looks like:</p>
 
 <pre><code>7:31.250 simulation_end
 </code></pre>
 
-<p>Next step, IreCore takes the first event out of the queue, and try to executes it.</p>
+<p>Next step, IreCore takes the first event out of the queue, and tries to execute it.</p>
 
 <blockquote>
 <p>Wwwww...wait, are you going to end the simulation? Kyla just bumped once!</p>

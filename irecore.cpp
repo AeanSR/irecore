@@ -122,6 +122,7 @@ void set_default_parameters(){
 	raidbuff = {
 		0
 	};
+	raidbuff.vers = 1;
 	seed = 0;
 	srand((unsigned int)time(NULL));
 	rng_engine = 32;

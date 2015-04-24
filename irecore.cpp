@@ -116,41 +116,41 @@ void set_default_parameters(){
 	list_available_devices = 0;
 	stat = {
 		"",
-		3945, 1714, 917, 1282, 478, 0,
+		0,
 	};
 	stat_not_pushed = 1;
 	raidbuff = {
-		1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1
+		0
 	};
 	seed = 0;
 	srand((unsigned int)time(NULL));
-	rng_engine = 127;
-	apl = "SPELL(recklessness); SPELL(bloodthirst); SPELL(execute); SPELL(ragingblow); SPELL(wildstrike);";
+	rng_engine = 32;
+	apl = "";
 	iterations = 50000;
 	vary_combat_length = 20.0f;
 	max_length = 450.0f;
 	initial_health_percentage = 100.0f;
 	death_pct = 0.0f;
 	power_max = 100.0f;
-	plate_specialization = 1;
-	single_minded = 1;
+	plate_specialization = 0;
+	single_minded = 0;
 	race = 0;
-	talent = 1121311;
-	mh_speed = 2.6f;
-	oh_speed = 2.6f;
-	mh_high = 1514;
-	oh_high = 1514;
-	mh_low = 814;
-	oh_low = 814;
-	mh_type = 1;
-	oh_type = 1;
+	talent = 0;
+	mh_speed = 1.5f;
+	oh_speed = 1.5f;
+	mh_high = 0;
+	oh_high = 0;
+	mh_low = 0;
+	oh_low = 0;
+	mh_type = 2;
+	oh_type = 2;
 
 	archmages_incandescence = 0;
-	archmages_greater_incandescence = 1;
-	t17_2pc = 1;
-	t17_4pc = 1;
-	thunderlord_mh = 1;
-	thunderlord_oh = 1;
+	archmages_greater_incandescence = 0;
+	t17_2pc = 0;
+	t17_4pc = 0;
+	thunderlord_mh = 0;
+	thunderlord_oh = 0;
 	bleeding_hollow_mh = 0;
 	bleeding_hollow_oh = 0;
 	shattered_hand_mh = 0;

@@ -258,9 +258,9 @@ float ocl_t::run(std::string& apl_cstr, std::string& predef){
 		}
 
 		std::cout << "Report for Stat Set " << thisstat->name << std::endl;
-		std::cout << "DPS " << ret << std::endl;
+		std::cout << "DPS " << (dps = ret) << std::endl;
 		std::cout << "DPS Range(stddev) " << dev << std::endl;
-		std::cout << "DPS Error(95% conf.) " << 2.0 * dev / sqrt(iterations) << std::endl;
+		std::cout << "DPS Error(95% conf.) " << (dpse = 2.0 * dev / sqrt(iterations)) << std::endl;
 	}
     delete[] res;
     clReleaseKernel(sim_iterate);

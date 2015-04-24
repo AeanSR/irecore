@@ -55,6 +55,8 @@ private:
 	int initialized;
 public:
 	int opencl_device_id;
+	float dps;
+	float dpse;
     int init();
     float run(std::string& apl_cstr, std::string& predef);
     int free();

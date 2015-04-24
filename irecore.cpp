@@ -237,13 +237,11 @@ void parse_parameters(std::vector<kvpair_t>& arglist){
 			stat.gear_str = atoi(i->value.c_str());
 			if (stat.gear_str < 0) stat.gear_str = 0;
 			stat_not_pushed = 1;
-			if (raidbuff.flask) stat.gear_str += 250;
 		}
 		else if (0 == i->key.compare("gear_crit")){
 			stat.gear_crit = atoi(i->value.c_str());
 			if (stat.gear_crit < 0) stat.gear_crit = 0;
 			stat_not_pushed = 1;
-			if (raidbuff.food) stat.gear_crit += 125;
 		}
 		else if (0 == i->key.compare("gear_mastery")){
 			stat.gear_mastery = atoi(i->value.c_str());
@@ -345,16 +343,10 @@ void parse_parameters(std::vector<kvpair_t>& arglist){
 			raidbuff.sta = !!raidbuff.sta;
 		}
 		else if (0 == i->key.compare("raidbuff_flask")){
-			int t = raidbuff.flask;
 			raidbuff.flask = !!atoi(i->value.c_str());
-			if (!t && raidbuff.flask) stat.gear_str += 250;
-			else if (t && !raidbuff.flask) stat.gear_str -= 250;
 		}
 		else if (0 == i->key.compare("raidbuff_food")){
-			int t = raidbuff.food;
 			raidbuff.food = !!atoi(i->value.c_str());
-			if (!t && raidbuff.food) stat.gear_crit += 125;
-			else if (t && !raidbuff.food) stat.gear_crit -= 125;
 		}
 		else if (0 == i->key.compare("raidbuff_potion")){
 			raidbuff.potion = !!atoi(i->value.c_str());
@@ -363,16 +355,11 @@ void parse_parameters(std::vector<kvpair_t>& arglist){
 			raidbuff.bloodlust = !!atoi(i->value.c_str());
 		}
 		else if (0 == i->key.compare("raidbuff_all")){
-			int t1 = raidbuff.flask;
-			int t2 = raidbuff.food;
 			raidbuff.str = atoi(i->value.c_str());
 			raidbuff.str = !!raidbuff.str;
 			raidbuff.bloodlust = raidbuff.flask = raidbuff.food = raidbuff.potion = raidbuff.ap = raidbuff.crit = raidbuff.haste = raidbuff.mastery = raidbuff.mult = raidbuff.vers = raidbuff.sp = raidbuff.sta = raidbuff.str;
 			raidbuff.vers = 1; /* This cannot be cancelled ingame. */
-			if (!t1 && raidbuff.flask) stat.gear_str += 250;
-			else if (t1 && !raidbuff.flask) stat.gear_str -= 250;
-			if (!t2 && raidbuff.food) stat.gear_crit += 125;
-			else if (t2 && !raidbuff.food) stat.gear_crit -= 125;
+			
 		}
 		else if (0 == i->key.compare("actions")){
 			apl = i->value;
@@ -430,52 +417,30 @@ void parse_parameters(std::vector<kvpair_t>& arglist){
 		else if (0 == i->key.compare("mh_low")){
 			mh_low = atoi(i->value.c_str());
 			if (mh_low < 0) mh_low = 0;
-			if (mh_high < mh_low){
-				int t = mh_high;
-				mh_high = mh_low;
-				mh_low = t;
-			}
 		}
 		else if (0 == i->key.compare("mh_high")){
 			mh_high = atoi(i->value.c_str());
 			if (mh_high < 0) mh_high = 0;
-			if (mh_high < mh_low){
-				int t = mh_high;
-				mh_high = mh_low;
-				mh_low = t;
-			}
 		}
 		else if (0 == i->key.compare("oh_low")){
 			oh_low = atoi(i->value.c_str());
 			if (oh_low < 0) oh_low = 0;
-			if (oh_high < oh_low){
-				int t = oh_high;
-				oh_high = oh_low;
-				oh_low = t;
-			}
 		}
 		else if (0 == i->key.compare("oh_high")){
 			oh_high = atoi(i->value.c_str());
 			if (oh_high < 0) oh_high = 0;
-			if (oh_high < oh_low){
-				int t = oh_high;
-				oh_high = oh_low;
-				oh_low = t;
-			}
 		}
 		else if (0 == i->key.compare("mh_type")){
 			if (0 == i->value.compare("2h")) mh_type = 0;
 			else if (0 == i->value.compare("1h")) mh_type = 1;
 			else if (0 == i->value.compare("dagger")) mh_type = 2;
 			else err("No such weapon type \"%s\".", i->value.c_str());
-			single_minded = (mh_type == 1 && oh_type == 1);
 		}
 		else if (0 == i->key.compare("oh_type")){
 			if (0 == i->value.compare("2h")) oh_type = 0;
 			else if (0 == i->value.compare("1h")) oh_type = 1;
 			else if (0 == i->value.compare("dagger")) oh_type = 2;
 			else err("No such weapon type \"%s\".", i->value.c_str());
-			single_minded = (mh_type == 1 && oh_type == 1);
 		}
 		else if (0 == i->key.compare("talent")){
 			talent = atoi(i->value.c_str());
@@ -765,18 +730,44 @@ void generate_predef(){
 	}
 }
 
+void parameters_consistency(){
+	single_minded = (mh_type == 1 && oh_type == 1);
+	if (mh_high < mh_low){
+		int t = mh_high;
+		mh_high = mh_low;
+		mh_low = t;
+	}
+	if (oh_high < oh_low){
+		int t = oh_high;
+		oh_high = oh_low;
+		oh_low = t;
+	}
+	if (stat_not_pushed) {
+		if (stat.name.empty()) stat.name = "<unnamed stat set>";
+		stat_array.push_back(stat);
+		stat_not_pushed = 0;
+	}
+	if (raidbuff.flask){
+		for (auto i = stat_array.begin(); i != stat_array.end(); i++)
+		i->gear_str += 250;
+	}
+	if (raidbuff.food){
+		for (auto i = stat_array.begin(); i != stat_array.end(); i++)
+		i->gear_crit += 125;
+	}
+}
+
 int main(int argc, char** argv){
 	std::cout << "IreCore " << STRFILEVER << " " << __DATE__ << "\n" << std::endl;
 	set_default_parameters();
 	std::vector<kvpair_t> arglist;
 	build_arglist(arglist, argc, argv);
 	parse_parameters(arglist);
+	parameters_consistency();
 	generate_predef();
-	
-	if (stat_not_pushed) {
-		if (stat.name.empty()) stat.name = "<unnamed stat set>";
-		stat_array.push_back(stat);
-	}
+
+	if (developer_debug)
+		std::cout << predef << std::endl;
 
 	if (developer_debug){
 		host_kernel_entry();

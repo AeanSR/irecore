@@ -45,20 +45,20 @@
 <h3>
 <a id="why-irecore" class="anchor" href="#why-irecore" aria-hidden="true"><span class="octicon octicon-link"></span></a>Why IreCore?</h3>
 
-<p>IreCore is a high performance, event-oriented, heterogeneous simulator written in OpenCL C, models a warrior character with fury spec dealing damage to a single raid boss.</p>
+<p>IreCore is a high performance, event-oriented, heterogeneous simulator written in OpenCL C, models a fury warrior character dealing damage to a single raid boss.</p>
 
 <p>Currently the state-of-the-art simulator <a href="https://github.com/simulationcraft/simc">SimulationCraft</a> is far more functional than IreCore. But while large-scale theorycrafting (e.g. <a href="https://github.com/AeanSR/aplga">APLGA</a> &amp; <a href="https://github.com/AeanSR/climb">Maxima Climb</a>), the effeciency of SimC cannot meet our needs. For example, APLGA runs <strong>billions</strong> of sim iterations to generate APL from scratch, for SimC that means approximately 1000 hours CPU time, 41 days without a break. That seems unacceptable.</p>
 
 <p><img src="http://sim.aean.net/speedup_comp.png" alt="SpeedUp SimC versus IreCore"></p>
 
-<p>With IreCore, the simulation speedup for common configurations skyrocketed 20x relatively, and even faster for simplified configurations. What's more, IreCore is able to run on CPU, or GPU, or whatever compute devices support OpenCL, such as Intel Xeon Phi coprocessors. If you run two IreCore process simutaneously on both CPU and GPU, you would get even 2x more faster.</p>
+<p>With IreCore, the simulation speedup skyrocketed 20x relatively for common configurations, and even higher for simplified configurations. What's more, IreCore is able to run on CPU, or GPU, or whatever compute devices support OpenCL, such as Intel Xeon Phi coprocessors. If you run two IreCore processes simutaneously on both CPU and GPU, you would get even 2x more faster.</p>
 
-<p>APLGA needs approximately 50 hours CPU time with IreCore as its evaluation function. If we run on both CPU and GPU, it needs just 1 day to get result. Sounds pretty good.</p>
+<p>APLGA needs approximately 50 hours CPU time with IreCore. If we run on both CPU and GPU, it needs just 1 day to get result. Sounds pretty good.</p>
 
 <h3>
 <a id="getting-started" class="anchor" href="#getting-started" aria-hidden="true"><span class="octicon octicon-link"></span></a>Getting Started</h3>
 
-<p>IreCore is a console simulator without graphic user interface. All configurations is done by passing parameters to the command line. Extract the release archive into your working directory (e.g. <code>E:\working_dir\</code>), and you will get 4 files and 1 folder.</p>
+<p>IreCore is a console simulator without graphic user interface. All configurations is done by passing parameters to the command line. Extract the release archive into your working directory (e.g. <code>E:\working_dir\</code>), and you will get 5 files and 1 folder.</p>
 
 <ul>
 <li>
@@ -67,6 +67,8 @@
 <strong>kernel.c</strong>: The kernel source. The kernel includes the whole simulator architecture and the fury spec defines. It is loaded dynamically so you can modify it, to achieve your special simulation goal.</li>
 <li>
 <strong>msvcr120.dll</strong> &amp; <strong>msvcp120.dll</strong>: C++ runtime library. If you already installed 32-bit VC++ 2013 Redistributable, these files is not needed.</li>
+<li>
+<strong>LICENSE</strong>: IreCore is distributed under the terms of The MIT License, here is a copy of the license.</li>
 <li>
 <strong>profile\</strong>: There is a completed configuration file in this folder. You can write your own configuration files with reference of it.</li>
 </ul>
@@ -107,7 +109,7 @@ DPS Error(95% conf.) 10.4255
 ......
 </code></pre>
 
-<p>And now you have your IreCore running on that device, enjoy it!</p>
+<p>Now you have your IreCore running on that device, enjoy it!</p>
 
 <h3>
 <a id="irecore-philosophy" class="anchor" href="#irecore-philosophy" aria-hidden="true"><span class="octicon octicon-link"></span></a>IreCore Philosophy</h3>
@@ -116,7 +118,7 @@ DPS Error(95% conf.) 10.4255
 
 <p>sAPL is a mapping from the state set <em><strong>S</strong></em> to the action set <em><strong>A</strong></em>. So if we are at the same state <em>s</em> at different time <em>t1</em> and <em>t2</em>, we will get exactly the same action <em>a</em> from a sAPL.</p>
 
-<p>So, if we scanned APL at moment <em>t1</em>, and executed nothing, and nothing happened to change system state, at the next moment <em>t2</em> we will execute nothing, same for the next moment <em>t3</em>, and same for the next moment <em>t4</em>... Until something happened and the system state changed, we may get a different action from APL.</p>
+<p>So, if we scanned APL at moment <em>t1</em>, and executed nothing, and nothing happened to change system state, at the next moment <em>t2</em> we will execute nothing, same for the next moment <em>t3</em>, and same for the next moment <em>t4</em>... Until something happened and the system state changed, we may get a different action from sAPL.</p>
 
 <p>Let's see some example. Here stands a warrior "Kylaciela" and she uses a spell called "bump". "bump" has no cooldown, no cost, and have a GCD. We designed a cool policy for Kyla, described as sAPL:</p>
 
@@ -153,7 +155,7 @@ bump_not_ready -&gt; wait
 
 <p>......</p>
 
-<p>Stupid simulation. But SimC is brilliant enough to avoid such repeated meaningless APL scanning. SimC will find Kyla is not ready until <code>0:01.500</code>, so the next scanning is directly scheduled at <code>0:01.500</code>.</p>
+<p>Stupid simulation, lots of cycles wasted on APL scannning. But SimC is brilliant enough to avoid such repeated meaningless APL scanning. SimC will find Kyla is not ready until <code>0:01.500</code>, so the next scanning is directly scheduled at <code>0:01.500</code>.</p>
 
 <p>Time elapsed. We arrived at <code>0:00.031</code> and do nothing.</p>
 
@@ -176,21 +178,21 @@ bump_not_ready -&gt; wait
 
 <p><code>bump_exec</code> event is not simply a registered bump, it represents a shifting from state <code>bump_ready</code> to state <code>bump_not_ready</code>. While <code>gcd_ready</code> represents a shifting from <code>bump_not_ready</code> back to <code>bump_ready</code>.</p>
 
-<p>Next step, IreCore takes the nearest event out of the queue, and try to executes it. Kyla bumped, and no new events scheduled. Now the event queue looks like:</p>
+<p>Next step, IreCore takes the first event out of the queue, and try to executes it. Kyla bumped, and no new events scheduled. Now the event queue looks like:</p>
 
 <pre><code>0:01.500 gcd_ready
 7:31.250 simulation_end
 </code></pre>
 
-<p>Next step, IreCore takes the nearest event out of the queue, and try to executes it. So the current time is about to <strong>jump</strong> from <code>0:00.000</code> to <code>0:01.500</code>. When time jumps, IreCore scans APL immediately before the jump. APL told us to wait, so the current time jumps to <code>0:01.500</code> and IreCore executes <code>gcd_ready</code>. <code>gcd_ready</code> is just a dummy event, nothing really happened, no new events scheduled. Now the event queue looks like:</p>
+<p>Next step, IreCore takes the first event out of the queue, and try to executes it. So the current time is about to <strong>jump</strong> from <code>0:00.000</code> to <code>0:01.500</code>. When time jumps, IreCore scans APL immediately before the jump. APL told us to wait, so the current time jumps to <code>0:01.500</code> and IreCore executes <code>gcd_ready</code>. <code>gcd_ready</code> is just a dummy event, nothing really happened, no new events scheduled. Now the event queue looks like:</p>
 
 <pre><code>7:31.250 simulation_end
 </code></pre>
 
-<p>Next step, IreCore takes the nearest event out of the queue, and try to executes it.</p>
+<p>Next step, IreCore takes the first event out of the queue, and try to executes it.</p>
 
 <blockquote>
-<p>Wwwww...wait, are you going to end the simulation? Kyla just bumped one time!</p>
+<p>Wwwww...wait, are you going to end the simulation? Kyla just bumped once!</p>
 </blockquote>
 
 <p>Don't worry. The current time is about to <strong>jump</strong> from <code>0:01.500</code> to <code>7:31.250</code>. When time jumps, IreCore scans APL immediately before the jump. APL told us to bump, so <code>bump_exec</code> and <code>gcd_ready</code> event is scheduled again, at <code>0:01.500</code> and <code>0:03:000</code> respectively. Now the event queue looks like:</p>

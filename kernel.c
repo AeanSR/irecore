@@ -1364,7 +1364,7 @@ enum {
 
 void special_procs(rtinfo_t* rti);
 
-kbool deal_damage( rtinfo_t* rti, float dmg, k32u dmgtype, float extra_crit_rate ) {
+k32s deal_damage( rtinfo_t* rti, float dmg, k32u dmgtype, float extra_crit_rate ) {
     switch( dmgtype ) {
     case DMGTYPE_NONE:
         lprintf( ( "damage %.0f", dmg ) );
@@ -1373,7 +1373,8 @@ kbool deal_damage( rtinfo_t* rti, float dmg, k32u dmgtype, float extra_crit_rate
         break;
     default: {
         float c = uni_rng( rti );
-        float cr = rti->player.stat.crit - 0.03f + extra_crit_rate;
+		if (dmgtype == DMGTYPE_MELEE && c < 0.19f) return -1;
+        float cr = rti->player.stat.crit - 0.03f + extra_crit_rate + (dmgtype == DMGTYPE_MELEE ? 0.19f : 0);
         float cdb = ( RACE == RACE_DWARF || RACE == RACE_TAUREN ) ? 2.04f : 2.0f;
         kbool ret;
         float fdmg;
@@ -1490,22 +1491,26 @@ DECL_EVENT( gcd_expire ) {
 DECL_EVENT( auto_attack_mh ) {
     float d = weapon_dmg( rti, 1.0f, 0, 0 );
 
-    if ( uni_rng( rti ) < 0.19f ) {
-        /* Miss */
-        lprintf( ( "mh miss" ) );
-    } else {
-        power_gain( rti, 3.5f * weapon[0].speed );
+	k32s ret = deal_damage( rti, d, DMGTYPE_MELEE, 0 );
+	if (ret == -1){
+		/* Miss */
+		lprintf(("mh miss"));
+	}
+	else {
+		power_gain(rti, 3.5f * weapon[0].speed);
 #if (TALENT_TIER3 == 2)
-        proc_RPPM( rti, &rti->player.suddendeath.proc, 2.5f * ( 1.0f + rti->player.stat.haste ), routnum_suddendeath_trigger );
+		proc_RPPM(rti, &rti->player.suddendeath.proc, 2.5f * (1.0f + rti->player.stat.haste), routnum_suddendeath_trigger);
 #endif
-        if( deal_damage( rti, d, DMGTYPE_MELEE, 0 ) ) {
-            /* Crit */
-            lprintf( ( "mh crit" ) );
-        } else {
-            /* Hit */
-            lprintf( ( "mh hit" ) );
-        }
-    }
+		if (ret){
+			/* Crit */
+			lprintf(("mh crit"));
+		}
+		else{
+			/* Hit */
+			lprintf(("mh hit"));
+		}
+	}
+
 #if (t17_4pc)
     eq_enqueue( rti, TIME_OFFSET( FROM_SECONDS( weapon[0].speed / ( 1.0f + rti->player.stat.haste
 		+ 0.06f * rti->player.rampage.stack
@@ -1517,23 +1522,25 @@ DECL_EVENT( auto_attack_mh ) {
 
 DECL_EVENT( auto_attack_oh ) {
     float d = weapon_dmg( rti, 1.0f, 0, 1 );
-
-    if ( uni_rng( rti ) < 0.19f ) {
-        /* Miss */
-        lprintf( ( "oh miss" ) );
-    } else {
-        power_gain( rti, 3.5f * weapon[1].speed * 0.5f );
+	k32s ret = deal_damage( rti, d, DMGTYPE_MELEE, 0 );
+	if (ret == -1){
+		/* Miss */
+		lprintf(("oh miss"));
+	}
+	else {
+		power_gain(rti, 3.5f * weapon[1].speed * 0.5f);
 #if (TALENT_TIER3 == 2)
-        proc_RPPM( rti, &rti->player.suddendeath.proc, 2.5f * ( 1.0f + rti->player.stat.haste ), routnum_suddendeath_trigger );
+		proc_RPPM(rti, &rti->player.suddendeath.proc, 2.5f * (1.0f + rti->player.stat.haste), routnum_suddendeath_trigger);
 #endif
-        if( deal_damage( rti, d, DMGTYPE_MELEE, 0 ) ) {
-            /* Crit */
-            lprintf( ( "oh crit" ) );
-        } else {
-            /* Hit */
-            lprintf( ( "oh hit" ) );
-        }
-    }
+		if (ret){
+			/* Crit */
+			lprintf(("oh crit"));
+		}
+		else{
+			/* Hit */
+			lprintf(("oh hit"));
+		}
+	}
 
 #if (t17_4pc)
     eq_enqueue( rti, TIME_OFFSET( FROM_SECONDS( weapon[1].speed / ( 1.0f + rti->player.stat.haste

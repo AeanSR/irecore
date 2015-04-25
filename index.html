@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html>
 
   <head>
@@ -49,11 +49,11 @@
 
 <p>IreCore is a high performance, event-oriented, heterogeneous simulator written in OpenCL C, models a fury warrior character dealing damage to a single raid boss.</p>
 
-<p>Currently the state-of-the-art simulator <a href="https://github.com/simulationcraft/simc">SimulationCraft</a> is far more functional than IreCore. But while large-scale theorycrafting (e.g. <a href="https://github.com/AeanSR/aplga">APLGA</a> &amp; <a href="https://github.com/AeanSR/climb">Maxima Climb</a>), the effeciency of SimC cannot meet our needs. For example, APLGA runs <strong>billions</strong> of sim iterations to generate APL from scratch, for SimC that means approximately 1000 hours CPU time, 41 days without a break. That seems unacceptable.</p>
+<p>Currently the state-of-the-art simulator <a href="https://github.com/simulationcraft/simc">SimulationCraft</a> is far more functional than IreCore. But while large-scale theorycrafting (e.g. <a href="https://github.com/AeanSR/aplga">APLGA</a> &amp; <a href="https://github.com/AeanSR/climb">Maxima Climb</a>), the efficiency of SimC cannot meet our needs. For example, APLGA runs <strong>billions</strong> of sim iterations to generate APL from scratch, for SimC that means approximately 1000 hours CPU time, 41 days without a break. That seems unacceptable.</p>
 
 <p><img src="http://sim.aean.net/speedup_comp.png" alt="SpeedUp SimC versus IreCore"></p>
 
-<p>With IreCore, the simulation speedup skyrocketed 20x relatively for common configurations, and even higher for simplified configurations. What's more, IreCore is able to run on CPU, or GPU, or whatever compute devices support OpenCL, such as Intel Xeon Phi coprocessors. If you run two IreCore processes simutaneously on both CPU and GPU, you would get even 2x more faster.</p>
+<p>With IreCore, the simulation speedup skyrocketed 20x relatively for common configurations, and even higher for simplified configurations. What's more, IreCore is able to run on CPU, or GPU, or whatever compute devices support OpenCL, such as Intel Xeon Phi coprocessors. If you run two IreCore processes simultaneously on both CPU and GPU, you would get even 2x more faster.</p>
 
 <p>APLGA needs approximately 50 hours CPU time with IreCore. If we run on both CPU and GPU, it needs just 1 day to get result. Sounds pretty good.</p>
 

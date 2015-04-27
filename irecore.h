@@ -1,4 +1,5 @@
 #include <iostream>
+#include <fstream>
 #include <string>
 #include <vector>
 #include <random>
@@ -45,6 +46,7 @@ extern cl_uint seed;
 extern int iterations;
 extern float max_length;
 extern int list_available_devices;
+extern std::ostream* report_path;
 
 class ocl_t{
 private:

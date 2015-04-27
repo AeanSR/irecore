@@ -1,5 +1,6 @@
 #include "irecore.h"
 
+std::ostream* report_path;
 stat_t stat;
 std::vector<stat_t> stat_array;
 int stat_not_pushed = 1;
@@ -159,6 +160,7 @@ void set_default_parameters(){
 
 	trinket1_name = "none";
 	trinket2_name = "none";
+	report_path = &std::cout;
 }
 
 typedef struct{
@@ -530,6 +532,9 @@ void parse_parameters(std::vector<kvpair_t>& arglist){
 			else if (0 == i->value.compare("lcg32")) rng_engine = 32;
 			else err("No such rng engine \"%s\".", i->value.c_str());
 		}
+		else if (0 == i->key.compare("output")){
+			report_path = new std::ofstream(i->value.c_str(), std::ofstream::out);
+		}
 		else if (0 == i->key.compare("developer_debug")){
 			developer_debug = !!atoi(i->value.c_str());
 		}
@@ -778,5 +783,7 @@ int main(int argc, char** argv){
 	else{
 		ocl().run(apl, predef);
 	}
+
+	report_path->flush();
 	return 0;
 }

@@ -258,9 +258,9 @@ float ocl_t::run(std::string& apl_cstr, std::string& predef){
 		}
 
 		*report_path << "Report for Stat Set " << thisstat->name << std::endl;
-		*report_path << "DPS " << (dps = ret) << std::endl;
+		*report_path << "DPS " << (thisstat->dps = ret) << std::endl;
 		*report_path << "DPS Range(stddev) " << dev << std::endl;
-		*report_path << "DPS Error(95% conf.) " << (dpse = 2.0 * dev / sqrt(iterations)) << std::endl;
+		*report_path << "DPS Error(95% conf.) " << (thisstat->dpse = 2.0 * dev / sqrt(iterations)) << std::endl;
 	}
     delete[] res;
     clReleaseKernel(sim_iterate);
@@ -274,6 +274,7 @@ float ocl_t::run(std::string& apl_cstr, std::string& predef){
 	std::cout << "Total elapsed time " << time_span1.count() << std::endl;
 	std::cout << "Simulation time " << time_span2.count() << std::endl;
 	std::cout << "Speedup " << (int)(iterations * max_length * stat_array.size() / time_span2.count()) << "x" << std::endl;
+	std::cout << std::endl;
     return 1;
 }
 

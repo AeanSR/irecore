@@ -28,6 +28,7 @@ int rng_engine;
 int default_actions;
 const int base10[] = { 1000000, 100000, 10000, 1000, 100, 10, 1 };
 #define TALENT_TIER(tier) ((talent / base10[tier - 1]) % 10)
+int calculate_scale_factors;
 
 int archmages_incandescence;
 int archmages_greater_incandescence;
@@ -162,7 +163,9 @@ void set_default_parameters(){
 
 	trinket1_name = "none";
 	trinket2_name = "none";
+
 	report_path = &std::cout;
+	calculate_scale_factors = 0;
 }
 
 typedef struct{
@@ -540,6 +543,9 @@ void parse_parameters(std::vector<kvpair_t>& arglist){
 		else if (0 == i->key.compare("output")){
 			report_path = new std::ofstream(i->value.c_str(), std::ofstream::out);
 		}
+		else if (0 == i->key.compare("calculate_scale_factors")){
+			calculate_scale_factors = !!atoi(i->value.c_str());
+		}
 		else if (0 == i->key.compare("developer_debug")){
 			developer_debug = !!atoi(i->value.c_str());
 		}
@@ -836,6 +842,45 @@ void parameters_consistency(){
 	if (default_actions){
 		auto_apl();
 	}
+	if (calculate_scale_factors){
+		if (stat_array.size() > 1) {
+			*report_path << "Scale factors enabled while multiple stat sets given. Stat sets except the first set are abbandoned." << std::endl;
+		}
+		stat = stat_array[0];
+		stat_array.clear();
+		stat.name = "scale factors baseline";
+		stat_array.push_back(stat);
+
+		stat.name = "scale factors str";
+		stat.gear_str += 120;
+		stat_array.push_back(stat);
+		stat.gear_str -= 120;
+
+		stat.name = "scale factors crit";
+		stat.gear_crit += 120;
+		stat_array.push_back(stat);
+		stat.gear_crit -= 120;
+
+		stat.name = "scale factors haste";
+		stat.gear_haste += 120;
+		stat_array.push_back(stat);
+		stat.gear_haste -= 120;
+
+		stat.name = "scale factors mastery";
+		stat.gear_mastery += 120;
+		stat_array.push_back(stat);
+		stat.gear_mastery -= 120;
+
+		stat.name = "scale factors mult";
+		stat.gear_mult += 120;
+		stat_array.push_back(stat);
+		stat.gear_mult -= 120;
+
+		stat.name = "scale factors vers";
+		stat.gear_vers += 120;
+		stat_array.push_back(stat);
+		stat.gear_vers -= 120;
+	}
 }
 
 int main(int argc, char** argv){
@@ -847,10 +892,8 @@ int main(int argc, char** argv){
 	parameters_consistency();
 	generate_predef();
 
-	if (developer_debug)
-		std::cout << predef << std::endl;
-
 	if (developer_debug){
+		std::cout << predef << std::endl;
 		host_kernel_entry();
 	}
 	else if(list_available_devices){
@@ -858,6 +901,22 @@ int main(int argc, char** argv){
 	}
 	else{
 		ocl().run(apl, predef);
+	}
+
+	if (calculate_scale_factors){
+		*report_path << "Scale factors:" << std::endl;
+		const char* stat_name[] = {
+			0, "str", "crit", "haste", "mastery", "mult", "vers",
+		};
+		float sf, sfe;
+		for (int i = 1; i < stat_array.size(); i++){
+			sf = stat_array[i].dps - stat_array[0].dps;
+			sf /= 120.0;
+			sfe = stat_array[i].dpse * stat_array[i].dpse + stat_array[0].dpse * stat_array[0].dpse;
+			sfe = sqrt(sfe) / 120.0;
+			*report_path << stat_name[i] << " " << sf << ", error " << sfe << std::endl;
+		}
+
 	}
 
 	report_path->flush();

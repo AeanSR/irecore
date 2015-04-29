@@ -24,6 +24,8 @@ typedef struct {
 	cl_uint gear_mastery;
 	cl_uint gear_mult;
 	cl_uint gear_vers;
+	float dps;
+	float dpse;
 } stat_t;
 typedef struct{
 	int str;
@@ -57,8 +59,6 @@ private:
 	int initialized;
 public:
 	int opencl_device_id;
-	float dps;
-	float dpse;
     int init();
     float run(std::string& apl_cstr, std::string& predef);
     int free();

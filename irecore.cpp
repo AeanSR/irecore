@@ -25,6 +25,7 @@ int mh_type;
 int oh_type;
 int talent;
 int rng_engine;
+int default_actions;
 const int base10[] = { 1000000, 100000, 10000, 1000, 100, 10, 1 };
 #define TALENT_TIER(tier) ((talent / base10[tier - 1]) % 10)
 
@@ -128,6 +129,7 @@ void set_default_parameters(){
 	srand((unsigned int)time(NULL));
 	rng_engine = 32;
 	apl = "";
+	default_actions=0;
 	iterations = 50000;
 	vary_combat_length = 20.0f;
 	max_length = 450.0f;
@@ -370,6 +372,9 @@ void parse_parameters(std::vector<kvpair_t>& arglist){
 		else if (0 == i->key.compare("actions+")){
 			apl.append(i->value);
 			apl.append("\n");
+		}
+		else if (0 == i->key.compare("default_actions")){
+			default_actions = !!atoi(i->value.c_str());
 		}
 		else if (0 == i->key.compare("vary_combat_length")){
 			vary_combat_length = atof(i->value.c_str());
@@ -735,6 +740,74 @@ void generate_predef(){
 	}
 }
 
+void auto_apl(){
+	apl = "if(!UP(enrage.expire)||(REMAIN(bloodthirst.cd)>FROM_SECONDS(3)&&rti->player.ragingblow.stack<2))SPELL(berserkerrage);";
+
+	if(TALENT_TIER(7) == 1 || TALENT_TIER(6) != 2) apl.append("SPELL(recklessness);");
+		else apl.append("if(UP(bloodbath.expire))SPELL(recklessness);");
+
+	if (TALENT_TIER(6) == 1) apl.append("if(UP(recklessness.expire)||REMAIN(recklessness.cd)>FROM_SECONDS(60)||rti->expected_combat_length-rti->timestamp<FROM_SECONDS(30))SPELL(avatar);");
+
+	if (0 == strcmp(race_str_param[race], "troll"))
+		if(TALENT_TIER(6) == 2) apl.append("if(UP(bloodbath.expire)||UP(recklessness.expire))SPELL(berserking);");
+		else apl.append("SPELL(berserking);");
+
+	if (0 == strcmp(race_str_param[race], "orc"))
+		if(TALENT_TIER(6) == 2) apl.append("if(UP(bloodbath.expire)||UP(recklessness.expire))SPELL(bloodfury);");
+		else apl.append("SPELL(bloodfury);");
+
+	if (0 == strcmp(race_str_param[race], "bloodelf")) apl.append("if(rti->player.power<power_max-40)SPELL(arcane_torrent);");
+
+	if (raidbuff.potion) apl.append("if((enemy_health_percent(rti)<20&&UP(recklessness.expire))||rti->expected_combat_length-rti->timestamp<FROM_SECONDS(25))SPELL(potion);");
+
+	if (0 == trinket1_name.compare("vial_of_convulsive_shadows") || 0 == trinket2_name.compare("vial_of_convulsive_shadows"))
+		if (TALENT_TIER(7) == 1) apl.append("if(UP(recklessness.expire)||rti->expected_combat_length-rti->timestamp<FROM_SECONDS(25))SPELL(vial_of_convulsive_shadows);");
+		else apl.append("SPELL(vial_of_convulsive_shadows);");
+
+	if (0 == trinket1_name.compare("scabbard_of_kyanos") || 0 == trinket2_name.compare("scabbard_of_kyanos")) apl.append("SPELL(scabbard_of_kyanos);");
+	
+	if (0 == trinket1_name.compare("badge_of_victory") || 0 == trinket2_name.compare("badge_of_victory"))
+		if (TALENT_TIER(7) == 1) apl.append("if(UP(recklessness.expire)||rti->expected_combat_length-rti->timestamp<FROM_SECONDS(25))SPELL(badge_of_victory);");
+		else apl.append("SPELL(badge_of_victory);");
+
+	if (TALENT_TIER(6) == 2) apl.append("SPELL(bloodbath);");
+
+	apl.append("if(rti->player.power>power_max-20&&enemy_health_percent(rti)>20)SPELL(wildstrike);");
+
+	if(TALENT_TIER(3) == 3) apl.append("if(!UP(enrage.expire)||rti->player.ragingblow.stack<2)SPELL(bloodthirst);");
+	else apl.append("if(rti->player.power<power_max-40||!UP(enrage.expire)||rti->player.ragingblow.stack<2)SPELL(bloodthirst);");
+
+	if (TALENT_TIER(7) == 2)
+		if (TALENT_TIER(6) == 2) apl.append("if(UP(bloodbath.expire))SPELL(ravager);");
+		else apl.append("SPELL(ravager);");
+
+	if (TALENT_TIER(7) == 3) apl.append("SPELL(siegebreaker);");
+
+	if (TALENT_TIER(3) == 2) apl.append("if(UP(suddendeath.expire))SPELL(execute);");
+
+	if (TALENT_TIER(4) == 1) apl.append("SPELL(stormbolt);");
+
+	apl.append("if(UP(bloodsurge.expire))SPELL(wildstrike);");
+
+	apl.append("if(UP(enrage.expire)||rti->expected_combat_length-rti->timestamp<FROM_SECONDS(12))SPELL(execute);");
+
+	if (TALENT_TIER(4) == 3)
+		if (TALENT_TIER(6) == 2) apl.append("if(UP(bloodbath.expire))SPELL(dragonroar);");
+		else apl.append("SPELL(dragonroar);");
+
+	apl.append("SPELL(ragingblow);");
+
+	apl.append("if(REMAIN(bloodthirst.cd)<FROM_SECONDS(0.5)&&!power_check(rti,50))return;");
+
+	apl.append("if(UP(enrage.expire)&&enemy_health_percent(rti)>20)SPELL(wildstrike);");
+
+	if (TALENT_TIER(6) == 3) apl.append("SPELL(bladestorm);");
+
+	if (TALENT_TIER(3) != 3 && TALENT_TIER(4) == 2) apl.append("SPELL(shockwave);");
+
+	apl.append("SPELL(bloodthirst);");
+}
+
 void parameters_consistency(){
 	single_minded = (mh_type == 1 && oh_type == 1);
 	if (mh_high < mh_low){
@@ -759,6 +832,9 @@ void parameters_consistency(){
 	if (raidbuff.food){
 		for (auto i = stat_array.begin(); i != stat_array.end(); i++)
 		i->gear_crit += 125;
+	}
+	if (default_actions){
+		auto_apl();
 	}
 }
 

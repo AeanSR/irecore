@@ -300,6 +300,36 @@ void parse_parameters(std::vector<kvpair_t>& arglist){
 			if (stat.gear_vers < 0) stat.gear_vers = 0;
 			stat_not_pushed = 1;
 		}
+		else if (0 == i->key.compare("gear_str-")){
+			stat.gear_str -= atoi(i->value.c_str());
+			if (stat.gear_str < 0) stat.gear_str = 0;
+			stat_not_pushed = 1;
+		}
+		else if (0 == i->key.compare("gear_crit-")){
+			stat.gear_crit -= atoi(i->value.c_str());
+			if (stat.gear_crit < 0) stat.gear_crit = 0;
+			stat_not_pushed = 1;
+		}
+		else if (0 == i->key.compare("gear_mastery-")){
+			stat.gear_mastery -= atoi(i->value.c_str());
+			if (stat.gear_mastery < 0) stat.gear_mastery = 0;
+			stat_not_pushed = 1;
+		}
+		else if (0 == i->key.compare("gear_haste-")){
+			stat.gear_haste -= atoi(i->value.c_str());
+			if (stat.gear_haste < 0) stat.gear_haste = 0;
+			stat_not_pushed = 1;
+		}
+		else if (0 == i->key.compare("gear_mult-")){
+			stat.gear_mult -= atoi(i->value.c_str());
+			if (stat.gear_mult < 0) stat.gear_mult = 0;
+			stat_not_pushed = 1;
+		}
+		else if (0 == i->key.compare("gear_vers-")){
+			stat.gear_vers -= atoi(i->value.c_str());
+			if (stat.gear_vers < 0) stat.gear_vers = 0;
+			stat_not_pushed = 1;
+		}
 		else if (0 == i->key.compare("push_stats")){
 			stat.name = i->value;
 			if (stat.name.empty()) stat.name = "<unnamed stat set>";

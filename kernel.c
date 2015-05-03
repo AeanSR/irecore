@@ -10,6 +10,12 @@
 	Free to use for any purpose. No warranty given.
 */
 
+/*
+	TODO list:
+	Touch of the Grave (Undead trait) is a mystery. Need more feedbacks since I play nelf only.
+	Now implemented as 20%-15s ICD, 1932~2244 damage scales with enrage, mastery and vers.
+*/
+
 #define SHOW_LOG
 #define passive_power_regen 0
 
@@ -35,7 +41,7 @@
 #define BUFF_STA 1
 #define BUFF_POTION 1
 #define BUFF_BLOODLUST 1
-#define RACE RACE_TAUREN
+#define RACE RACE_UNDEAD
 #define MH_LOW 1659
 #define MH_HIGH 2490
 #define MH_SPEED 3.6f
@@ -622,6 +628,9 @@ typedef struct {
 #if (RACE == RACE_ORC)
 	bloodfury_t		bloodfury;
 #endif
+#if (RACE == RACE_UNDEAD)
+	ICD_t			touch_of_the_grave;
+#endif
 #if defined(trinket_vial_of_convulsive_shadows)
 	struct{
 		time_t cd;
@@ -1114,11 +1123,11 @@ void refresh_str( rtinfo_t* rti ) {
 
 void refresh_ap( rtinfo_t* rti ) {
     k32u ap = rti->player.stat.str;
+    if ( BUFF_AP ) ap = convert_uint_rtz( ap * 1.1f + 0.5f );
 #if (RACE == RACE_ORC)
 	if (UP(bloodfury.expire)) ap += 345;
 #endif
-    if ( BUFF_AP ) ap = convert_uint_rtz( ap * 1.1f + 0.5f );
-    rti->player.stat.ap = ap;
+	rti->player.stat.ap = ap;
 }
 
 void refresh_mastery( rtinfo_t* rti ) {
@@ -1304,6 +1313,9 @@ enum {
 	routnum_bloodfury_start,
 	routnum_bloodfury_expire,
 	routnum_bloodfury_cd,
+#endif
+#if (RACE == RACE_UNDEAD)
+	routnum_touch_of_the_grave_trigger,
 #endif
 #if defined(trinket_vial_of_convulsive_shadows)
 	routnum_vial_of_convulsive_shadows_expire,
@@ -2487,6 +2499,15 @@ DECL_SPELL(bloodfury){
     lprintf( ( "cast bloodfury" ) );
 }
 #endif
+#if (RACE == RACE_UNDEAD)
+DECL_EVENT(touch_of_the_grave_trigger){
+	float d = 1932.0f;
+	d += uni_rng(rti) * (2244.0f - 1932.0f);
+	if(UP(enrage.expire)) d *= 1.1f * (1.0f + rti->player.stat.mastery); /* TotG scales with enrage? */
+	d *= 1.0f + rti->player.stat.vers; /* scales with versatility? */
+	deal_damage(rti, d, DMGTYPE_NONE, 0);
+}
+#endif
 
 // === trinkets ===============================================================
 #if defined(trinket_vial_of_convulsive_shadows)
@@ -2885,6 +2906,9 @@ void routine_entries( rtinfo_t* rti, _event_t e ) {
 		HOOK_EVENT( bloodfury_expire );
 		HOOK_EVENT( bloodfury_cd );
 #endif
+#if (RACE == RACE_UNDEAD)
+		HOOK_EVENT( touch_of_the_grave_trigger );
+#endif
 #if defined(trinket_vial_of_convulsive_shadows)
 		HOOK_EVENT( vial_of_convulsive_shadows_expire );
 		HOOK_EVENT( vial_of_convulsive_shadows_start );
@@ -3005,6 +3029,9 @@ void module_init( rtinfo_t* rti ) {
 }
 
 void special_procs(rtinfo_t* rti){
+#if (RACE == RACE_UNDEAD)
+	proc_ICD(rti, &rti->player.touch_of_the_grave, 0.2f, FROM_SECONDS(15), routnum_touch_of_the_grave_trigger);
+#endif
 #if (archmages_incandescence || archmages_greater_incandescence)
 	if (!UP(incandescence.expire)){
 		proc_RPPM(rti, &rti->player.incandescence.proc, 0.92f, routnum_incandescence_trigger);
@@ -3065,10 +3092,10 @@ void special_procs(rtinfo_t* rti){
 void scan_apl( rtinfo_t* rti ) {
     SPELL( recklessness );
     //SPELL( bloodbath );
-    //SPELL( bloodthirst );
-    //SPELL( execute );
-    //SPELL( ragingblow );
-    //SPELL( wildstrike );
+    SPELL( bloodthirst );
+    SPELL( execute );
+    SPELL( ragingblow );
+    SPELL( wildstrike );
 }
 
 void host_kernel_entry() {

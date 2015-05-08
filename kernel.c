@@ -56,8 +56,10 @@
 #define TALENT_TIER7 1
 #define archmages_incandescence 0
 #define archmages_greater_incandescence 1
-#define t17_2pc 1
-#define t17_4pc 1
+#define t17_2pc 0
+#define t17_4pc 0
+#define t18_2pc 1
+#define t18_4pc 1
 #define thunderlord_mh 1
 #define thunderlord_oh 1
 #define bleedinghollow_mh 0
@@ -1376,7 +1378,7 @@ enum {
 
 void special_procs( rtinfo_t* rti );
 
-k32s deal_damage( rtinfo_t* rti, float dmg, k32u dmgtype, float extra_crit_rate ) {
+k32s deal_damage( rtinfo_t* rti, float dmg, k32u dmgtype, float extra_crit_rate, float extra_crit_bonus ) {
     switch( dmgtype ) {
     case DMGTYPE_NONE:
         lprintf( ( "damage %.0f", dmg ) );
@@ -1387,7 +1389,7 @@ k32s deal_damage( rtinfo_t* rti, float dmg, k32u dmgtype, float extra_crit_rate 
         float c = uni_rng( rti );
         if ( dmgtype == DMGTYPE_MELEE && c < 0.19f ) return -1;
         float cr = rti->player.stat.crit - 0.03f + extra_crit_rate + ( dmgtype == DMGTYPE_MELEE ? 0.19f : 0 );
-        float cdb = ( RACE == RACE_DWARF || RACE == RACE_TAUREN ) ? 2.04f : 2.0f;
+        float cdb = (1.0f + extra_crit_bonus) * (( RACE == RACE_DWARF || RACE == RACE_TAUREN ) ? 2.04f : 2.0f);
         kbool ret;
         float fdmg;
 #if (TALENT_TIER6 == 2)
@@ -1504,7 +1506,7 @@ DECL_EVENT( gcd_expire ) {
 DECL_EVENT( auto_attack_mh ) {
     float d = weapon_dmg( rti, 1.0f, 0, 0 );
 
-    k32s ret = deal_damage( rti, d, DMGTYPE_MELEE, 0 );
+    k32s ret = deal_damage( rti, d, DMGTYPE_MELEE, 0, 0 );
     if ( ret == -1 ) {
         /* Miss */
         lprintf( ( "mh miss" ) );
@@ -1533,7 +1535,7 @@ DECL_EVENT( auto_attack_mh ) {
 
 DECL_EVENT( auto_attack_oh ) {
     float d = weapon_dmg( rti, 1.0f, 0, 1 );
-    k32s ret = deal_damage( rti, d, DMGTYPE_MELEE, 0 );
+    k32s ret = deal_damage( rti, d, DMGTYPE_MELEE, 0, 0 );
     if ( ret == -1 ) {
         /* Miss */
         lprintf( ( "oh miss" ) );
@@ -1588,7 +1590,7 @@ DECL_EVENT( bloodthirst_execute ) {
         eq_enqueue( rti, rti->timestamp, routnum_bloodsurge_trigger );
     }
 
-    if ( deal_damage( rti, d, DMGTYPE_SPECIAL, 0.4f ) ) {
+    if ( deal_damage( rti, d, DMGTYPE_SPECIAL, 0.4f, 0 ) ) {
         /* Crit */
         eq_enqueue( rti, rti->timestamp, routnum_enrage_trigger );
         lprintf( ( "bloodthirst crit" ) );
@@ -1627,7 +1629,7 @@ DECL_EVENT( ragingblow_execute ) {
         lprintf( ( "ragingblow expire" ) );
     }
 
-    if ( deal_damage( rti, d, DMGTYPE_SPECIAL, 0 ) ) {
+    if ( deal_damage( rti, d, DMGTYPE_SPECIAL, 0, 0 ) ) {
         /* Crit */
         lprintf( ( "ragingblow crit" ) );
 #if (t17_2pc)
@@ -1642,7 +1644,7 @@ DECL_EVENT( ragingblow_execute ) {
 
     /* Off hand. */
     d = weapon_dmg( rti, 2.0, 1, 1 );
-    if ( deal_damage( rti, d, DMGTYPE_SPECIAL, 0 ) ) {
+    if ( deal_damage( rti, d, DMGTYPE_SPECIAL, 0, 0 ) ) {
         /* Crit */
         lprintf( ( "ragingblow oh crit" ) );
 #if (t17_2pc)
@@ -1690,7 +1692,7 @@ DECL_EVENT( execute_execute ) {
     float d = weapon_dmg( rti, 3.5f * 1.2f, 1, 0 );
     if ( SINGLE_MINDED ) d *= 1.15f;
 
-    if ( deal_damage( rti, d, DMGTYPE_SPECIAL, 0 ) ) {
+    if ( deal_damage( rti, d, DMGTYPE_SPECIAL, 0, 0 ) ) {
         /* Crit */
         lprintf( ( "execute crit" ) );
 
@@ -1703,7 +1705,7 @@ DECL_EVENT( execute_execute ) {
     d = weapon_dmg( rti, 3.5f * 1.2f, 1, 1 );
     if ( SINGLE_MINDED ) d *= 1.15f;
 
-    if ( deal_damage( rti, d, DMGTYPE_SPECIAL, 0 ) ) {
+    if ( deal_damage( rti, d, DMGTYPE_SPECIAL, 0, 0 ) ) {
         /* Crit */
         lprintf( ( "execute oh crit" ) );
 
@@ -1750,17 +1752,42 @@ DECL_SPELL( execute ) {
 }
 
 // === wildstrike =============================================================
-DECL_EVENT( wildstrike_execute ) {
-    float d = weapon_dmg( rti, 3.75f, 1, 1 );
+DECL_EVENT(wildstrike_execute) {
+	float d = weapon_dmg(rti, 3.75f, 1, 1);
 
-    if ( deal_damage( rti, d, DMGTYPE_SPECIAL, 0 ) ) {
-        /* Crit */
-        lprintf( ( "wildstrike crit" ) );
+#if (t18_2pc)
+	if (deal_damage(rti, d, DMGTYPE_SPECIAL, UP(bloodsurge.expire) ? 0.12 : 0, UP(bloodsurge.expire) ? 0.12 : 0)) {
+#else
+	if (deal_damage(rti, d, DMGTYPE_SPECIAL, 0, 0)) {
+#endif
 
-    } else {
-        /* Hit */
-        lprintf( ( "wildstrike hit" ) );
-    }
+#if (t18_4pc)
+		if(UP(recklessness.cd)){
+#if (TALENT_TIER7 == 1)
+			rti->player.recklessness.cd = max( rti->player.recklessness.cd - FROM_SECONDS(20), rti->timestamp );
+			if( rti->player.recklessness.cd == rti->timestamp )
+				eq_enqueue(rti, rti->player.recklessness.cd, routnum_recklessness_cd);
+#else
+			rti->player.recklessness.cd = max( rti->player.recklessness.cd - FROM_SECONDS(20), rti->timestamp );
+			eq_enqueue(rti, rti->player.recklessness.cd, routnum_recklessness_cd);
+#endif
+		}
+#endif
+		/* Crit */
+		lprintf(("wildstrike crit"));
+	}
+	else {
+		/* Hit */
+		lprintf(("wildstrike hit"));
+	}
+
+	if (UP(bloodsurge.expire)){
+		rti->player.bloodsurge.stack--;
+		if (rti->player.bloodsurge.stack == 0) {
+			rti->player.bloodsurge.expire = 0;
+			lprintf(("bloodsurge expire"));
+		}
+	}
 }
 
 DECL_EVENT( bloodsurge_trigger ) {
@@ -1788,12 +1815,6 @@ DECL_SPELL( wildstrike ) {
     if ( !UP( bloodsurge.expire ) ) {
         if ( !power_check( rti, WILDSTRIKE_RAGE_COST ) ) return;
         power_consume( rti, WILDSTRIKE_RAGE_COST );
-    } else {
-        rti->player.bloodsurge.stack --;
-        if ( rti->player.bloodsurge.stack == 0 ) {
-            rti->player.bloodsurge.expire = 0;
-            lprintf( ( "bloodsurge expire" ) );
-        }
     }
     gcd_start( rti, FROM_SECONDS( 0.75 ) );
     eq_enqueue( rti, rti->timestamp, routnum_wildstrike_execute );
@@ -1880,11 +1901,17 @@ DECL_EVENT( recklessness_cd ) {
             lprintf( ( "recklessness ready" ) );
         }
 #if (TALENT_TIER7 == 1)
+#if (t18_4pc)
+        else if ( rti->player.recklessness.cd - rti->timestamp > FROM_SECONDS( 10 ) ) {
+            eq_enqueue( rti, TIME_OFFSET(FROM_SECONDS(5)), routnum_recklessness_cd );
+        }
+#endif
         else if ( rti->player.recklessness.cd - rti->timestamp > FROM_MILLISECONDS( 333 ) ) {
             eq_enqueue( rti, ( rti->player.recklessness.cd + rti->timestamp ) / 2, routnum_recklessness_cd );
         } else {
             eq_enqueue( rti, rti->player.recklessness.cd, routnum_recklessness_cd );
         }
+
 #endif
 }
 
@@ -1956,7 +1983,7 @@ DECL_EVENT( stormbolt_cd ) {
 DECL_EVENT( stormbolt_execute ) {
     float d = weapon_dmg( rti, 0.6f * 4.0f, 1, 0 );
 
-    if ( deal_damage( rti, d, DMGTYPE_SPECIAL, 0 ) ) {
+    if ( deal_damage( rti, d, DMGTYPE_SPECIAL, 0, 0 ) ) {
         /* Crit */
         lprintf( ( "stormbolt crit" ) );
 
@@ -1966,7 +1993,7 @@ DECL_EVENT( stormbolt_execute ) {
     }
     d = weapon_dmg( rti, 0.6f * 4.0f, 1, 1 );
 
-    if ( deal_damage( rti, d, DMGTYPE_SPECIAL, 0 ) ) {
+    if ( deal_damage( rti, d, DMGTYPE_SPECIAL, 0, 0 ) ) {
         /* Crit */
         lprintf( ( "stormbolt_oh crit" ) );
 
@@ -2014,7 +2041,7 @@ DECL_EVENT( shockwave_cd ) {
 DECL_EVENT( shockwave_execute ) {
     float d = ap_dmg( rti, 1.25f );
 
-    if ( deal_damage( rti, d, DMGTYPE_SPECIAL, 0 ) ) {
+    if ( deal_damage( rti, d, DMGTYPE_SPECIAL, 0, 0 ) ) {
         /* Crit */
         lprintf( ( "shockwave crit" ) );
 
@@ -2062,7 +2089,7 @@ DECL_EVENT( dragonroar_cd ) {
 DECL_EVENT( dragonroar_execute ) {
     float d = ap_dmg( rti, 1.65f );
 
-    if ( deal_damage( rti, d, DMGTYPE_DRAGONROAR, 0 ) ) {
+    if ( deal_damage( rti, d, DMGTYPE_DRAGONROAR, 0, 0 ) ) {
         /* Crit */
         lprintf( ( "dragonroar crit" ) );
 
@@ -2098,7 +2125,7 @@ DECL_EVENT( ravager_cd ) {
 DECL_EVENT( ravager_tick ) {
     float d = ap_dmg( rti, 0.615f );
 
-    if ( deal_damage( rti, d, DMGTYPE_SPECIAL, 0 ) ) {
+    if ( deal_damage( rti, d, DMGTYPE_SPECIAL, 0, 0 ) ) {
         /* Crit */
         lprintf( ( "ravager crit" ) );
 
@@ -2133,7 +2160,7 @@ DECL_EVENT( siegebreaker_cd ) {
 DECL_EVENT( siegebreaker_execute ) {
     float d = weapon_dmg( rti, 4.5f, 1, 0 );
 
-    if ( deal_damage( rti, d, DMGTYPE_SPECIAL, 0 ) ) {
+    if ( deal_damage( rti, d, DMGTYPE_SPECIAL, 0, 0 ) ) {
         /* Crit */
         lprintf( ( "siegebreaker crit" ) );
 
@@ -2143,7 +2170,7 @@ DECL_EVENT( siegebreaker_execute ) {
     }
     d = weapon_dmg( rti, 4.5f, 1, 1 );
 
-    if ( deal_damage( rti, d, DMGTYPE_SPECIAL, 0 ) ) {
+    if ( deal_damage( rti, d, DMGTYPE_SPECIAL, 0, 0 ) ) {
         /* Crit */
         lprintf( ( "siegebreaker_oh crit" ) );
 
@@ -2187,7 +2214,7 @@ DECL_EVENT( bladestorm_cd ) {
 DECL_EVENT( bladestorm_tick ) {
     float d = weapon_dmg( rti, 1.6f, 1, 0 );
 
-    if ( deal_damage( rti, d, DMGTYPE_SPECIAL, 0 ) ) {
+    if ( deal_damage( rti, d, DMGTYPE_SPECIAL, 0, 0 ) ) {
         /* Crit */
         lprintf( ( "bladestorm crit" ) );
 
@@ -2197,7 +2224,7 @@ DECL_EVENT( bladestorm_tick ) {
     }
     d = weapon_dmg( rti, 1.6f, 1, 1 );
 
-    if ( deal_damage( rti, d, DMGTYPE_SPECIAL, 0 ) ) {
+    if ( deal_damage( rti, d, DMGTYPE_SPECIAL, 0, 0 ) ) {
         /* Crit */
         lprintf( ( "bladestorm_oh crit" ) );
 
@@ -2304,7 +2331,7 @@ DECL_EVENT( bloodbath_tick ) {
     if ( rti->player.bloodbath.dot_start + FROM_SECONDS( 7.0f - rti->player.bloodbath.ticks ) != rti->timestamp ) return;
     float dmg = rti->player.bloodbath.pool / rti->player.bloodbath.ticks;
     rti->player.bloodbath.pool -= dmg;
-    deal_damage( rti, dmg, DMGTYPE_NONE, 0 );
+    deal_damage( rti, dmg, DMGTYPE_NONE, 0, 0 );
     lprintf( ( "bloodbath ticks" ) );
     rti->player.bloodbath.ticks -= 1.0f;
     if ( rti->player.bloodbath.ticks >= 1.0f )
@@ -2366,7 +2393,7 @@ DECL_EVENT( enchant_mh_trigger ) {
     refresh_mastery( rti );
 #endif
 #if (shatteredhand_mh)
-    deal_damage( rti, 1500.0f, DMGTYPE_NONE, .0f );
+    deal_damage( rti, 1500.0f, DMGTYPE_NONE, 0, 0 );
     rti->player.enchant_mh.expire = TIME_OFFSET( FROM_SECONDS( 6 ) );
     rti->player.enchant_mh.ticks = 6.0f;
     eq_enqueue( rti, TIME_OFFSET( FROM_SECONDS( 1 ) ), routnum_enchant_mh_tick );
@@ -2395,7 +2422,7 @@ DECL_EVENT( enchant_oh_trigger ) {
     refresh_mastery( rti );
 #endif
 #if (shatteredhand_oh)
-    deal_damage( rti, 1500.0f, DMGTYPE_NONE, .0f );
+    deal_damage( rti, 1500.0f, DMGTYPE_NONE, 0, 0 );
     rti->player.enchant_oh.expire = TIME_OFFSET( FROM_SECONDS( 6 ) );
     rti->player.enchant_oh.ticks = 6.0f;
     eq_enqueue( rti, TIME_OFFSET( FROM_SECONDS( 1 ) ), routnum_enchant_oh_tick );
@@ -2408,7 +2435,7 @@ DECL_EVENT( enchant_oh_trigger ) {
 DECL_EVENT( enchant_mh_tick ) {
     if ( TIME_OFFSET( FROM_SECONDS( rti->player.enchant_mh.ticks - 1.0f ) ) == rti->player.enchant_mh.expire ) {
         rti->player.enchant_mh.ticks -= 1.0f;
-        deal_damage( rti, 750.0f, DMGTYPE_NONE, .0f );
+        deal_damage( rti, 750.0f, DMGTYPE_NONE, 0, 0 );
         if ( rti->player.enchant_mh.ticks >= 1.0f )
             eq_enqueue( rti, TIME_OFFSET( FROM_SECONDS( 1 ) ), routnum_enchant_mh_tick );
     }
@@ -2418,7 +2445,7 @@ DECL_EVENT( enchant_mh_tick ) {
 DECL_EVENT( enchant_oh_tick ) {
     if ( TIME_OFFSET( FROM_SECONDS( rti->player.enchant_oh.ticks - 1.0f ) ) == rti->player.enchant_oh.expire ) {
         rti->player.enchant_oh.ticks -= 1.0f;
-        deal_damage( rti, 750.0f, DMGTYPE_NONE, .0f );
+        deal_damage( rti, 750.0f, DMGTYPE_NONE, 0, 0 );
         if ( rti->player.enchant_oh.ticks >= 1.0f )
             eq_enqueue( rti, TIME_OFFSET( FROM_SECONDS( 1 ) ), routnum_enchant_oh_tick );
     }
@@ -2502,7 +2529,7 @@ DECL_EVENT( touch_of_the_grave_trigger ) {
     d += uni_rng( rti ) * ( 2244.0f - 1932.0f );
     if( UP( enrage.expire ) ) d *= 1.1f * ( 1.0f + rti->player.stat.mastery ); /* TotG scales with enrage? */
     d *= 1.0f + rti->player.stat.vers; /* scales with versatility? */
-    deal_damage( rti, d, DMGTYPE_NONE, 0 );
+    deal_damage( rti, d, DMGTYPE_NONE, 0, 0 );
 }
 #endif
 

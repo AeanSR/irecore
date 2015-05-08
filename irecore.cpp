@@ -34,6 +34,8 @@ int archmages_incandescence;
 int archmages_greater_incandescence;
 int t17_2pc;
 int t17_4pc;
+int t18_2pc;
+int t18_4pc;
 int thunderlord_mh;
 int thunderlord_oh;
 int bleeding_hollow_mh;
@@ -154,6 +156,8 @@ void set_default_parameters(){
 	archmages_greater_incandescence = 0;
 	t17_2pc = 0;
 	t17_4pc = 0;
+	t18_2pc = 0;
+	t18_4pc = 0;
 	thunderlord_mh = 0;
 	thunderlord_oh = 0;
 	bleeding_hollow_mh = 0;
@@ -504,6 +508,12 @@ void parse_parameters(std::vector<kvpair_t>& arglist){
 		else if (0 == i->key.compare("t17_4pc")){
 			t17_4pc = !!atoi(i->value.c_str());
 		}
+		else if (0 == i->key.compare("t18_2pc")){
+			t18_2pc = !!atoi(i->value.c_str());
+		}
+		else if (0 == i->key.compare("t18_4pc")){
+			t18_4pc = !!atoi(i->value.c_str());
+		}
 		else if (0 == i->key.compare("mh_enchant")){
 			thunderlord_mh = !i->value.compare("thunderlord");
 			bleeding_hollow_mh = !i->value.compare("bleedinghollow");
@@ -729,6 +739,14 @@ void generate_predef(){
 
 	predef.append("#define t17_4pc ");
 	sprintf(buffer, "%d", t17_4pc);
+	predef.append(buffer); predef.append("\r\n");
+	
+	predef.append("#define t18_2pc ");
+	sprintf(buffer, "%d", t18_2pc);
+	predef.append(buffer); predef.append("\r\n");
+
+	predef.append("#define t18_4pc ");
+	sprintf(buffer, "%d", t18_4pc);
 	predef.append(buffer); predef.append("\r\n");
 
 	predef.append("#define thunderlord_mh ");

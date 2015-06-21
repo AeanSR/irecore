@@ -205,83 +205,6 @@ void set_global_id( int dim, int idx ) {
 }
 #endif /* !defined(__OPENCL_VERSION__) */
 
-/* clz() "Count leading zero" on Host */
-#if !defined(__OPENCL_VERSION__)
-#if defined(_MSC_VER)
-#if defined(_M_IA64) || defined(_M_X64)
-unsigned char _BitScanReverse64( unsigned long* _Index, unsigned __int64 _Mask ); /* MSVC Intrinsic. */
-/*
-    _BitScanReverse64 set IDX to the position(from LSB) of the first bit set in mask.
-    What we need is counting leading zero, thus return 64 - (IDX + 1).
-*/
-k8u clz( k64u mask ) {
-    unsigned long IDX = 0;
-    _BitScanReverse64( &IDX, mask );
-    return 63 - IDX;
-}
-#elif defined(_M_IX86)
-unsigned char _BitScanReverse( unsigned long* _Index, unsigned long _Mask ); /* MSVC Intrinsic. */
-/*
-    On 32-bit machine, _BitScanReverse only accept 32 bit number.
-    So we need do some cascade.
-*/
-k32u clz( k64u mask ) {
-    unsigned long IDX = 0;
-    if ( mask >> 32 ) {
-        _BitScanReverse( &IDX, mask >> 32 );
-        return ( k32u )( 31 - IDX );
-    }
-    _BitScanReverse( &IDX, mask & 0xFFFFFFFFULL );
-    return ( k32u )( 63 - IDX );
-}
-#else
-/*
-    This machine is not x86/amd64/Itanium Processor Family(IPF).
-    the processor don't have a 'bsr' instruction so _BitScanReverse is not available.
-    Need some bit manipulation...
-*/
-#define NEED_CLZ_BIT_TWIDDLING
-#endif /* defined(_M_IA64) || defined(_M_X64) */
-#elif defined(__GNUC__)
-#define clz __builtin_clzll /* GCC have already done this. */
-#else
-/*
-    Unkown compilers. We know nothing about what intrinsics they have,
-    nor what their inline assembly format is.
-*/
-#define NEED_CLZ_BIT_TWIDDLING
-#endif /* defined(_MSC_VER) */
-#endif /* !defined(__OPENCL_VERSION__) */
-#if defined(NEED_CLZ_BIT_TWIDDLING)
-#undef NEED_CLZ_BIT_TWIDDLING
-/*
-    Tons of magic numbers... For how could this works, see:
-        http://supertech.csail.mit.edu/papers/debruijn.pdf
-    result for zero input is NOT same as MSVC intrinsic version, but still undefined.
-*/
-k32u clz( k64u mask ) {
-    static k32u DeBruijn[64] = {
-        /*        0   1   2   3   4   5   6   7 */
-        /*  0 */  0, 63, 62, 11, 61, 57, 10, 37,
-        /*  8 */ 60, 26, 23, 56, 30,  9, 16, 36,
-        /* 16 */  2, 59, 25, 18, 20, 22, 42, 55,
-        /* 24 */ 40, 29,  5,  8, 15, 46, 35, 53,
-        /* 32 */  1, 12, 58, 38, 27, 24, 31, 17,
-        /* 40 */  3, 19, 21, 43, 41,  6, 47, 54,
-        /* 48 */ 13, 39, 28, 32,  4, 44,  7, 48,
-        /* 56 */ 14, 33, 45, 49, 34, 50, 51, 52,
-    };
-    v |= v >> 1;
-    v |= v >> 2;
-    v |= v >> 4;
-    v |= v >> 8;
-    v |= v >> 16;
-    v |= v >> 32;
-    v++;
-    return DeBruijn[( v * 0x022fdd63cc95386dULL ) >> 58];
-}
-#endif /* defined(NEED_CLZ_BIT_TWIDDLING) */
-
 /* Const Pi. */
 #if !defined(M_PI)
 #define M_PI 3.14159265358979323846
@@ -372,11 +295,9 @@ typedef struct {
     time_t lasttimeattemps;
     time_t lasttimeprocs;
 } RPPM_t;
-#if (TALENT_TIER3 != 3)
 typedef struct {
     time_t cd;
 } bloodthirst_t;
-#endif
 typedef struct {
     k16u stack;
     time_t expire;
@@ -399,29 +320,19 @@ typedef struct {
     time_t cd;
     time_t expire;
 } recklessness_t;
-
-#if (TALENT_TIER4 == 1)
 typedef struct {
     time_t cd;
 } stormbolt_t;
-#endif
-#if (TALENT_TIER4 == 2)
 typedef struct {
     time_t cd;
 } shockwave_t;
-#endif
-#if (TALENT_TIER4 == 3)
 typedef struct {
     time_t cd;
 } dragonroar_t;
-#endif
-#if (TALENT_TIER6 == 1)
 typedef struct {
     time_t cd;
     time_t expire;
 } avatar_t;
-#endif
-#if (TALENT_TIER6 == 2)
 typedef struct {
     time_t cd;
     time_t expire;
@@ -429,80 +340,54 @@ typedef struct {
     float ticks;
     time_t dot_start;
 } bloodbath_t;
-#endif
-#if (TALENT_TIER6 == 3)
 typedef struct {
     time_t cd;
     time_t expire;
 } bladestorm_t;
-#endif
-
-#if (TALENT_TIER7 == 2)
 typedef struct {
     time_t cd;
     time_t expire;
 } ravager_t;
-#endif
-#if (TALENT_TIER7 == 3)
 typedef struct {
     time_t cd;
 } siegebreaker_t;
-#endif
-#if (BUFF_POTION == 1)
 typedef struct {
     time_t expire;
     time_t cd;
 } potion_t;
-#endif
-#if (t17_4pc)
 typedef struct {
     time_t expire;
     k32u stack;
 } rampage_t;
-#endif
-#if (archmages_incandescence || archmages_greater_incandescence)
 typedef struct {
     time_t expire;
     RPPM_t proc;
 } incandescence_t;
-#endif
-#if (thunderlord_mh || thunderlord_oh)
 typedef struct {
     time_t expire;
     k32u extend;
     RPPM_t proc;
 } thunderlord_t;
-#endif
-#if (bleedinghollow_mh || bleedinghollow_oh)
 typedef struct {
     time_t expire;
     RPPM_t proc;
 } bleedinghollow_t;
-#endif
-#if (shatteredhand_mh || shatteredhand_oh)
 typedef struct {
     time_t expire;
     float ticks;
     RPPM_t proc;
 } shatteredhand_t;
-#endif
-#if (RACE == RACE_BLOODELF)
 typedef struct {
     time_t cd;
 } arcanetorrent_t;
-#endif
-#if (RACE == RACE_TROLL)
 typedef struct {
     time_t cd;
     time_t expire;
 } berserking_t;
-#endif
-#if (RACE == RACE_ORC)
 typedef struct {
     time_t cd;
     time_t expire;
 } bloodfury_t;
-#endif
 
 typedef struct weapon_t {
     float speed;
@@ -986,36 +871,6 @@ int eq_execute( rtinfo_t* rti ) {
     return 1;
 }
 
-/* Delete an event from EQ. Costly. */
-void eq_delete( rtinfo_t* rti, time_t time, k32u routnum ) {
-    _event_t* p = &rti->eq.event[-1];
-    k32u i = 1, child;
-    _event_t last;
-
-    /* Find the event in O(n). */
-    while( i <= rti->eq.count ) {
-        if ( p[i].time == time && p[i].routine == routnum )
-            break;
-        i++;
-    }
-    if ( i > rti->eq.count ) /* Not found? */
-        return;
-
-    /* Delete the event in O(logn). */
-    last = p[rti->eq.count--];
-    for( ; i << 1 <= rti->eq.count; i = child ) {
-        child = i << 1;
-        if ( child != rti->eq.count && rti->eq.event[child].time < p[child].time )
-            child++;
-        if ( last.time > p[child].time )
-            p[i] = p[child];
-        else
-            break;
-    }
-    p[i] = last;
-
-}
-
 float enemy_health_percent( rtinfo_t* rti ) {
     /*
         What differs from SimulationCraft, OpenCL iterations are totally parallelized.
@@ -1371,9 +1226,7 @@ enum {
     DMGTYPE_NONE,
     DMGTYPE_MELEE,
     DMGTYPE_SPECIAL,
-#if (TALENT_TIER4 == 3)
     DMGTYPE_DRAGONROAR,
-#endif
 };
 
 void special_procs( rtinfo_t* rti );

@@ -1609,7 +1609,7 @@ DECL_EVENT(wildstrike_execute) {
 	float d = weapon_dmg(rti, 3.75f, 1, 1);
 
 #if (t18_2pc)
-	if (deal_damage(rti, d, DMGTYPE_SPECIAL, UP(bloodsurge.expire) ? 0.12 : 0, UP(bloodsurge.expire) ? 0.12 : 0)) {
+	if (deal_damage(rti, d, DMGTYPE_SPECIAL, UP(bloodsurge.expire) ? 1.0 : 0, UP(bloodsurge.expire) ? 0.12 : 0)) {
 #else
 	if (deal_damage(rti, d, DMGTYPE_SPECIAL, 0, 0)) {
 #endif
@@ -1617,11 +1617,11 @@ DECL_EVENT(wildstrike_execute) {
 #if (t18_4pc)
 		if(UP(recklessness.cd)){
 #if (TALENT_TIER7 == 1)
-			rti->player.recklessness.cd = max( rti->player.recklessness.cd - FROM_SECONDS(20), rti->timestamp );
+			rti->player.recklessness.cd = max( rti->player.recklessness.cd - FROM_SECONDS(25), rti->timestamp );
 			if( rti->player.recklessness.cd == rti->timestamp )
 				eq_enqueue(rti, rti->player.recklessness.cd, routnum_recklessness_cd);
 #else
-			rti->player.recklessness.cd = max( rti->player.recklessness.cd - FROM_SECONDS(20), rti->timestamp );
+			rti->player.recklessness.cd = max( rti->player.recklessness.cd - FROM_SECONDS(25), rti->timestamp );
 			eq_enqueue(rti, rti->player.recklessness.cd, routnum_recklessness_cd);
 #endif
 		}
@@ -1755,17 +1755,17 @@ DECL_EVENT( recklessness_cd ) {
         }
 #if (TALENT_TIER7 == 1)
 #if (t18_4pc)
-        else if ( rti->player.recklessness.cd - rti->timestamp > FROM_SECONDS( 10 ) ) {
-            eq_enqueue( rti, TIME_OFFSET(FROM_SECONDS(5)), routnum_recklessness_cd );
-        }
+		else if (rti->player.recklessness.cd - rti->timestamp > FROM_SECONDS(25)) {
+			eq_enqueue(rti, TIME_OFFSET(FROM_SECONDS(5)), routnum_recklessness_cd);
+		}
 #endif
         else if ( rti->player.recklessness.cd - rti->timestamp > FROM_MILLISECONDS( 333 ) ) {
             eq_enqueue( rti, ( rti->player.recklessness.cd + rti->timestamp ) / 2, routnum_recklessness_cd );
         } else {
             eq_enqueue( rti, rti->player.recklessness.cd, routnum_recklessness_cd );
         }
-
 #endif
+
 }
 
 DECL_EVENT( recklessness_expire ) {

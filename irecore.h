@@ -42,7 +42,7 @@ typedef struct{
 	int potion;
 	int bloodlust;
 } raidbuff_t;
-extern stat_t stat;
+extern stat_t current_stat;
 extern std::vector<stat_t> stat_array;
 extern cl_uint seed;
 extern int iterations;

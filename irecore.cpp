@@ -1,7 +1,7 @@
 #include "irecore.h"
 
 std::ostream* report_path;
-stat_t stat;
+stat_t current_stat;
 std::vector<stat_t> stat_array;
 int stat_not_pushed = 1;
 raidbuff_t raidbuff;
@@ -119,7 +119,7 @@ void err(const char* format, ...){
 void set_default_parameters(){
 	developer_debug = 0;
 	list_available_devices = 0;
-	stat = {
+	current_stat = {
 		"",
 		0,
 	};
@@ -245,99 +245,99 @@ void build_arglist(std::vector<kvpair_t>& arglist, int argc, char** argv){
 void parse_parameters(std::vector<kvpair_t>& arglist){
 	for (auto i = arglist.begin(); i != arglist.end(); i++){
 		if (0 == i->key.compare("gear_str")){
-			stat.gear_str = atoi(i->value.c_str());
-			if (stat.gear_str < 0) stat.gear_str = 0;
+			current_stat.gear_str = atoi(i->value.c_str());
+			if (current_stat.gear_str < 0) current_stat.gear_str = 0;
 			stat_not_pushed = 1;
 		}
 		else if (0 == i->key.compare("gear_crit")){
-			stat.gear_crit = atoi(i->value.c_str());
-			if (stat.gear_crit < 0) stat.gear_crit = 0;
+			current_stat.gear_crit = atoi(i->value.c_str());
+			if (current_stat.gear_crit < 0) current_stat.gear_crit = 0;
 			stat_not_pushed = 1;
 		}
 		else if (0 == i->key.compare("gear_mastery")){
-			stat.gear_mastery = atoi(i->value.c_str());
-			if (stat.gear_mastery < 0) stat.gear_mastery = 0;
+			current_stat.gear_mastery = atoi(i->value.c_str());
+			if (current_stat.gear_mastery < 0) current_stat.gear_mastery = 0;
 			stat_not_pushed = 1;
 		}
 		else if (0 == i->key.compare("gear_haste")){
-			stat.gear_haste = atoi(i->value.c_str());
-			if (stat.gear_haste < 0) stat.gear_haste = 0;
+			current_stat.gear_haste = atoi(i->value.c_str());
+			if (current_stat.gear_haste < 0) current_stat.gear_haste = 0;
 			stat_not_pushed = 1;
 		}
 		else if (0 == i->key.compare("gear_mult")){
-			stat.gear_mult = atoi(i->value.c_str());
-			if (stat.gear_mult < 0) stat.gear_mult = 0;
+			current_stat.gear_mult = atoi(i->value.c_str());
+			if (current_stat.gear_mult < 0) current_stat.gear_mult = 0;
 			stat_not_pushed = 1;
 		}
 		else if (0 == i->key.compare("gear_vers")){
-			stat.gear_vers = atoi(i->value.c_str());
-			if (stat.gear_vers < 0) stat.gear_vers = 0;
+			current_stat.gear_vers = atoi(i->value.c_str());
+			if (current_stat.gear_vers < 0) current_stat.gear_vers = 0;
 			stat_not_pushed = 1;
 		}
 		else if (0 == i->key.compare("gear_str+")){
-			stat.gear_str += atoi(i->value.c_str());
-			if (stat.gear_str < 0) stat.gear_str = 0;
+			current_stat.gear_str += atoi(i->value.c_str());
+			if (current_stat.gear_str < 0) current_stat.gear_str = 0;
 			stat_not_pushed = 1;
 		}
 		else if (0 == i->key.compare("gear_crit+")){
-			stat.gear_crit += atoi(i->value.c_str());
-			if (stat.gear_crit < 0) stat.gear_crit = 0;
+			current_stat.gear_crit += atoi(i->value.c_str());
+			if (current_stat.gear_crit < 0) current_stat.gear_crit = 0;
 			stat_not_pushed = 1;
 		}
 		else if (0 == i->key.compare("gear_mastery+")){
-			stat.gear_mastery += atoi(i->value.c_str());
-			if (stat.gear_mastery < 0) stat.gear_mastery = 0;
+			current_stat.gear_mastery += atoi(i->value.c_str());
+			if (current_stat.gear_mastery < 0) current_stat.gear_mastery = 0;
 			stat_not_pushed = 1;
 		}
 		else if (0 == i->key.compare("gear_haste+")){
-			stat.gear_haste += atoi(i->value.c_str());
-			if (stat.gear_haste < 0) stat.gear_haste = 0;
+			current_stat.gear_haste += atoi(i->value.c_str());
+			if (current_stat.gear_haste < 0) current_stat.gear_haste = 0;
 			stat_not_pushed = 1;
 		}
 		else if (0 == i->key.compare("gear_mult+")){
-			stat.gear_mult += atoi(i->value.c_str());
-			if (stat.gear_mult < 0) stat.gear_mult = 0;
+			current_stat.gear_mult += atoi(i->value.c_str());
+			if (current_stat.gear_mult < 0) current_stat.gear_mult = 0;
 			stat_not_pushed = 1;
 		}
 		else if (0 == i->key.compare("gear_vers+")){
-			stat.gear_vers += atoi(i->value.c_str());
-			if (stat.gear_vers < 0) stat.gear_vers = 0;
+			current_stat.gear_vers += atoi(i->value.c_str());
+			if (current_stat.gear_vers < 0) current_stat.gear_vers = 0;
 			stat_not_pushed = 1;
 		}
 		else if (0 == i->key.compare("gear_str-")){
-			stat.gear_str -= atoi(i->value.c_str());
-			if (stat.gear_str < 0) stat.gear_str = 0;
+			current_stat.gear_str -= atoi(i->value.c_str());
+			if (current_stat.gear_str < 0) current_stat.gear_str = 0;
 			stat_not_pushed = 1;
 		}
 		else if (0 == i->key.compare("gear_crit-")){
-			stat.gear_crit -= atoi(i->value.c_str());
-			if (stat.gear_crit < 0) stat.gear_crit = 0;
+			current_stat.gear_crit -= atoi(i->value.c_str());
+			if (current_stat.gear_crit < 0) current_stat.gear_crit = 0;
 			stat_not_pushed = 1;
 		}
 		else if (0 == i->key.compare("gear_mastery-")){
-			stat.gear_mastery -= atoi(i->value.c_str());
-			if (stat.gear_mastery < 0) stat.gear_mastery = 0;
+			current_stat.gear_mastery -= atoi(i->value.c_str());
+			if (current_stat.gear_mastery < 0) current_stat.gear_mastery = 0;
 			stat_not_pushed = 1;
 		}
 		else if (0 == i->key.compare("gear_haste-")){
-			stat.gear_haste -= atoi(i->value.c_str());
-			if (stat.gear_haste < 0) stat.gear_haste = 0;
+			current_stat.gear_haste -= atoi(i->value.c_str());
+			if (current_stat.gear_haste < 0) current_stat.gear_haste = 0;
 			stat_not_pushed = 1;
 		}
 		else if (0 == i->key.compare("gear_mult-")){
-			stat.gear_mult -= atoi(i->value.c_str());
-			if (stat.gear_mult < 0) stat.gear_mult = 0;
+			current_stat.gear_mult -= atoi(i->value.c_str());
+			if (current_stat.gear_mult < 0) current_stat.gear_mult = 0;
 			stat_not_pushed = 1;
 		}
 		else if (0 == i->key.compare("gear_vers-")){
-			stat.gear_vers -= atoi(i->value.c_str());
-			if (stat.gear_vers < 0) stat.gear_vers = 0;
+			current_stat.gear_vers -= atoi(i->value.c_str());
+			if (current_stat.gear_vers < 0) current_stat.gear_vers = 0;
 			stat_not_pushed = 1;
 		}
 		else if (0 == i->key.compare("push_stats")){
-			stat.name = i->value;
-			if (stat.name.empty()) stat.name = "<unnamed stat set>";
-			stat_array.push_back(stat);
+			current_stat.name = i->value;
+			if (current_stat.name.empty()) current_stat.name = "<unnamed stat set>";
+			stat_array.push_back(current_stat);
 			stat_not_pushed = 0;
 		}
 		else if (0 == i->key.compare("deterministic_seed")){
@@ -875,8 +875,8 @@ void parameters_consistency(){
 		oh_low = t;
 	}
 	if (stat_not_pushed) {
-		if (stat.name.empty()) stat.name = "<unnamed stat set>";
-		stat_array.push_back(stat);
+		if (current_stat.name.empty()) current_stat.name = "<unnamed stat set>";
+		stat_array.push_back(current_stat);
 		stat_not_pushed = 0;
 	}
 	if (raidbuff.flask){
@@ -894,40 +894,40 @@ void parameters_consistency(){
 		if (stat_array.size() > 1) {
 			*report_path << "Scale factors enabled while multiple stat sets given. Stat sets except the first set are abbandoned." << std::endl;
 		}
-		stat = stat_array[0];
+		current_stat = stat_array[0];
 		stat_array.clear();
-		stat.name = "scale factors baseline";
-		stat_array.push_back(stat);
+		current_stat.name = "scale factors baseline";
+		stat_array.push_back(current_stat);
 
-		stat.name = "scale factors str";
-		stat.gear_str += 120;
-		stat_array.push_back(stat);
-		stat.gear_str -= 120;
+		current_stat.name = "scale factors str";
+		current_stat.gear_str += 120;
+		stat_array.push_back(current_stat);
+		current_stat.gear_str -= 120;
 
-		stat.name = "scale factors crit";
-		stat.gear_crit += 120;
-		stat_array.push_back(stat);
-		stat.gear_crit -= 120;
+		current_stat.name = "scale factors crit";
+		current_stat.gear_crit += 120;
+		stat_array.push_back(current_stat);
+		current_stat.gear_crit -= 120;
 
-		stat.name = "scale factors haste";
-		stat.gear_haste += 120;
-		stat_array.push_back(stat);
-		stat.gear_haste -= 120;
+		current_stat.name = "scale factors haste";
+		current_stat.gear_haste += 120;
+		stat_array.push_back(current_stat);
+		current_stat.gear_haste -= 120;
 
-		stat.name = "scale factors mastery";
-		stat.gear_mastery += 120;
-		stat_array.push_back(stat);
-		stat.gear_mastery -= 120;
+		current_stat.name = "scale factors mastery";
+		current_stat.gear_mastery += 120;
+		stat_array.push_back(current_stat);
+		current_stat.gear_mastery -= 120;
 
-		stat.name = "scale factors mult";
-		stat.gear_mult += 120;
-		stat_array.push_back(stat);
-		stat.gear_mult -= 120;
+		current_stat.name = "scale factors mult";
+		current_stat.gear_mult += 120;
+		stat_array.push_back(current_stat);
+		current_stat.gear_mult -= 120;
 
-		stat.name = "scale factors vers";
-		stat.gear_vers += 120;
-		stat_array.push_back(stat);
-		stat.gear_vers -= 120;
+		current_stat.name = "scale factors vers";
+		current_stat.gear_vers += 120;
+		stat_array.push_back(current_stat);
+		current_stat.gear_vers -= 120;
 	}
 }
 

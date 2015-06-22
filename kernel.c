@@ -1232,6 +1232,7 @@ enum {
 #endif
 #if defined(trinket_worldbreakers_resolve)
 	routnum_worldbreakers_resolve_expire,
+	routnum_worldbreakers_resolve_trigger,
 #endif
 };
 
@@ -1399,16 +1400,7 @@ DECL_EVENT( auto_attack_mh ) {
 #endif
 
 #if defined(trinket_worldbreakers_resolve)
-	rti->player.worldbreakers_resolve.stack++;
-	rti->player.worldbreakers_resolve.expire = TIME_OFFSET(FROM_SECONDS(6));
-	eq_enqueue(rti, rti->player.worldbreakers_resolve.expire, routnum_worldbreakers_resolve_expire);
-	if (rti->player.worldbreakers_resolve.stack > 10) {
-		rti->player.worldbreakers_resolve.stack = 10;
-	}
-	else {
-		lprintf(("worldbreakers_resolve stack %d", rti->player.worldbreakers_resolve.stack));
-		refresh_haste(rti);
-	}
+	eq_enqueue(rti, rti->timestamp, routnum_worldbreakers_resolve_trigger);
 #endif
 }
 
@@ -1441,16 +1433,7 @@ DECL_EVENT( auto_attack_oh ) {
 #endif
 
 #if defined(trinket_worldbreakers_resolve)
-	rti->player.worldbreakers_resolve.stack++;
-	rti->player.worldbreakers_resolve.expire = TIME_OFFSET(FROM_SECONDS(6));
-	eq_enqueue(rti, rti->player.worldbreakers_resolve.expire, routnum_worldbreakers_resolve_expire);
-	if (rti->player.worldbreakers_resolve.stack > 10) {
-		rti->player.worldbreakers_resolve.stack = 10;
-	}
-	else {
-		lprintf(("worldbreakers_resolve stack %d", rti->player.worldbreakers_resolve.stack));
-		refresh_haste(rti);
-	}
+	eq_enqueue(rti, rti->timestamp, routnum_worldbreakers_resolve_trigger);
 #endif
 }
 
@@ -2671,6 +2654,18 @@ DECL_EVENT(worldbreakers_resolve_expire) {
 		refresh_haste(rti);
 	}
 }
+DECL_EVENT(worldbreakers_resolve_trigger) {
+	rti->player.worldbreakers_resolve.stack++;
+	rti->player.worldbreakers_resolve.expire = TIME_OFFSET(FROM_SECONDS(6));
+	eq_enqueue(rti, rti->player.worldbreakers_resolve.expire, routnum_worldbreakers_resolve_expire);
+	if (rti->player.worldbreakers_resolve.stack > 10) {
+		rti->player.worldbreakers_resolve.stack = 10;
+	}
+	else {
+		lprintf(("worldbreakers_resolve stack %d", rti->player.worldbreakers_resolve.stack));
+		refresh_haste(rti);
+	}
+}
 #endif
 
 // === anger_management =======================================================
@@ -2881,6 +2876,7 @@ void routine_entries( rtinfo_t* rti, _event_t e ) {
         HOOK_EVENT( mote_of_the_mountain_expire );
 #endif
 #if defined(trinket_worldbreakers_resolve)
+		HOOK_EVENT(worldbreakers_resolve_trigger);
 		HOOK_EVENT(worldbreakers_resolve_expire);
 #endif
     default:

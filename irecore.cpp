@@ -63,6 +63,7 @@ const char* trinket_list[] = {
 	"draenic_stone",
 	"skull_of_war",
 	"mote_of_the_mountain",
+	"worldbreakers_resolve",
 	NULL
 };
 

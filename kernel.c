@@ -68,7 +68,7 @@
 #define shatteredhand_oh 0
 //#define trinket_vial_of_convulsive_shadows 2033
 //#define trinket_forgemasters_insignia 181
-//#define trinket_horn_of_screaming_spirits 2652
+#define trinket_horn_of_screaming_spirits 2652
 //#define trinket_scabbard_of_kyanos 2200
 //#define trinket_badge_of_victory 1456
 //#define trinket_insignia_of_victory 867
@@ -76,7 +76,8 @@
 //#define trinket_formidable_fang 1743
 //#define trinket_draenic_stone 1414
 //#define trinket_skull_of_war 2120
-#define trinket_mote_of_the_mountain 1517
+//#define trinket_mote_of_the_mountain 1517
+#define trinket_worldbreakers_resolve 220
 #endif /* !defined(__OPENCL_VERSION__) */
 
 /* Debug on Host! */
@@ -252,7 +253,7 @@ typedef k32u time_t;
 #define REMAIN( time_to_check ) ((time_t)max(((k32s)rti->player.time_to_check - (k32s)rti->timestamp), 0))
 
 /* Event queue. */
-#define EQ_SIZE_EXP (6)
+#define EQ_SIZE_EXP (7)
 #define EQ_SIZE ((1 << EQ_SIZE_EXP) - 1)
 typedef struct {
     time_t time;
@@ -584,6 +585,12 @@ typedef struct {
         time_t expire;
         RPPM_t proc;
     } mote_of_the_mountain;
+#endif
+#if defined(trinket_worldbreakers_resolve)
+	struct {
+		time_t expire;
+		k32u   stack;
+	} worldbreakers_resolve;
 #endif
     time_t gcd;
 }
@@ -1026,6 +1033,9 @@ void refresh_haste( rtinfo_t* rti ) {
     if ( UP( berserking.expire ) ) haste *= 1.15f;
 #endif
     if ( BUFF_BLOODLUST hostonly( && rti->timestamp ) ) if ( ( rti->timestamp % FROM_SECONDS( 600 ) ) < FROM_SECONDS( 30 ) ) haste *= 1.3f;
+#if defined(trinket_worldbreakers_resolve)
+	haste *= 1.0f + (trinket_worldbreakers_resolve * rti->player.worldbreakers_resolve.stack) * 0.0001;
+#endif
     rti->player.stat.haste = haste - 1.0f;
 }
 
@@ -1220,6 +1230,9 @@ enum {
     routnum_mote_of_the_mountain_trigger,
     routnum_mote_of_the_mountain_expire,
 #endif
+#if defined(trinket_worldbreakers_resolve)
+	routnum_worldbreakers_resolve_expire,
+#endif
 };
 
 enum {
@@ -1384,6 +1397,19 @@ DECL_EVENT( auto_attack_mh ) {
 #else
     eq_enqueue( rti, TIME_OFFSET( FROM_SECONDS( weapon[0].speed / ( 1.0f + rti->player.stat.haste ) ) ), routnum_auto_attack_mh );
 #endif
+
+#if defined(trinket_worldbreakers_resolve)
+	rti->player.worldbreakers_resolve.stack++;
+	rti->player.worldbreakers_resolve.expire = TIME_OFFSET(FROM_SECONDS(6));
+	eq_enqueue(rti, rti->player.worldbreakers_resolve.expire, routnum_worldbreakers_resolve_expire);
+	if (rti->player.worldbreakers_resolve.stack > 10) {
+		rti->player.worldbreakers_resolve.stack = 10;
+	}
+	else {
+		lprintf(("worldbreakers_resolve stack %d", rti->player.worldbreakers_resolve.stack));
+		refresh_haste(rti);
+	}
+#endif
 }
 
 DECL_EVENT( auto_attack_oh ) {
@@ -1412,6 +1438,19 @@ DECL_EVENT( auto_attack_oh ) {
                                                                   ) ) ), routnum_auto_attack_oh );
 #else
     eq_enqueue( rti, TIME_OFFSET( FROM_SECONDS( weapon[1].speed / ( 1.0f + rti->player.stat.haste ) ) ), routnum_auto_attack_oh );
+#endif
+
+#if defined(trinket_worldbreakers_resolve)
+	rti->player.worldbreakers_resolve.stack++;
+	rti->player.worldbreakers_resolve.expire = TIME_OFFSET(FROM_SECONDS(6));
+	eq_enqueue(rti, rti->player.worldbreakers_resolve.expire, routnum_worldbreakers_resolve_expire);
+	if (rti->player.worldbreakers_resolve.stack > 10) {
+		rti->player.worldbreakers_resolve.stack = 10;
+	}
+	else {
+		lprintf(("worldbreakers_resolve stack %d", rti->player.worldbreakers_resolve.stack));
+		refresh_haste(rti);
+	}
 #endif
 }
 
@@ -2624,6 +2663,16 @@ DECL_EVENT( mote_of_the_mountain_expire ) {
 }
 #endif
 
+#if defined(trinket_worldbreakers_resolve)
+DECL_EVENT(worldbreakers_resolve_expire) {
+	if (rti->timestamp == rti->player.worldbreakers_resolve.expire) {
+		lprintf(("worldbreakers_resolve expire"));
+		rti->player.worldbreakers_resolve.stack = 0;
+		refresh_haste(rti);
+	}
+}
+#endif
+
 // === anger_management =======================================================
 void anger_management_count( rtinfo_t* rti, float rage ) {
     time_t t = FROM_SECONDS( rage / 30.0f );
@@ -2830,6 +2879,9 @@ void routine_entries( rtinfo_t* rti, _event_t e ) {
 #if defined(trinket_mote_of_the_mountain)
         HOOK_EVENT( mote_of_the_mountain_trigger );
         HOOK_EVENT( mote_of_the_mountain_expire );
+#endif
+#if defined(trinket_worldbreakers_resolve)
+		HOOK_EVENT(worldbreakers_resolve_expire);
 #endif
     default:
         assert( 0 );

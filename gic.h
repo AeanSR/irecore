@@ -12,6 +12,9 @@ public:
 	gic(QWidget *parent = 0);
 	~gic();
 
+private slots:
+    void on_btnRun_clicked();
+
 private:
 	Ui::gicClass ui;
 };

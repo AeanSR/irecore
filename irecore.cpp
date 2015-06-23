@@ -932,7 +932,7 @@ void parameters_consistency(){
 	}
 }
 
-int main(int argc, char** argv){
+int clic_main(int argc, char** argv){
 	std::cout << "IreCore " << STRFILEVER << " " << __DATE__ << "\n" << std::endl;
 	set_default_parameters();
 	std::vector<kvpair_t> arglist;

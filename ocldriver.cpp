@@ -2,10 +2,6 @@
 
 char* ocl_src_char;
 
-typedef struct{
-	size_t platform_id;
-	size_t device_id;
-} pdpair_t;
 std::vector<pdpair_t> ocl_device_list;
 
 template <typename T>
@@ -56,63 +52,66 @@ T prefix_stddev(const T* _data, size_t n, T mean) {
 
 int ocl_t::init()
 {
-	std::cout << "Query available compute devices ...\n";
-
 	cl_int err;
 	cl_uint num;
+	std::vector<cl_platform_id> platforms;
+
+
+	*report_path << "Query available compute devices ...\n";
+
 	err = clGetPlatformIDs(0, 0, &num);
 	if (err != CL_SUCCESS) {
-		std::cerr << "Unable to get platforms\n";
+		*report_path << "Unable to get platforms\n";
 		return 0;
 	}
 
-	std::vector<cl_platform_id> platforms(num);
+	platforms.resize(num);
 	err = clGetPlatformIDs(num, &platforms[0], &num);
 	if (err != CL_SUCCESS) {
-		std::cerr << "Unable to get platform ID\n";
+		*report_path << "Unable to get platform ID\n";
 		return 0;
 	}
+	if (ocl_device_list.empty()){
+		int device_counter = 0;
+		for (size_t platform_id = 0; platform_id < num; platform_id++){
+			size_t dev_c, info_c;
+			clGetPlatformInfo(platforms[platform_id], CL_PLATFORM_NAME, 0, NULL, &info_c);
+			std::string platname;
+			platname.resize(info_c);
+			clGetPlatformInfo(platforms[platform_id], CL_PLATFORM_NAME, info_c, &platname[0], 0);
+			*report_path << "Platform :" << platname << "\n";
 
-	int device_counter = 0;
-	for (size_t platform_id = 0; platform_id < num; platform_id++){
-		size_t dev_c, info_c;
-		clGetPlatformInfo(platforms[platform_id], CL_PLATFORM_NAME, 0, NULL, &info_c);
-		std::string platname;
-		platname.resize(info_c);
-		clGetPlatformInfo(platforms[platform_id], CL_PLATFORM_NAME, info_c, &platname[0], 0);
-		std::cout << "Platform :" << platname << "\n";
+			cl_context_properties prop[] = { CL_CONTEXT_PLATFORM, reinterpret_cast<cl_context_properties>(platforms[platform_id]), 0 };
+			context = clCreateContextFromType(prop, CL_DEVICE_TYPE_ALL, NULL, NULL, NULL);
+			if (context == 0) {
+				*report_path << "Can't create OpenCL context\n";
+				return 0;
+			}
 
-		cl_context_properties prop[] = { CL_CONTEXT_PLATFORM, reinterpret_cast<cl_context_properties>(platforms[platform_id]), 0 };
-		context = clCreateContextFromType(prop, CL_DEVICE_TYPE_ALL, NULL, NULL, NULL);
-		if (context == 0) {
-			std::cerr << "Can't create OpenCL context\n";
-			return 0;
+			clGetContextInfo(context, CL_CONTEXT_DEVICES, 0, NULL, &dev_c);
+			std::vector<cl_device_id> devices(dev_c / sizeof(cl_device_id));
+			clGetContextInfo(context, CL_CONTEXT_DEVICES, dev_c, &devices[0], 0);
+
+			for (auto i = devices.begin(); i != devices.end(); i++){
+				clGetDeviceInfo(*i, CL_DEVICE_NAME, 0, NULL, &info_c);
+				std::string devname;
+				devname.resize(info_c);
+				clGetDeviceInfo(*i, CL_DEVICE_NAME, info_c, &devname[0], 0);
+				*report_path << "\tDevice " << device_counter++ << ": " << devname.c_str() << "\n";
+				pdpair_t pd;
+				pd.device_id = i - devices.begin();
+				pd.platform_id = platform_id;
+				ocl_device_list.push_back(pd);
+			}
+			clReleaseContext(context);
 		}
-		
-		clGetContextInfo(context, CL_CONTEXT_DEVICES, 0, NULL, &dev_c);
-		std::vector<cl_device_id> devices(dev_c / sizeof(cl_device_id));
-		clGetContextInfo(context, CL_CONTEXT_DEVICES, dev_c, &devices[0], 0);
-
-		for (auto i = devices.begin(); i != devices.end(); i++){
-			clGetDeviceInfo(*i, CL_DEVICE_NAME, 0, NULL, &info_c);
-			std::string devname;
-			devname.resize(info_c);
-			clGetDeviceInfo(*i, CL_DEVICE_NAME, info_c, &devname[0], 0);
-			std::cout << "\tDevice " << device_counter++ << ": " << devname.c_str() << "\n";
-			pdpair_t pd;
-			pd.device_id = i - devices.begin();
-			pd.platform_id = platform_id;
-			ocl_device_list.push_back(pd);
-		}
-		clReleaseContext(context);
 	}
-
 	if (list_available_devices) return 0;
 
 	cl_context_properties prop[] = { CL_CONTEXT_PLATFORM, reinterpret_cast<cl_context_properties>(platforms[ocl_device_list[opencl_device_id].platform_id]), 0 };
 	context = clCreateContextFromType(prop, CL_DEVICE_TYPE_ALL, NULL, NULL, NULL);
 	if (context == 0) {
-		std::cerr << "Can't create OpenCL context\n";
+		*report_path << "Can't create OpenCL context\n";
 		return 0;
 	}
 
@@ -126,18 +125,18 @@ int ocl_t::init()
 	std::string devname;
 	devname.resize(info_c);
 	clGetDeviceInfo(device_used, CL_DEVICE_NAME, info_c, &devname[0], 0);
-	std::cout << "Execute on Device " << opencl_device_id << ": " << devname << std::endl;
-	std::cout << "OK!\n";
+	*report_path << "Execute on Device " << opencl_device_id << ": " << devname << std::endl;
+	*report_path << "OK!\n";
 
 	queue = clCreateCommandQueue(context, device_used, 0, 0);
 	if (queue == 0) {
-		std::cerr << "Can't create command queue\n";
+		*report_path << "Can't create command queue\n";
 		return 0;
 	}
 
 	cl_res = clCreateBuffer(context, CL_MEM_WRITE_ONLY, sizeof(cl_float)* iterations, NULL, NULL);
 	if (cl_res == 0) {
-		std::cerr << "Can't create OpenCL buffer\n";
+		*report_path << "Can't create OpenCL buffer\n";
 		return 0;
 	}
 
@@ -159,7 +158,7 @@ float ocl_t::run(std::string& apl_cstr, std::string& predef){
 	cl_int err;
 	auto t1 = std::chrono::high_resolution_clock::now();
 
-    std::cout << "JIT ...\n";
+    *report_path << "JIT ...\n";
 
 	std::string source(predef);
 	source.append(ocl_src_char);
@@ -174,46 +173,45 @@ float ocl_t::run(std::string& apl_cstr, std::string& predef){
     }
 
 	if ((err = clBuildProgram(program, 0, 0, "-cl-single-precision-constant -cl-denorms-are-zero -cl-fast-relaxed-math", 0, 0)) != CL_SUCCESS) {
-		std::cerr << "Can't build program\n";
+		*report_path << "Can't build program\n";
 		size_t len;
 		char buffer[204800];
 		cl_build_status bldstatus;
-		printf("\nError %d: Failed to build program executable\n", err);
+		*report_path << "\nError " << err << ": Failed to build program executable\n";
 		err = clGetProgramBuildInfo(program, device_used, CL_PROGRAM_BUILD_STATUS, sizeof(bldstatus), (void *)&bldstatus, &len);
 		if (err != CL_SUCCESS)
 		{
-			printf("Build Status error %d\n", err);
-			exit(1);
+			*report_path << "Build Status error " << err << "\n";
+			return -1.0;
 		}
-		if (bldstatus == CL_BUILD_SUCCESS) printf("Build Status: CL_BUILD_SUCCESS\n");
-		if (bldstatus == CL_BUILD_NONE) printf("Build Status: CL_BUILD_NONE\n");
-		if (bldstatus == CL_BUILD_ERROR) printf("Build Status: CL_BUILD_ERROR\n");
-		if (bldstatus == CL_BUILD_IN_PROGRESS) printf("Build Status: CL_BUILD_IN_PROGRESS\n");
+		if (bldstatus == CL_BUILD_SUCCESS) *report_path << "Build Status: CL_BUILD_SUCCESS\n";
+		if (bldstatus == CL_BUILD_NONE) *report_path << "Build Status: CL_BUILD_NONE\n";
+		if (bldstatus == CL_BUILD_ERROR) *report_path << "Build Status: CL_BUILD_ERROR\n";
+		if (bldstatus == CL_BUILD_IN_PROGRESS) *report_path << "Build Status: CL_BUILD_IN_PROGRESS\n";
 		err = clGetProgramBuildInfo(program, device_used, CL_PROGRAM_BUILD_OPTIONS, sizeof(buffer), buffer, &len);
 		if (err != CL_SUCCESS)
 		{
-			printf("Build Options error %d\n", err);
-			exit(1);
+			*report_path << "Build Options error " << err << "\n";
+			return -1.0;
 		}
-		printf("Build Options: %s\n", buffer);
+		*report_path << "Build Options: " << buffer << "\n";
 		err = clGetProgramBuildInfo(program, device_used, CL_PROGRAM_BUILD_LOG, sizeof(buffer), buffer, &len);
 		if (err != CL_SUCCESS)
 		{
-			printf("Build Log error %d\n", err);
-			exit(1);
+			*report_path << "Build Log error " << err << "\n";
+			return -1.0;
 		}
-		printf("Build Log:\n%s\n", buffer);
-		exit(1);
+		*report_path << "Build Log:\n" << buffer << "\n";
 		return -1.0;
 	}
     if (program == 0) {
-        std::cerr << "Can't load or build program\n";
+		*report_path << "Can't load or build program\n";
         return -1.0;
     }
 
     cl_kernel sim_iterate = clCreateKernel(program, "sim_iterate", 0);
     if (sim_iterate == 0) {
-        std::cerr << "Can't load kernel\n";
+		*report_path << "Can't load kernel\n";
         clReleaseProgram(program);
         return -1.0;
     }
@@ -233,7 +231,7 @@ float ocl_t::run(std::string& apl_cstr, std::string& predef){
 		clSetKernelArg(sim_iterate, 7, sizeof(cl_uint), &thisstat->gear_vers);
 
 
-		std::cout << "Sim " << thisstat->name << "...\n";
+		*report_path << "Sim " << thisstat->name << "...\n";
 		size_t work_size = iterations;
 		err = clEnqueueNDRangeKernel(queue, sim_iterate, 1, 0, &work_size, 0, 0, 0, 0);
 
@@ -243,7 +241,7 @@ float ocl_t::run(std::string& apl_cstr, std::string& predef){
 		if (err == CL_SUCCESS) {
 			err = clEnqueueReadBuffer(queue, cl_res, CL_TRUE, 0, sizeof(float) * iterations, &res[0], 0, 0, 0);
 			if (err != CL_SUCCESS){
-				printf("Can't read back data %d\n", err);
+				*report_path << "Can't read back data " << err << "\n";
 				ret = -1.0;
 			}
 			else{
@@ -253,13 +251,13 @@ float ocl_t::run(std::string& apl_cstr, std::string& predef){
 			}
 		}
 		else{
-			printf("Can't run kernel %d\n", err);
+			*report_path << "Can't run kernel " << err << "\n";
 			ret = -1.0;
 		}
 
 		*report_path << "Report for Stat Set " << thisstat->name << std::endl;
 		*report_path << "DPS " << (thisstat->dps = ret) << std::endl;
-		*report_path << "DPS Range(stddev) " << dev << std::endl;
+		*report_path << "DPS Range(stddev) " << (thisstat->dpsr = dev) << std::endl;
 		*report_path << "DPS Error(95% conf.) " << (thisstat->dpse = 2.0 * dev / sqrt(iterations)) << std::endl;
 	}
     delete[] res;
@@ -270,11 +268,11 @@ float ocl_t::run(std::string& apl_cstr, std::string& predef){
 	auto t3 = std::chrono::high_resolution_clock::now();
 	std::chrono::duration<double> time_span1 = std::chrono::duration_cast<std::chrono::duration<double>>(t3 - t1);
 	std::chrono::duration<double> time_span2 = std::chrono::duration_cast<std::chrono::duration<double>>(t3 - t2);
-	std::cout << std::endl;
-	std::cout << "Total elapsed time " << time_span1.count() << std::endl;
-	std::cout << "Simulation time " << time_span2.count() << std::endl;
-	std::cout << "Speedup " << (int)(iterations * max_length * stat_array.size() / time_span2.count()) << "x" << std::endl;
-	std::cout << std::endl;
+	*report_path << std::endl;
+	*report_path << "Total elapsed time " << time_span1.count() << std::endl;
+	*report_path << "Simulation time " << time_span2.count() << std::endl;
+	*report_path << "Speedup " << (int)(iterations * max_length * stat_array.size() / time_span2.count()) << "x" << std::endl;
+	*report_path << std::endl;
     return 1;
 }
 

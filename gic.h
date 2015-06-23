@@ -11,6 +11,7 @@ class gic : public QMainWindow
 public:
 	gic(QWidget *parent = 0);
 	~gic();
+	void reset_result_page();
 
 private slots:
     void on_btnRun_clicked();

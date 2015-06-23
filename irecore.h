@@ -1,5 +1,6 @@
 #include <iostream>
 #include <fstream>
+#include <functional>
 #include <string>
 #include <vector>
 #include <random>
@@ -25,6 +26,7 @@ typedef struct {
 	cl_uint gear_mult;
 	cl_uint gear_vers;
 	float dps;
+	float dpsr;
 	float dpse;
 } stat_t;
 typedef struct{
@@ -43,11 +45,29 @@ typedef struct{
 	int bloodlust;
 } raidbuff_t;
 extern stat_t current_stat;
+extern raidbuff_t raidbuff;
 extern std::vector<stat_t> stat_array;
 extern cl_uint seed;
 extern int iterations;
+extern int rng_engine;
+extern float vary_combat_length;
 extern float max_length;
+extern float initial_health_percentage;
+extern float death_pct;
+extern float power_max; // rage_max
+extern int plate_specialization;
+extern int single_minded;
+extern int race;
+extern float mh_speed;
+extern float oh_speed;
+extern int mh_low, mh_high;
+extern int oh_low, oh_high;
+extern int mh_type;
+extern int oh_type;
+extern int talent;
+extern int default_actions;
 extern int list_available_devices;
+extern int calculate_scale_factors;
 extern std::ostream* report_path;
 
 class ocl_t{
@@ -68,6 +88,11 @@ public:
         free();
     }
 };
+typedef struct{
+	size_t platform_id;
+	size_t device_id;
+} pdpair_t;
+extern std::vector<pdpair_t> ocl_device_list;
 
 ocl_t& ocl();
 

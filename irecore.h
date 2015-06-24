@@ -68,6 +68,24 @@ extern int talent;
 extern int default_actions;
 extern int list_available_devices;
 extern int calculate_scale_factors;
+extern int archmages_incandescence;
+extern int archmages_greater_incandescence;
+extern int t17_2pc;
+extern int t17_4pc;
+extern int t18_2pc;
+extern int t18_4pc;
+extern int thunderlord_mh;
+extern int thunderlord_oh;
+extern int bleeding_hollow_mh;
+extern int bleeding_hollow_oh;
+extern int shattered_hand_mh;
+extern int shattered_hand_oh;
+extern int developer_debug;
+extern int list_available_devices;
+extern std::string trinket1_name;
+extern std::string trinket2_name;
+extern int trinket1_value;
+extern int trinket2_value;
 extern std::ostream* report_path;
 
 class ocl_t{
@@ -99,6 +117,7 @@ typedef struct{
 extern std::vector<pdpair_t> ocl_device_list;
 void build_arglist(std::vector<kvpair_t>& arglist, int argc, char** argv);
 void parse_parameters(std::vector<kvpair_t>& arglist);
+extern const char* trinket_list[];
 
 ocl_t& ocl();
 

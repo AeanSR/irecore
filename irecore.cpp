@@ -854,15 +854,29 @@ void auto_apl(){
 
 void parameters_consistency(){
 	single_minded = (mh_type == 1 && oh_type == 1);
+	if (0 == trinket1_name.compare(trinket2_name) && 0 != trinket1_name.compare("none")){
+		*report_path << "Duplicated trinkets \"" << trinket2_name << "\" not allowed. Trinket 2 reset to none." << std::endl;
+		trinket2_name = "none";
+	}
 	if (mh_high < mh_low){
+		*report_path << "MH Low Damage is higher than MH High Damage, exchanged." << std::endl;
 		int t = mh_high;
 		mh_high = mh_low;
 		mh_low = t;
 	}
 	if (oh_high < oh_low){
+		*report_path << "OH Low Damage is higher than OH High Damage, exchanged." << std::endl;
 		int t = oh_high;
 		oh_high = oh_low;
 		oh_low = t;
+	}
+	if (mh_speed <= .0){
+		*report_path << "MH Speed less than or equal to zero, reset to 1.5s." << std::endl;
+		mh_speed = 1.5;
+	}
+	if (oh_speed <= .0){
+		*report_path << "OH Speed less than or equal to zero, reset to 1.5s." << std::endl;
+		oh_speed = 1.5;
 	}
 	if (stat_not_pushed) {
 		if (current_stat.name.empty()) current_stat.name = "<unnamed stat set>";

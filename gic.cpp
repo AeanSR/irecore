@@ -4,6 +4,50 @@
 
 void set_default_parameters();
 
+typedef struct{
+	int type;
+	int str;
+	int crit;
+	int haste;
+	int mastery;
+	int mult;
+	int vers;
+} item_t;
+item_t gear_list[16];
+int selected_gear_slot = 0;
+QString gear_type_list_misc[] = {
+	QString(),
+};
+QString gear_type_list_armor[] = {
+	QApplication::translate("gicClass", "Plate"),
+	QApplication::translate("gicClass", "Mail/Leather/Cloth"),
+	QString(),
+};
+QString gear_type_list_weapon[] = {
+	QApplication::translate("gicClass", "1H Sword/Axe/Mace/Fist"),
+	QApplication::translate("gicClass", "2H Sword/Axe/Mace/Polearm"),
+	QApplication::translate("gicClass", "Dagger"),
+	QString(),
+};
+QString* gear_type_list[] = {
+	gear_type_list_armor,
+	gear_type_list_misc,
+	gear_type_list_armor,
+	gear_type_list_misc,
+	gear_type_list_armor,
+	gear_type_list_armor,
+	gear_type_list_weapon,
+	gear_type_list_weapon,
+	gear_type_list_armor,
+	gear_type_list_armor,
+	gear_type_list_armor,
+	gear_type_list_armor,
+	gear_type_list_misc,
+	gear_type_list_misc,
+	gear_type_list_misc,
+	gear_type_list_misc,
+};
+
 void gic::reset_result_page(){
 	ui.lblDPS->setText("N/A");
 	ui.lblDPSRange->setText("N/A");
@@ -41,7 +85,6 @@ gic::gic(QWidget *parent)
 	qRegisterMetaType<QString>("QString");
 	reset_result_page();
 	ui.tabWidget->setCurrentIndex(0);
-	connect(this, SIGNAL(more_result(const QString &)), ui.txtResult, SLOT(append(const QString &)));
 
 	// Show current version.
 	QString ver_str(QApplication::translate("gicClass", "  Current Version: ", 0));
@@ -200,8 +243,157 @@ gic::gic(QWidget *parent)
 		<< "REMAIN(potion.expire)"
 		<< "REMAIN(potion.cd)";
 	ui.listConditions->addItems(lists);
+	lists.clear();
 	auto_apl();
 	ui.txtAPL->setPlainText(QString(apl.c_str()));
+
+	ui.comboRegion->addItem("cn");
+	ui.comboRegion->addItem("us");
+	ui.comboRegion->addItem("eu");
+	ui.comboRegion->addItem("tw");
+	ui.comboRegion->addItem("kr");
+
+	connect(ui.radioHelm, SIGNAL(toggled(bool)), this, SLOT(select_gear_slot()));
+	connect(ui.radioNeck, SIGNAL(toggled(bool)), this, SLOT(select_gear_slot()));
+	connect(ui.radioShoulder, SIGNAL(toggled(bool)), this, SLOT(select_gear_slot()));
+	connect(ui.radioBack, SIGNAL(toggled(bool)), this, SLOT(select_gear_slot()));
+	connect(ui.radioChest, SIGNAL(toggled(bool)), this, SLOT(select_gear_slot()));
+	connect(ui.radioWrist, SIGNAL(toggled(bool)), this, SLOT(select_gear_slot()));
+	connect(ui.radioMainhand, SIGNAL(toggled(bool)), this, SLOT(select_gear_slot()));
+	connect(ui.radioOffhand, SIGNAL(toggled(bool)), this, SLOT(select_gear_slot()));
+	connect(ui.radioHand, SIGNAL(toggled(bool)), this, SLOT(select_gear_slot()));
+	connect(ui.radioWaist, SIGNAL(toggled(bool)), this, SLOT(select_gear_slot()));
+	connect(ui.radioLeg, SIGNAL(toggled(bool)), this, SLOT(select_gear_slot()));
+	connect(ui.radioFeet, SIGNAL(toggled(bool)), this, SLOT(select_gear_slot()));
+	connect(ui.radioFinger1, SIGNAL(toggled(bool)), this, SLOT(select_gear_slot()));
+	connect(ui.radioFinger2, SIGNAL(toggled(bool)), this, SLOT(select_gear_slot()));
+	connect(ui.radioTrinket1, SIGNAL(toggled(bool)), this, SLOT(select_gear_slot()));
+	connect(ui.radioTrinket2, SIGNAL(toggled(bool)), this, SLOT(select_gear_slot()));
+
+	connect(ui.txtItemStr, SIGNAL(textEdited(const QString &)), this, SLOT(gear_summary_calculate()));
+	connect(ui.txtItemCrit, SIGNAL(textEdited(const QString &)), this, SLOT(gear_summary_calculate()));
+	connect(ui.txtItemHaste, SIGNAL(textEdited(const QString &)), this, SLOT(gear_summary_calculate()));
+	connect(ui.txtItemMastery, SIGNAL(textEdited(const QString &)), this, SLOT(gear_summary_calculate()));
+	connect(ui.txtItemMult, SIGNAL(textEdited(const QString &)), this, SLOT(gear_summary_calculate()));
+	connect(ui.txtItemVers, SIGNAL(textEdited(const QString &)), this, SLOT(gear_summary_calculate()));
+	connect(ui.comboItemType, SIGNAL(activated(int)), this, SLOT(gear_summary_calculate()));
+	connect(ui.comboRace, SIGNAL(activated(int)), this, SLOT(gear_summary_calculate()));
+	connect(ui.checkRaidBuffAP, SIGNAL(stateChanged(int)), this, SLOT(gear_summary_calculate()));
+	connect(ui.checkRaidBuffStr, SIGNAL(stateChanged(int)), this, SLOT(gear_summary_calculate()));
+	connect(ui.checkRaidBuffCrit, SIGNAL(stateChanged(int)), this, SLOT(gear_summary_calculate()));
+	connect(ui.checkRaidBuffMult, SIGNAL(stateChanged(int)), this, SLOT(gear_summary_calculate()));
+	connect(ui.checkRaidBuffVers, SIGNAL(stateChanged(int)), this, SLOT(gear_summary_calculate()));
+	connect(ui.checkRaidBuffHaste, SIGNAL(stateChanged(int)), this, SLOT(gear_summary_calculate()));
+	connect(ui.checkRaidBuffMastery, SIGNAL(stateChanged(int)), this, SLOT(gear_summary_calculate()));
+
+	ui.comboIncandescence->addItem(QApplication::translate("gicClass", "No Legendary Ring"));
+	ui.comboIncandescence->addItem(QApplication::translate("gicClass", "Incandescence(690)"));
+	ui.comboIncandescence->addItem(QApplication::translate("gicClass", "Greater Incandescence(715)"));
+
+	ui.comboMHEnchant->addItem(QApplication::translate("gicClass", "No Enchantment."));
+	ui.comboOHEnchant->addItem(QApplication::translate("gicClass", "No Enchantment."));
+	ui.comboMHEnchant->addItem(QApplication::translate("gicClass", "Thunderlord"));
+	ui.comboOHEnchant->addItem(QApplication::translate("gicClass", "Thunderlord"));
+	ui.comboMHEnchant->addItem(QApplication::translate("gicClass", "Bleeding Hollow"));
+	ui.comboOHEnchant->addItem(QApplication::translate("gicClass", "Bleeding Hollow"));
+	ui.comboMHEnchant->addItem(QApplication::translate("gicClass", "Shattered Hand"));
+	ui.comboOHEnchant->addItem(QApplication::translate("gicClass", "Shattered Hand"));
+
+	connect(ui.txtMHHigh, SIGNAL(textEdited(const QString &)), this, SLOT(mh_dps_calculate()));
+	connect(ui.txtMHLow, SIGNAL(textEdited(const QString &)), this, SLOT(mh_dps_calculate()));
+	connect(ui.txtMHSpeed, SIGNAL(textEdited(const QString &)), this, SLOT(mh_dps_calculate()));
+	connect(ui.txtOHHigh, SIGNAL(textEdited(const QString &)), this, SLOT(oh_dps_calculate()));
+	connect(ui.txtOHLow, SIGNAL(textEdited(const QString &)), this, SLOT(oh_dps_calculate()));
+	connect(ui.txtOHSpeed, SIGNAL(textEdited(const QString &)), this, SLOT(oh_dps_calculate()));
+
+	lists <<
+		QApplication::translate("gicClass", "No Trinket Special.") <<
+		QApplication::translate("gicClass", "Vial of Convulsive Shadows") <<
+		QApplication::translate("gicClass", "Forgemaster's Insignia") <<
+		QApplication::translate("gicClass", "Horn of Screaming Spirits") <<
+		QApplication::translate("gicClass", "Scabbard of Kyanos") <<
+		QApplication::translate("gicClass", "Badge of Victory") <<
+		QApplication::translate("gicClass", "Insignia of Victory") <<
+		QApplication::translate("gicClass", "Tectus' Beating Heart") <<
+		QApplication::translate("gicClass", "Formidable Fang") <<
+		QApplication::translate("gicClass", "Draenic Stone") <<
+		QApplication::translate("gicClass", "Skull of War") <<
+		QApplication::translate("gicClass", "Mote of the Mountain") <<
+		QApplication::translate("gicClass", "Worldbreaker's Resolve");
+	ui.comboTrinketSpecial1->addItems(lists);
+	ui.comboTrinketSpecial2->addItems(lists);
+	lists.clear();
+
+	lists <<
+		QApplication::translate("gicClass", "Not set.") <<
+		QApplication::translate("gicClass", "Human") <<
+		QApplication::translate("gicClass", "Dwarf") <<
+		QApplication::translate("gicClass", "Gnome") <<
+		QApplication::translate("gicClass", "Night Elf(day)") <<
+		QApplication::translate("gicClass", "Night Elf(night)") <<
+		QApplication::translate("gicClass", "Draenei") <<
+		QApplication::translate("gicClass", "Worgen") <<
+		QApplication::translate("gicClass", "Orc") <<
+		QApplication::translate("gicClass", "Troll") <<
+		QApplication::translate("gicClass", "Tauren") <<
+		QApplication::translate("gicClass", "Undead") <<
+		QApplication::translate("gicClass", "Blood Elf") <<
+		QApplication::translate("gicClass", "Goblin") <<
+		QApplication::translate("gicClass", "Pandaren");
+	ui.comboRace->addItems(lists);
+	lists.clear();
+
+	ui.comboTalent1->addItem(QApplication::translate("gicClass", "Not set."));
+	ui.comboTalent1->addItem(QApplication::translate("gicClass", "Juggernaut"));
+	ui.comboTalent1->addItem(QApplication::translate("gicClass", "Double Time"));
+	ui.comboTalent1->addItem(QApplication::translate("gicClass", "Warbringer"));
+
+	ui.comboTalent2->addItem(QApplication::translate("gicClass", "Not set."));
+	ui.comboTalent2->addItem(QApplication::translate("gicClass", "Enraged Regeneration"));
+	ui.comboTalent2->addItem(QApplication::translate("gicClass", "Second Wind"));
+	ui.comboTalent2->addItem(QApplication::translate("gicClass", "Impending Victory"));
+
+	ui.comboTalent3->addItem(QApplication::translate("gicClass", "Not set."));
+	ui.comboTalent3->addItem(QApplication::translate("gicClass", "Furious Strike"));
+	ui.comboTalent3->addItem(QApplication::translate("gicClass", "Sudden Death"));
+	ui.comboTalent3->addItem(QApplication::translate("gicClass", "Unquenchable Thirst"));
+
+	ui.comboTalent4->addItem(QApplication::translate("gicClass", "Not set."));
+	ui.comboTalent4->addItem(QApplication::translate("gicClass", "Storm Bolt"));
+	ui.comboTalent4->addItem(QApplication::translate("gicClass", "Shockwave"));
+	ui.comboTalent4->addItem(QApplication::translate("gicClass", "Dragon Roar"));
+
+	ui.comboTalent5->addItem(QApplication::translate("gicClass", "Not set."));
+	ui.comboTalent5->addItem(QApplication::translate("gicClass", "Mass Spell Reflection"));
+	ui.comboTalent5->addItem(QApplication::translate("gicClass", "Safeguard"));
+	ui.comboTalent5->addItem(QApplication::translate("gicClass", "Vigilance"));
+
+	ui.comboTalent6->addItem(QApplication::translate("gicClass", "Not set."));
+	ui.comboTalent6->addItem(QApplication::translate("gicClass", "Avatar"));
+	ui.comboTalent6->addItem(QApplication::translate("gicClass", "Bloodbath"));
+	ui.comboTalent6->addItem(QApplication::translate("gicClass", "Bladestorm"));
+
+	ui.comboTalent7->addItem(QApplication::translate("gicClass", "Not set."));
+	ui.comboTalent7->addItem(QApplication::translate("gicClass", "Anger Management"));
+	ui.comboTalent7->addItem(QApplication::translate("gicClass", "Ravager"));
+	ui.comboTalent7->addItem(QApplication::translate("gicClass", "Siegebreaker"));
+
+	ui.tableGearSummary->setItem(1, 0, new QTableWidgetItem(QApplication::translate("gicClass", "Strength")));
+	ui.tableGearSummary->setItem(2, 0, new QTableWidgetItem(QApplication::translate("gicClass", "AP")));
+	ui.tableGearSummary->setItem(3, 0, new QTableWidgetItem(QApplication::translate("gicClass", "Crit")));
+	ui.tableGearSummary->setItem(4, 0, new QTableWidgetItem(QApplication::translate("gicClass", "Haste")));
+	ui.tableGearSummary->setItem(5, 0, new QTableWidgetItem(QApplication::translate("gicClass", "Mastery")));
+	ui.tableGearSummary->setItem(6, 0, new QTableWidgetItem(QApplication::translate("gicClass", "Mult")));
+	ui.tableGearSummary->setItem(7, 0, new QTableWidgetItem(QApplication::translate("gicClass", "Vers")));
+	ui.tableGearSummary->setItem(0, 1, new QTableWidgetItem(QApplication::translate("gicClass", "Gear")));
+	ui.tableGearSummary->setItem(0, 2, new QTableWidgetItem(QApplication::translate("gicClass", "Buffed")));
+
+	QString* p = gear_type_list[selected_gear_slot];
+	while (p->length())
+		ui.comboItemType->addItem(*p++);
+	ui.comboItemType->setCurrentIndex(gear_list[selected_gear_slot].type);
+	gear_summary_calculate();
+
 }
 
 gic::~gic()
@@ -256,6 +448,8 @@ void gic::on_btnRun_clicked()
 	reset_result_page(); 
 	ui.tabWidget->setCurrentWidget(ui.tabResult);
 	ui.btnRun->setDisabled(true);
+	set_default_parameters();
+	gear_summary_calculate();
 	QtConcurrent::run(this, &gic::run_simulation);
 }
 
@@ -268,8 +462,6 @@ void gic::run_simulation(){
 	struct tm* ts = localtime(&rawtime);
 	strftime(header, 80, "============================== %H:%M:%S ==============================", ts);
 
-	
-	set_default_parameters();
 	stat_array.clear();
 
 	if (!simlog) simlog = new ofunctionstream(this);
@@ -300,6 +492,45 @@ void gic::run_simulation(){
 	raidbuff.sta = ui.checkRaidBuffSta->isChecked();
 	raidbuff.str = ui.checkRaidBuffStr->isChecked();
 	raidbuff.vers = ui.checkRaidBuffVers->isChecked();
+
+	talent = 0;
+	talent += ui.comboTalent7->currentIndex();
+	talent += ui.comboTalent6->currentIndex() * 10;
+	talent += ui.comboTalent5->currentIndex() * 100;
+	talent += ui.comboTalent4->currentIndex() * 1000;
+	talent += ui.comboTalent3->currentIndex() * 10000;
+	talent += ui.comboTalent2->currentIndex() * 100000;
+	talent += ui.comboTalent1->currentIndex() * 1000000;
+	race = ui.comboRace->currentIndex();
+	trinket1_name = trinket_list[ui.comboTrinketSpecial1->currentIndex()];
+	trinket2_name = trinket_list[ui.comboTrinketSpecial2->currentIndex()];
+	trinket1_value = ui.txtTrinketValue1->text().toInt();
+	trinket2_value = ui.txtTrinketValue2->text().toInt();
+	
+	mh_high = ui.txtMHHigh->text().toInt();
+	oh_high = ui.txtOHHigh->text().toInt();
+	mh_low = ui.txtMHLow->text().toInt();
+	oh_low = ui.txtOHLow->text().toInt();
+	mh_speed = ui.txtMHSpeed->text().toFloat();
+	oh_speed = ui.txtOHSpeed->text().toFloat();
+	mh_type = gear_list[6].type;
+	oh_type = gear_list[7].type;
+
+	power_max = 100;
+	if (ui.checkGlyphOfUnendingRage->isChecked()) power_max += 20;
+	if (race == 3) power_max *= 1.05;
+	t17_2pc = ui.checkT172P->isChecked();
+	t17_4pc = ui.checkT174P->isChecked();
+	t18_2pc = ui.checkT182P->isChecked();
+	t18_4pc = ui.checkT184P->isChecked();
+	archmages_incandescence = (ui.comboIncandescence->currentIndex() == 1);
+	archmages_greater_incandescence = (ui.comboIncandescence->currentIndex() == 2);
+	thunderlord_mh = (ui.comboMHEnchant->currentIndex() == 1);
+	bleeding_hollow_mh = (ui.comboMHEnchant->currentIndex() == 2);
+	shattered_hand_mh = (ui.comboMHEnchant->currentIndex() == 3);
+	thunderlord_oh = (ui.comboOHEnchant->currentIndex() == 1);
+	bleeding_hollow_oh = (ui.comboOHEnchant->currentIndex() == 2);
+	shattered_hand_oh = (ui.comboOHEnchant->currentIndex() == 3);
 
 	apl = ui.txtAPL->toPlainText().toStdString();
 	default_actions = ui.checkDefaultActions->isChecked();
@@ -466,4 +697,189 @@ void gic::on_listConditions_itemDoubleClicked()
 {
 	if (ui.listConditions->currentItem())
 		ui.txtAPL->textCursor().insertText(ui.listConditions->currentItem()->text());
+}
+
+void gic::on_btnImport_clicked()
+{
+	std::string region;
+	std::string realm;
+	std::string name;
+	region = ui.comboRegion->currentText().toStdString();
+	realm = ui.txtRealm->text().toStdString();
+	name = ui.txtCharacter->text().toStdString();
+	import_player(this, realm, name, region);
+
+}
+
+
+
+void gic::mh_dps_calculate()
+{
+	mh_high = ui.txtMHHigh->text().toInt();
+	mh_low = ui.txtMHLow->text().toInt();
+	mh_speed = ui.txtMHSpeed->text().toFloat();
+	if (mh_speed <= .0) mh_speed = 1.5;
+	float mh_dps = (mh_high + mh_low) * 0.5 / mh_speed;
+	char buf[32];
+	sprintf(buf, "%.1f", mh_dps + 0.05);
+	ui.lblMHDPS->setText(buf);
+}
+void gic::oh_dps_calculate()
+{
+	oh_high = ui.txtOHHigh->text().toInt();
+	oh_low = ui.txtOHLow->text().toInt();
+	oh_speed = ui.txtOHSpeed->text().toFloat();
+	if (oh_speed <= .0) oh_speed = 1.5;
+	float oh_dps = (oh_high + oh_low) * 0.5 / oh_speed;
+	char buf[32];
+	sprintf(buf, "%.1f", oh_dps + 0.05);
+	ui.lblOHDPS->setText(buf);
+}
+
+QString qsprint(int v){
+	char buf[32];
+	sprintf(buf, "%d", v);
+	return buf;
+}
+QString qsprint(float v){
+	char buf[32];
+	sprintf(buf, "%.2f%%", v * 100.f);
+	return buf;
+}
+
+void gic::select_gear_slot()
+{
+	if (ui.radioHelm->isChecked()) selected_gear_slot = 0;
+	if (ui.radioNeck->isChecked()) selected_gear_slot = 1;
+	if (ui.radioShoulder->isChecked()) selected_gear_slot = 2;
+	if (ui.radioBack->isChecked()) selected_gear_slot = 3;
+	if (ui.radioChest->isChecked()) selected_gear_slot = 4;
+	if (ui.radioWrist->isChecked()) selected_gear_slot = 5;
+	if (ui.radioMainhand->isChecked()) selected_gear_slot = 6;
+	if (ui.radioOffhand->isChecked()) selected_gear_slot = 7;
+	if (ui.radioHand->isChecked()) selected_gear_slot = 8;
+	if (ui.radioWaist->isChecked()) selected_gear_slot = 9;
+	if (ui.radioLeg->isChecked()) selected_gear_slot = 10;
+	if (ui.radioFeet->isChecked()) selected_gear_slot = 11;
+	if (ui.radioFinger1->isChecked()) selected_gear_slot = 12;
+	if (ui.radioFinger2->isChecked()) selected_gear_slot = 13;
+	if (ui.radioTrinket1->isChecked()) selected_gear_slot = 14;
+	if (ui.radioTrinket2->isChecked()) selected_gear_slot = 15;
+	ui.txtItemStr->setText(qsprint(gear_list[selected_gear_slot].str));
+	ui.txtItemCrit->setText(qsprint(gear_list[selected_gear_slot].crit));
+	ui.txtItemHaste->setText(qsprint(gear_list[selected_gear_slot].haste));
+	ui.txtItemMastery->setText(qsprint(gear_list[selected_gear_slot].mastery));
+	ui.txtItemMult->setText(qsprint(gear_list[selected_gear_slot].mult));
+	ui.txtItemVers->setText(qsprint(gear_list[selected_gear_slot].vers));
+	ui.comboItemType->clear();
+	QString* p = gear_type_list[selected_gear_slot];
+	while (p->length())
+		ui.comboItemType->addItem(*p++);
+	ui.comboItemType->setCurrentIndex(gear_list[selected_gear_slot].type);
+}
+
+#define RACE_NONE 0
+#define RACE_HUMAN 1
+#define RACE_DWARF 2
+#define RACE_GNOME 3
+#define RACE_NIGHTELF_DAY 4
+#define RACE_NIGHTELF_NIGHT 5
+#define RACE_DRAENEI 6
+#define RACE_WORGEN 7
+#define RACE_ORC 8
+#define RACE_TROLL 9
+#define RACE_TAUREN 10
+#define RACE_UNDEAD 11
+#define RACE_BLOODELF 12
+#define RACE_GOBLIN 13
+#define RACE_PANDAREN 14
+
+void gic::gear_summary_calculate()
+{
+	race = ui.comboRace->currentIndex();
+	gear_list[selected_gear_slot].type = ui.comboItemType->currentIndex();
+	gear_list[selected_gear_slot].str = ui.txtItemStr->text().toInt();
+	gear_list[selected_gear_slot].crit = ui.txtItemCrit->text().toInt();
+	gear_list[selected_gear_slot].haste = ui.txtItemHaste->text().toInt();
+	gear_list[selected_gear_slot].mastery = ui.txtItemMastery->text().toInt();
+	gear_list[selected_gear_slot].mult = ui.txtItemMult->text().toInt();
+	gear_list[selected_gear_slot].vers = ui.txtItemVers->text().toInt();
+
+	plate_specialization = 1;
+	int str = 0, crit = 0, haste = 0, mastery = 0, mult = 0, vers = 0, ap = 0;
+
+	for (int i = 0; i < 16; i++){
+		plate_specialization = plate_specialization && ((gear_type_list[i] != gear_type_list_armor) || (gear_list[i].type == 0));
+		str += gear_list[i].str;
+		crit += gear_list[i].crit;
+		haste += gear_list[i].haste;
+		mastery += gear_list[i].mastery;
+		mult += gear_list[i].mult;
+		vers += gear_list[i].vers;
+	}
+
+	ui.tableGearSummary->setItem(1, 1, new QTableWidgetItem(qsprint(str)));
+	ui.tableGearSummary->setItem(3, 1, new QTableWidgetItem(qsprint(crit)));
+	ui.tableGearSummary->setItem(4, 1, new QTableWidgetItem(qsprint(haste)));
+	ui.tableGearSummary->setItem(5, 1, new QTableWidgetItem(qsprint(mastery)));
+	ui.tableGearSummary->setItem(6, 1, new QTableWidgetItem(qsprint(mult)));
+	ui.tableGearSummary->setItem(7, 1, new QTableWidgetItem(qsprint(vers)));
+	
+	current_stat.gear_str = str;
+	current_stat.gear_crit = crit;
+	current_stat.gear_mastery = mastery;
+	current_stat.gear_haste = haste;
+	current_stat.gear_mult = mult;
+	current_stat.gear_vers = vers;
+
+	int racial_base_str[] = {
+		0, 0, 5, -5, -4, -4, 66, 3, 3, 1, 5, -1, -3, -3, 0,
+	};
+
+	float fstr = str;
+	float coeff = 1.0f;
+	if (plate_specialization) coeff *= 1.05f;
+	if (ui.checkRaidBuffStr->isChecked()) coeff *= 1.05f;
+	str = (int)(fstr * coeff);
+	fstr = 1455; /* Base str @lvl 100. */
+	fstr += racial_base_str[race]; /* Racial str. */
+	str += (int)(fstr * coeff);
+	
+	ap = str;
+	if (ui.checkRaidBuffAP->isChecked()) ap = (int)(ap * 1.1f + 0.5f);
+
+	float fmastery = (float)mastery;
+	if (ui.checkRaidBuffMastery->isChecked()) fmastery += 550;
+	fmastery = 1.4f * (0.08f + fmastery / 11000);
+
+	float fcrit = (float)crit;
+	fcrit *= 1.05f;
+	fcrit = 0.05f + fcrit / 11000;
+	if (ui.checkRaidBuffCrit->isChecked()) fcrit += 0.05f;
+	if ((race == RACE_NIGHTELF_DAY) || (race == RACE_BLOODELF) || (race == RACE_WORGEN))
+		fcrit += 0.01f;
+
+	float fhaste = (float)haste;
+	fhaste = 1.0f + fhaste / 9000;
+	if (ui.checkRaidBuffHaste->isChecked()) fhaste *= 1.05f;
+	if ((race == RACE_NIGHTELF_NIGHT) || (race == RACE_GOBLIN) || (race == RACE_GNOME))
+		fhaste *= 1.01f;
+	fhaste = fhaste - 1.0f;
+
+	float fmult = (float)mult;
+	fmult = fmult / 6600;
+	if (ui.checkRaidBuffMult->isChecked()) fmult += 0.05f;
+
+	float fvers = (float)vers;
+	if (race == RACE_HUMAN) fvers += 100;
+	fvers = fvers / 13000;
+	if (ui.checkRaidBuffVers->isChecked()) fvers += 0.03f;
+
+	ui.tableGearSummary->setItem(1, 2, new QTableWidgetItem(qsprint(str)));
+	ui.tableGearSummary->setItem(2, 2, new QTableWidgetItem(qsprint(ap)));
+	ui.tableGearSummary->setItem(3, 2, new QTableWidgetItem(qsprint(fcrit)));
+	ui.tableGearSummary->setItem(4, 2, new QTableWidgetItem(qsprint(fhaste)));
+	ui.tableGearSummary->setItem(5, 2, new QTableWidgetItem(qsprint(fmastery)));
+	ui.tableGearSummary->setItem(6, 2, new QTableWidgetItem(qsprint(fmult)));
+	ui.tableGearSummary->setItem(7, 2, new QTableWidgetItem(qsprint(fvers)));
 }

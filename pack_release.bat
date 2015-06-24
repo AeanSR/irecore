@@ -13,6 +13,7 @@ copy LICENSE release\LICENSE
 copy %qt_dir%\bin\Qt5Core.dll release\Qt5Core.dll
 copy %qt_dir%\bin\Qt5GUI.dll release\Qt5GUI.dll
 copy %qt_dir%\bin\Qt5Widgets.dll release\Qt5Widgets.dll
+copy %qt_dir%\bin\Qt5Network.dll release\Qt5Network.dll
 copy %qt_dir%\bin\icuin53.dll release\icuin53.dll
 copy %qt_dir%\bin\icuuc53.dll release\icuuc53.dll
 copy %qt_dir%\bin\icudt53.dll release\icudt53.dll

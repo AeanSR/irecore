@@ -300,14 +300,14 @@ typedef struct {
     time_t cd;
 } bloodthirst_t;
 typedef struct {
-    k16u stack;
+    k32u stack;
     time_t expire;
 } ragingblow_t;
 typedef struct {
     time_t expire;
 } enrage_t;
 typedef struct {
-    k16u stack;
+    k32u stack;
     time_t expire;
 } bloodsurge_t;
 typedef struct {

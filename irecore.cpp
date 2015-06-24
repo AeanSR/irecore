@@ -109,14 +109,6 @@ const char* weapon_type_str[] = {
 	"WEAPON_DAGGER",
 };
 
-void err(const char* format, ...){
-	va_list vl;
-	va_start(vl, format);
-	vfprintf(stderr, format, vl);
-	va_end(vl);
-	exit(-1);
-}
-
 void set_default_parameters(){
 	developer_debug = 0;
 	list_available_devices = 0;
@@ -173,11 +165,6 @@ void set_default_parameters(){
 	calculate_scale_factors = 0;
 }
 
-typedef struct{
-	std::string key;
-	std::string value;
-} kvpair_t;
-
 void build_arglist(std::vector<kvpair_t>& arglist, int argc, char** argv){
 	for (int i = 1; i < argc; i++){
 		kvpair_t kv;
@@ -199,7 +186,7 @@ void build_arglist(std::vector<kvpair_t>& arglist, int argc, char** argv){
 		}
 		else{
 			FILE* f = fopen(kv.key.c_str(), "rb");
-			if (!f) { err("Parameter \"%s\" is neither a valid key-value pair, nor a exist configuration file.", kv.key.c_str()); }
+			if (!f) { *report_path << "Parameter \"" << kv.key << "\" is neither a valid key-value pair, nor a exist configuration file." << std::endl; continue; }
 			char ** rargv = (char**)calloc(65536, sizeof(char*));
 			int rargc = 1;
 			char buffer[4096];
@@ -216,7 +203,7 @@ void build_arglist(std::vector<kvpair_t>& arglist, int argc, char** argv){
 							memcpy(rargv[rargc], buffer, buffer_i);
 							rargc++;
 							buffer_i = 0;
-							if (rargc >= 65536) { err("Configuration file too long."); }
+							if (rargc >= 65536) { *report_path << "Configuration file too long." << std::endl; break; }
 						}
 					}
 					else if (ch == '#' && buffer_i == 0){
@@ -224,7 +211,7 @@ void build_arglist(std::vector<kvpair_t>& arglist, int argc, char** argv){
 					}
 					else{
 						buffer[buffer_i++] = ch;
-						if (buffer_i >= 4096) { err("Configuration line too long."); }
+						if (buffer_i >= 4096) { *report_path << "Configuration line too long." << std::endl; break; }
 					}
 				}
 				else{
@@ -449,7 +436,7 @@ void parse_parameters(std::vector<kvpair_t>& arglist){
 					break;
 				}
 			}
-			if (race == -1) { err("No such race \"%s\".", i->value.c_str()); }
+			if (race == -1) { *report_path << "No such race \"" << i->value << "\"." << std::endl; race = 0; }
 		}
 		else if (0 == i->key.compare("mh_speed")){
 			mh_speed = atof(i->value.c_str());
@@ -479,21 +466,23 @@ void parse_parameters(std::vector<kvpair_t>& arglist){
 			if (0 == i->value.compare("2h")) mh_type = 0;
 			else if (0 == i->value.compare("1h")) mh_type = 1;
 			else if (0 == i->value.compare("dagger")) mh_type = 2;
-			else err("No such weapon type \"%s\".", i->value.c_str());
+			else *report_path << "No such weapon type \"" << i->value << "\"." << std::endl;
 		}
 		else if (0 == i->key.compare("oh_type")){
 			if (0 == i->value.compare("2h")) oh_type = 0;
 			else if (0 == i->value.compare("1h")) oh_type = 1;
 			else if (0 == i->value.compare("dagger")) oh_type = 2;
-			else err("No such weapon type \"%s\".", i->value.c_str());
+			else *report_path << "No such weapon type \"" << i->value << "\"." << std::endl;
 		}
 		else if (0 == i->key.compare("talent")){
 			talent = atoi(i->value.c_str());
 			if (talent < 0 || talent > 3333333
 				|| TALENT_TIER(1) > 3 || TALENT_TIER(2) > 3
 				|| TALENT_TIER(3) > 3 || TALENT_TIER(4) > 3 || TALENT_TIER(5) > 3
-				|| TALENT_TIER(6) > 3 || TALENT_TIER(7) > 3)
-				err("Talent set not vaild.");
+				|| TALENT_TIER(6) > 3 || TALENT_TIER(7) > 3){
+				*report_path << "Talent set not vaild.";
+				talent = 0000000;
+			}
 		}
 		else if (0 == i->key.compare("archmages_incandescence")){
 			archmages_incandescence = !!atoi(i->value.c_str());
@@ -520,14 +509,14 @@ void parse_parameters(std::vector<kvpair_t>& arglist){
 			bleeding_hollow_mh = !i->value.compare("bleedinghollow");
 			shattered_hand_mh = !i->value.compare("shatteredhand");
 			if (i->value.compare("none") && !thunderlord_mh && !bleeding_hollow_mh && !shattered_hand_mh)
-				err("No such weapon enchant\"%s\".", i->value.c_str());
+				*report_path << "No such weapon enchant\"" << i->value << "\"." << std::endl;
 		}
 		else if (0 == i->key.compare("oh_enchant")){
 			thunderlord_oh = !i->value.compare("thunderlord");
 			bleeding_hollow_oh = !i->value.compare("bleedinghollow");
 			shattered_hand_oh = !i->value.compare("shatteredhand");
 			if (i->value.compare("none") && !thunderlord_oh && !bleeding_hollow_oh && !shattered_hand_oh)
-				err("No such weapon enchant\"%s\".", i->value.c_str());
+				*report_path << "No such weapon enchant\"" << i->value << "\"." << std::endl;
 		}
 		else if (0 == i->key.compare("trinket1")){
 			char* buf = new char[i->value.size()+6];
@@ -540,7 +529,7 @@ void parse_parameters(std::vector<kvpair_t>& arglist){
 				}
 			}
 			if (!*p || p[0]!='v' || p[1]!='a' || p[2]!='l' || p[3]!='u' || p[4]!='e' || p[5]!='=')
-				if(strcmp(buf,"none")) err("Unexpected trinket grammar. Correct grammar:\n\ttrinket1=trinket_name,value=123\n\ttrinket1=none");
+				if (strcmp(buf, "none")){ *report_path << "Unexpected trinket grammar. Correct grammar:\n\ttrinket1=trinket_name,value=123\n\ttrinket1=none" << std::endl; continue; }
 			trinket1_name = buf;
 			if(strcmp(buf,"none"))
 				trinket1_value = atoi(p+6);
@@ -548,8 +537,8 @@ void parse_parameters(std::vector<kvpair_t>& arglist){
 			for (x = 0; trinket_list[x]; x++){
 				if ( 0 == trinket1_name.compare(trinket_list[x]) ) break;
 			}
-			if (!trinket_list[x]) err("No such trinket \"%s\".", trinket1_name.c_str());
-			if (0 == trinket1_name.compare(trinket2_name) && 0 != trinket1_name.compare("none")) err("Duplicated trinkets \"%s\" not allowed.", trinket1_name.c_str());
+			if (!trinket_list[x]){ *report_path << "No such trinket \"" << trinket1_name << "\"." << std::endl; trinket1_name = "none"; continue; }
+			if (0 == trinket1_name.compare(trinket2_name) && 0 != trinket1_name.compare("none")){ *report_path << "Duplicated trinkets \"" << trinket1_name << "\" not allowed." << std::endl; trinket1_name = "none"; continue; }
 			delete[] buf;
 		}
 		else if (0 == i->key.compare("trinket2")){
@@ -563,7 +552,7 @@ void parse_parameters(std::vector<kvpair_t>& arglist){
 				}
 			}
 			if (!*p || p[0]!='v' || p[1]!='a' || p[2]!='l' || p[3]!='u' || p[4]!='e' || p[5]!='=')
-				if(strcmp(buf,"none")) err("Unexpected trinket grammar. Correct grammar:\n\ttrinket2=trinket_name,value=123\n\ttrinket2=none");
+				if (strcmp(buf, "none")){ *report_path << "Unexpected trinket grammar. Correct grammar:\n\ttrinket2=trinket_name,value=123\n\ttrinket2=none" << std::endl; continue; }
 			trinket2_name = buf;
 			if(strcmp(buf,"none"))
 				trinket2_value = atoi(p+6);
@@ -571,15 +560,15 @@ void parse_parameters(std::vector<kvpair_t>& arglist){
 			for (x = 0; trinket_list[x]; x++){
 				if ( 0 == trinket2_name.compare(trinket_list[x]) ) break;
 			}
-			if (!trinket_list[x]) err("No such trinket \"%s\".", trinket2_name.c_str());
-			if (0 == trinket1_name.compare(trinket2_name) && 0 != trinket1_name.compare("none")) err("Duplicated trinkets \"%s\" not allowed.", trinket1_name.c_str());
+			if (!trinket_list[x]){ *report_path << "No such trinket \"" << trinket2_name << "\"." << std::endl; trinket2_name = "none"; continue; }
+			if (0 == trinket1_name.compare(trinket2_name) && 0 != trinket1_name.compare("none")){ *report_path << "Duplicated trinkets \"" << trinket2_name << "\" not allowed." << std::endl; trinket2_name = "none"; continue; }
 			delete[] buf;
 		}
 		else if (0 == i->key.compare("rng_engine")){
 			if (0 == i->value.compare("mt127")) rng_engine = 127;
 			else if (0 == i->value.compare("mwc64x")) rng_engine = 64;
 			else if (0 == i->value.compare("lcg32")) rng_engine = 32;
-			else err("No such rng engine \"%s\".", i->value.c_str());
+			else *report_path << "No such rng engine \"" << i->value << "\"." << std::endl;
 		}
 		else if (0 == i->key.compare("output")){
 			report_path = new std::ofstream(i->value.c_str(), std::ofstream::out);
@@ -597,7 +586,7 @@ void parse_parameters(std::vector<kvpair_t>& arglist){
 			ocl().opencl_device_id = atoi(i->value.c_str());
 		}
 		else{
-			err("Cannot parse parameter \"%s\".", i->key.c_str());
+			*report_path << "Cannot parse parameter \"" << i->key << "\"." << std::endl;
 		}
 	}
 }
@@ -796,71 +785,71 @@ void generate_predef(){
 }
 
 void auto_apl(){
-	apl = "if(!UP(enrage.expire)||(REMAIN(bloodthirst.cd)>FROM_SECONDS(3)&&rti->player.ragingblow.stack<2))SPELL(berserkerrage);";
+	apl = "if(!UP(enrage.expire)||(REMAIN(bloodthirst.cd)>FROM_SECONDS(3)&&rti->player.ragingblow.stack<2))SPELL(berserkerrage);\n";
 
-	if(TALENT_TIER(7) == 1 || TALENT_TIER(6) != 2) apl.append("SPELL(recklessness);");
-		else apl.append("if(UP(bloodbath.expire))SPELL(recklessness);");
+	if (TALENT_TIER(7) == 1 || TALENT_TIER(6) != 2) apl.append("SPELL(recklessness);\n");
+		else apl.append("if(UP(bloodbath.expire))SPELL(recklessness);\n");
 
-	if (TALENT_TIER(6) == 1) apl.append("if(UP(recklessness.expire)||REMAIN(recklessness.cd)>FROM_SECONDS(60)||rti->expected_combat_length-rti->timestamp<FROM_SECONDS(30))SPELL(avatar);");
+	if (TALENT_TIER(6) == 1) apl.append("if(UP(recklessness.expire)||REMAIN(recklessness.cd)>FROM_SECONDS(60)||rti->expected_combat_length-rti->timestamp<FROM_SECONDS(30))SPELL(avatar);\n");
 
 	if (0 == strcmp(race_str_param[race], "troll"))
-		if(TALENT_TIER(6) == 2) apl.append("if(UP(bloodbath.expire)||UP(recklessness.expire))SPELL(berserking);");
-		else apl.append("SPELL(berserking);");
+		if(TALENT_TIER(6) == 2) apl.append("if(UP(bloodbath.expire)||UP(recklessness.expire))SPELL(berserking);\n");
+		else apl.append("SPELL(berserking);\n");
 
 	if (0 == strcmp(race_str_param[race], "orc"))
-		if(TALENT_TIER(6) == 2) apl.append("if(UP(bloodbath.expire)||UP(recklessness.expire))SPELL(bloodfury);");
-		else apl.append("SPELL(bloodfury);");
+		if(TALENT_TIER(6) == 2) apl.append("if(UP(bloodbath.expire)||UP(recklessness.expire))SPELL(bloodfury);\n");
+		else apl.append("SPELL(bloodfury);\n");
 
-	if (0 == strcmp(race_str_param[race], "bloodelf")) apl.append("if(rti->player.power<power_max-40)SPELL(arcane_torrent);");
+	if (0 == strcmp(race_str_param[race], "bloodelf")) apl.append("if(rti->player.power<power_max-40)SPELL(arcane_torrent);\n");
 
-	if (raidbuff.potion) apl.append("if((enemy_health_percent(rti)<20&&UP(recklessness.expire))||rti->expected_combat_length-rti->timestamp<FROM_SECONDS(25))SPELL(potion);");
+	if (raidbuff.potion) apl.append("if((enemy_health_percent(rti)<20&&UP(recklessness.expire))||rti->expected_combat_length-rti->timestamp<FROM_SECONDS(25))SPELL(potion);\n");
 
 	if (0 == trinket1_name.compare("vial_of_convulsive_shadows") || 0 == trinket2_name.compare("vial_of_convulsive_shadows"))
-		if (TALENT_TIER(7) == 1) apl.append("if(UP(recklessness.expire)||rti->expected_combat_length-rti->timestamp<FROM_SECONDS(25))SPELL(vial_of_convulsive_shadows);");
-		else apl.append("SPELL(vial_of_convulsive_shadows);");
+		if (TALENT_TIER(7) == 1) apl.append("if(UP(recklessness.expire)||rti->expected_combat_length-rti->timestamp<FROM_SECONDS(25))SPELL(vial_of_convulsive_shadows);\n");
+		else apl.append("SPELL(vial_of_convulsive_shadows);\n");
 
-	if (0 == trinket1_name.compare("scabbard_of_kyanos") || 0 == trinket2_name.compare("scabbard_of_kyanos")) apl.append("SPELL(scabbard_of_kyanos);");
+	if (0 == trinket1_name.compare("scabbard_of_kyanos") || 0 == trinket2_name.compare("scabbard_of_kyanos")) apl.append("SPELL(scabbard_of_kyanos);\n");
 	
 	if (0 == trinket1_name.compare("badge_of_victory") || 0 == trinket2_name.compare("badge_of_victory"))
-		if (TALENT_TIER(7) == 1) apl.append("if(UP(recklessness.expire)||rti->expected_combat_length-rti->timestamp<FROM_SECONDS(25))SPELL(badge_of_victory);");
-		else apl.append("SPELL(badge_of_victory);");
+		if (TALENT_TIER(7) == 1) apl.append("if(UP(recklessness.expire)||rti->expected_combat_length-rti->timestamp<FROM_SECONDS(25))SPELL(badge_of_victory);\n");
+		else apl.append("SPELL(badge_of_victory);\n");
 
-	if (TALENT_TIER(6) == 2) apl.append("SPELL(bloodbath);");
+	if (TALENT_TIER(6) == 2) apl.append("SPELL(bloodbath);\n");
 
-	apl.append("if(rti->player.power>power_max-20&&enemy_health_percent(rti)>20)SPELL(wildstrike);");
+	apl.append("if(rti->player.power>power_max-20&&enemy_health_percent(rti)>20)SPELL(wildstrike);\n");
 
-	if(TALENT_TIER(3) == 3) apl.append("if(!UP(enrage.expire)||rti->player.ragingblow.stack<2)SPELL(bloodthirst);");
-	else apl.append("if(rti->player.power<power_max-40||!UP(enrage.expire)||rti->player.ragingblow.stack<2)SPELL(bloodthirst);");
+	if(TALENT_TIER(3) == 3) apl.append("if(!UP(enrage.expire)||rti->player.ragingblow.stack<2)SPELL(bloodthirst);\n");
+	else apl.append("if(rti->player.power<power_max-40||!UP(enrage.expire)||rti->player.ragingblow.stack<2)SPELL(bloodthirst);\n");
 
 	if (TALENT_TIER(7) == 2)
-		if (TALENT_TIER(6) == 2) apl.append("if(UP(bloodbath.expire))SPELL(ravager);");
-		else apl.append("SPELL(ravager);");
+		if (TALENT_TIER(6) == 2) apl.append("if(UP(bloodbath.expire))SPELL(ravager);\n");
+		else apl.append("SPELL(ravager);\n");
 
-	if (TALENT_TIER(7) == 3) apl.append("SPELL(siegebreaker);");
+	if (TALENT_TIER(7) == 3) apl.append("SPELL(siegebreaker);\n");
 
-	if (TALENT_TIER(3) == 2) apl.append("if(UP(suddendeath.expire))SPELL(execute);");
+	if (TALENT_TIER(3) == 2) apl.append("if(UP(suddendeath.expire))SPELL(execute);\n");
 
-	if (TALENT_TIER(4) == 1) apl.append("SPELL(stormbolt);");
+	if (TALENT_TIER(4) == 1) apl.append("SPELL(stormbolt);\n");
 
-	apl.append("if(UP(bloodsurge.expire))SPELL(wildstrike);");
+	apl.append("if(UP(bloodsurge.expire))SPELL(wildstrike);\n");
 
-	apl.append("if(UP(enrage.expire)||rti->expected_combat_length-rti->timestamp<FROM_SECONDS(12))SPELL(execute);");
+	apl.append("if(UP(enrage.expire)||rti->expected_combat_length-rti->timestamp<FROM_SECONDS(12))SPELL(execute);\n");
 
 	if (TALENT_TIER(4) == 3)
-		if (TALENT_TIER(6) == 2) apl.append("if(UP(bloodbath.expire))SPELL(dragonroar);");
-		else apl.append("SPELL(dragonroar);");
+		if (TALENT_TIER(6) == 2) apl.append("if(UP(bloodbath.expire))SPELL(dragonroar);\n");
+		else apl.append("SPELL(dragonroar);\n");
 
-	apl.append("SPELL(ragingblow);");
+	apl.append("SPELL(ragingblow);\n");
 
-	apl.append("if(REMAIN(bloodthirst.cd)<FROM_SECONDS(0.5)&&!power_check(rti,50))return;");
+	apl.append("if(REMAIN(bloodthirst.cd)<FROM_SECONDS(0.5)&&!power_check(rti,50))return;\n");
 
-	apl.append("if(UP(enrage.expire)&&enemy_health_percent(rti)>20)SPELL(wildstrike);");
+	apl.append("if(UP(enrage.expire)&&enemy_health_percent(rti)>20)SPELL(wildstrike);\n");
 
-	if (TALENT_TIER(6) == 3) apl.append("SPELL(bladestorm);");
+	if (TALENT_TIER(6) == 3) apl.append("SPELL(bladestorm);\n");
 
-	if (TALENT_TIER(3) != 3 && TALENT_TIER(4) == 2) apl.append("SPELL(shockwave);");
+	if (TALENT_TIER(3) != 3 && TALENT_TIER(4) == 2) apl.append("SPELL(shockwave);\n");
 
-	apl.append("SPELL(bloodthirst);");
+	apl.append("SPELL(bloodthirst);\n");
 }
 
 void parameters_consistency(){

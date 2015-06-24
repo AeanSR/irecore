@@ -7,8 +7,26 @@
     <x>0</x>
     <y>0</y>
     <width>1000</width>
-    <height>621</height>
+    <height>620</height>
    </rect>
+  </property>
+  <property name="sizePolicy">
+   <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+    <horstretch>0</horstretch>
+    <verstretch>0</verstretch>
+   </sizepolicy>
+  </property>
+  <property name="minimumSize">
+   <size>
+    <width>1000</width>
+    <height>620</height>
+   </size>
+  </property>
+  <property name="maximumSize">
+   <size>
+    <width>1000</width>
+    <height>620</height>
+   </size>
   </property>
   <property name="windowTitle">
    <string>IreCore</string>
@@ -462,6 +480,101 @@
         <attribute name="title">
          <string>Policy</string>
         </attribute>
+        <widget class="QCheckBox" name="checkDefaultActions">
+         <property name="geometry">
+          <rect>
+           <x>20</x>
+           <y>10</y>
+           <width>311</width>
+           <height>21</height>
+          </rect>
+         </property>
+         <property name="text">
+          <string>Use Default Action Priority Lists (Recommended)</string>
+         </property>
+         <property name="checked">
+          <bool>true</bool>
+         </property>
+        </widget>
+        <widget class="QPlainTextEdit" name="txtAPL">
+         <property name="geometry">
+          <rect>
+           <x>10</x>
+           <y>150</y>
+           <width>691</width>
+           <height>391</height>
+          </rect>
+         </property>
+         <property name="lineWrapMode">
+          <enum>QPlainTextEdit::NoWrap</enum>
+         </property>
+        </widget>
+        <widget class="QListWidget" name="listConditions">
+         <property name="geometry">
+          <rect>
+           <x>710</x>
+           <y>150</y>
+           <width>256</width>
+           <height>192</height>
+          </rect>
+         </property>
+         <property name="editTriggers">
+          <set>QAbstractItemView::NoEditTriggers</set>
+         </property>
+         <property name="alternatingRowColors">
+          <bool>true</bool>
+         </property>
+        </widget>
+        <widget class="QListWidget" name="listActions">
+         <property name="geometry">
+          <rect>
+           <x>710</x>
+           <y>350</y>
+           <width>256</width>
+           <height>192</height>
+          </rect>
+         </property>
+         <property name="editTriggers">
+          <set>QAbstractItemView::NoEditTriggers</set>
+         </property>
+         <property name="alternatingRowColors">
+          <bool>true</bool>
+         </property>
+        </widget>
+        <widget class="QLabel" name="label_13">
+         <property name="geometry">
+          <rect>
+           <x>20</x>
+           <y>40</y>
+           <width>941</width>
+           <height>101</height>
+          </rect>
+         </property>
+         <property name="text">
+          <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;When Default Actions is set, default action lists will override the editor below. Default action lists take care of all talent, trinket, racial-traits and bonuses stuff.&lt;/p&gt;&lt;p&gt;IreCore APLs is a piece of C code, inserted into kernel source directly as a function. All valid C code is valid for IreCore APL, so you can have more liberal policies, e.g. define your custom variables.&lt;/p&gt;&lt;p&gt;Frequently used lexicals are listed on the right side, double click to insert.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+         </property>
+         <property name="wordWrap">
+          <bool>true</bool>
+         </property>
+        </widget>
+       </widget>
+       <widget class="QWidget" name="tabOverride">
+        <attribute name="title">
+         <string>Override</string>
+        </attribute>
+        <widget class="QPlainTextEdit" name="txtOverride">
+         <property name="geometry">
+          <rect>
+           <x>10</x>
+           <y>10</y>
+           <width>951</width>
+           <height>531</height>
+          </rect>
+         </property>
+         <property name="placeholderText">
+          <string>Textual configuration will override graphic options.</string>
+         </property>
+        </widget>
        </widget>
        <widget class="QWidget" name="tabResult">
         <attribute name="title">
@@ -475,6 +588,9 @@
            <width>671</width>
            <height>531</height>
           </rect>
+         </property>
+         <property name="acceptRichText">
+          <bool>false</bool>
          </property>
         </widget>
         <widget class="QWidget" name="layoutWidget_2">

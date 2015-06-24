@@ -57,18 +57,18 @@ int ocl_t::init()
 	std::vector<cl_platform_id> platforms;
 
 
-	*report_path << "Query available compute devices ...\n";
+	*report_path << "Query available compute devices ..." << std::endl;
 
 	err = clGetPlatformIDs(0, 0, &num);
 	if (err != CL_SUCCESS) {
-		*report_path << "Unable to get platforms\n";
+		*report_path << "Unable to get platforms" << std::endl;
 		return 0;
 	}
 
 	platforms.resize(num);
 	err = clGetPlatformIDs(num, &platforms[0], &num);
 	if (err != CL_SUCCESS) {
-		*report_path << "Unable to get platform ID\n";
+		*report_path << "Unable to get platform ID" << std::endl;
 		return 0;
 	}
 	if (ocl_device_list.empty()){
@@ -79,12 +79,12 @@ int ocl_t::init()
 			std::string platname;
 			platname.resize(info_c);
 			clGetPlatformInfo(platforms[platform_id], CL_PLATFORM_NAME, info_c, &platname[0], 0);
-			*report_path << "Platform :" << platname << "\n";
+			*report_path << "Platform :" << platname << std::endl;
 
 			cl_context_properties prop[] = { CL_CONTEXT_PLATFORM, reinterpret_cast<cl_context_properties>(platforms[platform_id]), 0 };
 			context = clCreateContextFromType(prop, CL_DEVICE_TYPE_ALL, NULL, NULL, NULL);
 			if (context == 0) {
-				*report_path << "Can't create OpenCL context\n";
+				*report_path << "Can't create OpenCL context" << std::endl;
 				return 0;
 			}
 
@@ -97,7 +97,7 @@ int ocl_t::init()
 				std::string devname;
 				devname.resize(info_c);
 				clGetDeviceInfo(*i, CL_DEVICE_NAME, info_c, &devname[0], 0);
-				*report_path << "\tDevice " << device_counter++ << ": " << devname.c_str() << "\n";
+				*report_path << "\tDevice " << device_counter++ << ": " << devname.c_str() << std::endl;
 				pdpair_t pd;
 				pd.device_id = i - devices.begin();
 				pd.platform_id = platform_id;
@@ -111,7 +111,7 @@ int ocl_t::init()
 	cl_context_properties prop[] = { CL_CONTEXT_PLATFORM, reinterpret_cast<cl_context_properties>(platforms[ocl_device_list[opencl_device_id].platform_id]), 0 };
 	context = clCreateContextFromType(prop, CL_DEVICE_TYPE_ALL, NULL, NULL, NULL);
 	if (context == 0) {
-		*report_path << "Can't create OpenCL context\n";
+		*report_path << "Can't create OpenCL context" << std::endl;
 		return 0;
 	}
 
@@ -126,17 +126,17 @@ int ocl_t::init()
 	devname.resize(info_c);
 	clGetDeviceInfo(device_used, CL_DEVICE_NAME, info_c, &devname[0], 0);
 	*report_path << "Execute on Device " << opencl_device_id << ": " << devname << std::endl;
-	*report_path << "OK!\n";
+	*report_path << "OK!" << std::endl;
 
 	queue = clCreateCommandQueue(context, device_used, 0, 0);
 	if (queue == 0) {
-		*report_path << "Can't create command queue\n";
+		*report_path << "Can't create command queue" << std::endl;
 		return 0;
 	}
 
 	cl_res = clCreateBuffer(context, CL_MEM_WRITE_ONLY, sizeof(cl_float)* iterations, NULL, NULL);
 	if (cl_res == 0) {
-		*report_path << "Can't create OpenCL buffer\n";
+		*report_path << "Can't create OpenCL buffer" << std::endl;
 		return 0;
 	}
 
@@ -158,7 +158,7 @@ float ocl_t::run(std::string& apl_cstr, std::string& predef){
 	cl_int err;
 	auto t1 = std::chrono::high_resolution_clock::now();
 
-    *report_path << "JIT ...\n";
+	*report_path << "JIT ..." << std::endl;
 
 	std::string source(predef);
 	source.append(ocl_src_char);
@@ -173,45 +173,45 @@ float ocl_t::run(std::string& apl_cstr, std::string& predef){
     }
 
 	if ((err = clBuildProgram(program, 0, 0, "-cl-single-precision-constant -cl-denorms-are-zero -cl-fast-relaxed-math", 0, 0)) != CL_SUCCESS) {
-		*report_path << "Can't build program\n";
+		*report_path << "Can't build program" << std::endl;
 		size_t len;
 		char buffer[204800];
 		cl_build_status bldstatus;
-		*report_path << "\nError " << err << ": Failed to build program executable\n";
+		*report_path << "\nError " << err << ": Failed to build program executable" << std::endl;
 		err = clGetProgramBuildInfo(program, device_used, CL_PROGRAM_BUILD_STATUS, sizeof(bldstatus), (void *)&bldstatus, &len);
 		if (err != CL_SUCCESS)
 		{
-			*report_path << "Build Status error " << err << "\n";
+			*report_path << "Build Status error " << err << std::endl;
 			return -1.0;
 		}
-		if (bldstatus == CL_BUILD_SUCCESS) *report_path << "Build Status: CL_BUILD_SUCCESS\n";
-		if (bldstatus == CL_BUILD_NONE) *report_path << "Build Status: CL_BUILD_NONE\n";
-		if (bldstatus == CL_BUILD_ERROR) *report_path << "Build Status: CL_BUILD_ERROR\n";
-		if (bldstatus == CL_BUILD_IN_PROGRESS) *report_path << "Build Status: CL_BUILD_IN_PROGRESS\n";
+		if (bldstatus == CL_BUILD_SUCCESS) *report_path << "Build Status: CL_BUILD_SUCCESS" << std::endl;
+		if (bldstatus == CL_BUILD_NONE) *report_path << "Build Status: CL_BUILD_NONE" << std::endl;
+		if (bldstatus == CL_BUILD_ERROR) *report_path << "Build Status: CL_BUILD_ERROR" << std::endl;
+		if (bldstatus == CL_BUILD_IN_PROGRESS) *report_path << "Build Status: CL_BUILD_IN_PROGRESS" << std::endl;
 		err = clGetProgramBuildInfo(program, device_used, CL_PROGRAM_BUILD_OPTIONS, sizeof(buffer), buffer, &len);
 		if (err != CL_SUCCESS)
 		{
-			*report_path << "Build Options error " << err << "\n";
+			*report_path << "Build Options error " << err << std::endl;
 			return -1.0;
 		}
-		*report_path << "Build Options: " << buffer << "\n";
+		*report_path << "Build Options: " << buffer << std::endl;
 		err = clGetProgramBuildInfo(program, device_used, CL_PROGRAM_BUILD_LOG, sizeof(buffer), buffer, &len);
 		if (err != CL_SUCCESS)
 		{
-			*report_path << "Build Log error " << err << "\n";
+			*report_path << "Build Log error " << err << std::endl;
 			return -1.0;
 		}
-		*report_path << "Build Log:\n" << buffer << "\n";
+		*report_path << "Build Log:\n" << buffer << std::endl;
 		return -1.0;
 	}
     if (program == 0) {
-		*report_path << "Can't load or build program\n";
+		*report_path << "Can't load or build program" << std::endl;
         return -1.0;
     }
 
     cl_kernel sim_iterate = clCreateKernel(program, "sim_iterate", 0);
     if (sim_iterate == 0) {
-		*report_path << "Can't load kernel\n";
+		*report_path << "Can't load kernel" << std::endl;
         clReleaseProgram(program);
         return -1.0;
     }
@@ -231,7 +231,7 @@ float ocl_t::run(std::string& apl_cstr, std::string& predef){
 		clSetKernelArg(sim_iterate, 7, sizeof(cl_uint), &thisstat->gear_vers);
 
 
-		*report_path << "Sim " << thisstat->name << "...\n";
+		*report_path << "Sim " << thisstat->name << "..." << std::endl;
 		size_t work_size = iterations;
 		err = clEnqueueNDRangeKernel(queue, sim_iterate, 1, 0, &work_size, 0, 0, 0, 0);
 
@@ -241,7 +241,7 @@ float ocl_t::run(std::string& apl_cstr, std::string& predef){
 		if (err == CL_SUCCESS) {
 			err = clEnqueueReadBuffer(queue, cl_res, CL_TRUE, 0, sizeof(float) * iterations, &res[0], 0, 0, 0);
 			if (err != CL_SUCCESS){
-				*report_path << "Can't read back data " << err << "\n";
+				*report_path << "Can't read back data " << err << std::endl;
 				ret = -1.0;
 			}
 			else{
@@ -251,7 +251,7 @@ float ocl_t::run(std::string& apl_cstr, std::string& predef){
 			}
 		}
 		else{
-			*report_path << "Can't run kernel " << err << "\n";
+			*report_path << "Can't run kernel " << err << std::endl;
 			ret = -1.0;
 		}
 
@@ -280,6 +280,7 @@ int ocl_t::free(){
 	clReleaseMemObject(cl_res);
 	clReleaseCommandQueue(queue);
 	clReleaseContext(context);
+	initialized = 0;
 	return 0;
 }
 

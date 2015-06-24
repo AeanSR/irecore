@@ -1,6 +1,7 @@
 #include <iostream>
 #include <fstream>
 #include <functional>
+#include <thread>
 #include <string>
 #include <vector>
 #include <random>
@@ -8,7 +9,6 @@
 #include <stdint.h>
 #include <algorithm>
 #include <chrono>
-#include <cstdarg>
 #include "VersionNo.h"
 
 #ifdef __APPLE__
@@ -85,15 +85,27 @@ public:
     ocl_t() : initialized(0){
     } 
     ~ocl_t(){
-        free();
+        //free();
     }
 };
 typedef struct{
 	size_t platform_id;
 	size_t device_id;
 } pdpair_t;
+typedef struct{
+	std::string key;
+	std::string value;
+} kvpair_t;
 extern std::vector<pdpair_t> ocl_device_list;
+void build_arglist(std::vector<kvpair_t>& arglist, int argc, char** argv);
+void parse_parameters(std::vector<kvpair_t>& arglist);
 
 ocl_t& ocl();
+
+extern std::string apl;
+extern std::string predef;
+void parameters_consistency();
+void generate_predef();
+void auto_apl();
 
 extern "C" void host_kernel_entry();

@@ -62,6 +62,9 @@
     <ClCompile Include="battlenet.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="ench_dbc.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <CustomBuild Include="gic.h">

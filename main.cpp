@@ -6,7 +6,7 @@ int clic_main(int argc, char** argv);
 
 int main(int argc, char *argv[])
 {
-	if (GetStdHandle(STD_OUTPUT_HANDLE) == 0) // this is a detached gui process. show gui.
+	if (1||GetStdHandle(STD_OUTPUT_HANDLE) == 0) // this is a detached gui process. show gui.
 	{
 		QApplication a(argc, argv);
 		gic w;

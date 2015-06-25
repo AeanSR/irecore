@@ -128,3 +128,21 @@ void generate_predef();
 void auto_apl();
 
 extern "C" void host_kernel_entry();
+
+typedef struct{
+	int id;
+	int stat;
+	int value;
+} enchant_t;
+extern "C" enchant_t enchant_list[];
+extern "C" enchant_t gem_list[];
+typedef struct{
+	int type;
+	int str;
+	int crit;
+	int haste;
+	int mastery;
+	int mult;
+	int vers;
+} item_t;
+extern item_t gear_list[16];

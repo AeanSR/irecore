@@ -4,15 +4,6 @@
 
 void set_default_parameters();
 
-typedef struct{
-	int type;
-	int str;
-	int crit;
-	int haste;
-	int mastery;
-	int mult;
-	int vers;
-} item_t;
 item_t gear_list[16];
 int selected_gear_slot = 0;
 QString gear_type_list_misc[] = {
@@ -285,6 +276,8 @@ gic::gic(QWidget *parent)
 	connect(ui.checkRaidBuffVers, SIGNAL(stateChanged(int)), this, SLOT(gear_summary_calculate()));
 	connect(ui.checkRaidBuffHaste, SIGNAL(stateChanged(int)), this, SLOT(gear_summary_calculate()));
 	connect(ui.checkRaidBuffMastery, SIGNAL(stateChanged(int)), this, SLOT(gear_summary_calculate()));
+	connect(ui.checkRaidBuffFlask, SIGNAL(stateChanged(int)), this, SLOT(gear_summary_calculate()));
+	connect(ui.checkRaidBuffFood, SIGNAL(stateChanged(int)), this, SLOT(gear_summary_calculate()));
 
 	ui.comboIncandescence->addItem(QApplication::translate("gicClass", "No Legendary Ring"));
 	ui.comboIncandescence->addItem(QApplication::translate("gicClass", "Incandescence(690)"));
@@ -707,7 +700,7 @@ void gic::on_btnImport_clicked()
 	region = ui.comboRegion->currentText().toStdString();
 	realm = ui.txtRealm->text().toStdString();
 	name = ui.txtCharacter->text().toStdString();
-	import_player(this, realm, name, region);
+	import_player(realm, name, region);
 
 }
 
@@ -831,6 +824,11 @@ void gic::gear_summary_calculate()
 	current_stat.gear_haste = haste;
 	current_stat.gear_mult = mult;
 	current_stat.gear_vers = vers;
+
+	if (ui.checkRaidBuffFlask->isChecked()) str += 250;
+	if (ui.checkRaidBuffFood->isChecked()) crit += 125;
+
+
 
 	int racial_base_str[] = {
 		0, 0, 5, -5, -4, -4, 66, 3, 3, 1, 5, -1, -3, -3, 0,

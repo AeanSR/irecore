@@ -24,6 +24,7 @@ public:
 	~gic();
 	void reset_result_page();
 	void run_simulation();
+	void import_player(std::string& realm, std::string& name, std::string& region);
 
 private slots:
     void on_btnRun_clicked();
@@ -57,6 +58,5 @@ public:
 	rapidjson::Document get();
 };
 
-void import_player(gic* pg, std::string& realm, std::string& name, std::string& region);
 
 #endif // GIC_H

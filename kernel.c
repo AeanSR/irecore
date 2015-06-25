@@ -2546,7 +2546,7 @@ DECL_SPELL( badge_of_victory ) {
     eq_enqueue( rti, rti->timestamp, routnum_badge_of_victory_start );
     rti->player.badge_of_victory.expire = TIME_OFFSET( FROM_SECONDS( 20 ) );
     eq_enqueue( rti, rti->player.badge_of_victory.expire, routnum_badge_of_victory_expire );
-    rti->player.badge_of_victory.cd = TIME_OFFSET( FROM_SECONDS( 120 ) );
+    rti->player.badge_of_victory.cd = TIME_OFFSET( FROM_SECONDS( 60 ) );
     eq_enqueue( rti, rti->player.badge_of_victory.cd, routnum_badge_of_victory_cd );
     lprintf( ( "cast badge_of_victory" ) );
 }

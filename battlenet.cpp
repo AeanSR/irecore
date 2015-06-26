@@ -13,7 +13,7 @@ rapidjson::Document getjson::get(){
 	rapidjson::Document j;
 
 	if (reply->error()){
-		QMessageBox::information(pg, QApplication::translate("gicClass", "Import Fail"), QApplication::translate("gicClass", "Cannot connect Battle Net."), QMessageBox::Ok);
+		QMessageBox::information(pg, QApplication::translate("gicClass", "Import Fail"), QApplication::translate("gicClass", "Cannot connect Battle.Net:\n") + url.toString(), QMessageBox::Ok);
 		return j;
 	}
 
@@ -23,8 +23,69 @@ rapidjson::Document getjson::get(){
 }
 
 QString qsprint(int v);
-QString qsprint(float v);
 
+int gic::retrive_item_subclass(int id, std::string& region){
+	getjson bn;
+	QString url;
+	char buf[32];
+	bn.set_parent(this);
+	if (region.compare("cn")){
+		url = "http://";
+		url.append(region.c_str());
+		url.append(".battle.net/api/wow/item/");
+		url.append(itoa(id,buf,10));
+		url.append("?locale=en_US");
+	}
+	else{
+		url = "http://www.battlenet.com.cn/api/wow/item/";
+		url.append(itoa(id, buf, 10));
+		url.append("?locale=en_US");
+	}
+	bn.set_url(url);
+	rapidjson::Document j = bn.get();
+
+	if (j["availableContexts"][0].GetStringLength()){
+		if (region.compare("cn")){
+			url = "http://";
+			url.append(region.c_str());
+			url.append(".battle.net/api/wow/item/");
+			url.append(itoa(id, buf, 10));
+			url.append("/");
+			url.append(j["availableContexts"][0].GetString());
+			url.append("?locale=en_US");
+		}
+		else{
+			url = "http://www.battlenet.com.cn/api/wow/item/";
+			url.append(itoa(id, buf, 10));
+			url.append("/");
+			url.append(j["availableContexts"][0].GetString());
+			url.append("?locale=en_US");
+		}
+		bn.set_url(url);
+		j = bn.get();
+	}
+
+
+	int itemClass = j["itemClass"].GetInt();
+	qDebug() << url << " " << itemClass << " " << j["itemSubClass"].GetInt();
+
+	if (itemClass == 4){
+		return (j["itemSubClass"].GetInt() == 4) ? 0 : 1;
+	}
+	else if (itemClass == 2){
+		switch (j["itemSubClass"].GetInt()){
+		case 0: case 4: case 7: case 13: 
+			return 0;
+		case 1: case 5: case 6: case 8: case 10:
+			return 1;
+		case 15: default:
+			return 2;
+		}
+	}
+	else{
+		return 0;
+	}
+}
 
 // stat 4,72,74 -> strength
 //      32 -> crit
@@ -32,7 +93,6 @@ QString qsprint(float v);
 //      49 -> mastery
 //      59 -> multistrike
 //      40 -> versatility
-
 void gic::import_player(std::string& realm, std::string& name, std::string& region){
 	getjson bn;
 	QString url;
@@ -53,13 +113,8 @@ void gic::import_player(std::string& realm, std::string& name, std::string& regi
 		url.append(name.c_str());
 		url.append("?fields=talents,items&locale=en_US");
 	}
-	qDebug() << url;
 	bn.set_url(url);
 	rapidjson::Document j = bn.get();
-	rapidjson::StringBuffer b;
-	rapidjson::PrettyWriter< rapidjson::StringBuffer > writer(b);
-	j.Accept(writer);
-	qDebug() << b.GetString();
 
 	if (j["class"].GetInt() != 1){
 		QMessageBox::information(this, QApplication::translate("gicClass", "Import Fail"), QApplication::translate("gicClass", "This character is not a warrior."), QMessageBox::Ok);
@@ -323,6 +378,7 @@ void gic::import_player(std::string& realm, std::string& name, std::string& regi
 			mh_low = item["weaponInfo"]["damage"]["min"].GetInt();
 			mh_high = item["weaponInfo"]["damage"]["max"].GetInt();
 			mh_speed = item["weaponInfo"]["weaponSpeed"].GetDouble();
+			
 		}
 		if (i == 7){
 			if (enchid == 5330) ui.comboOHEnchant->setCurrentIndex(1);
@@ -349,6 +405,7 @@ void gic::import_player(std::string& realm, std::string& name, std::string& regi
 			default:break;
 			}
 		}
+		gear_list[i].type = retrive_item_subclass(itemid, region);
 		
 	}
 

@@ -25,7 +25,7 @@ public:
 	void reset_result_page();
 	void run_simulation();
 	void import_player(std::string& realm, std::string& name, std::string& region);
-
+	int retrive_item_subclass(int id, std::string& region);
 private slots:
     void on_btnRun_clicked();
 	void on_btnImport_clicked();

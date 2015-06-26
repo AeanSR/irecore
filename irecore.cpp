@@ -889,7 +889,7 @@ void parameters_consistency(){
 	}
 	if (raidbuff.food){
 		for (auto i = stat_array.begin(); i != stat_array.end(); i++)
-		i->gear_crit += 125;
+			i->gear_crit += 125 * (race == 14 ? 2 : 1);
 	}
 	if (default_actions){
 		auto_apl();

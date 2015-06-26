@@ -6,9 +6,15 @@ int clic_main(int argc, char** argv);
 
 int main(int argc, char *argv[])
 {
-	if (1||GetStdHandle(STD_OUTPUT_HANDLE) == 0) // this is a detached gui process. show gui.
+	if (GetStdHandle(STD_OUTPUT_HANDLE) == 0) // this is a detached gui process. show gui.
 	{
 		QApplication a(argc, argv);
+		QString lang = QLocale::system().name().split('_').at(0).toLower();
+		QTranslator* myappTranslator = new QTranslator;
+		QString qm_name = QString("gic_") + lang + QString(".qm");
+		qDebug() << qm_name;
+		myappTranslator->load(qm_name);
+		a.installTranslator(myappTranslator);
 		gic w;
 		w.show();
 		return a.exec();

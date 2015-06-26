@@ -10,14 +10,14 @@ QString gear_type_list_misc[] = {
 	QString(),
 };
 QString gear_type_list_armor[] = {
-	QApplication::translate("gicClass", "Plate"),
-	QApplication::translate("gicClass", "Mail/Leather/Cloth"),
+	QString(),
+	QString(),
 	QString(),
 };
 QString gear_type_list_weapon[] = {
-	QApplication::translate("gicClass", "1H Sword/Axe/Mace/Fist"),
-	QApplication::translate("gicClass", "2H Sword/Axe/Mace/Polearm"),
-	QApplication::translate("gicClass", "Dagger"),
+	QString(),
+	QString(),
+	QString(),
 	QString(),
 };
 QString* gear_type_list[] = {
@@ -76,6 +76,12 @@ gic::gic(QWidget *parent)
 	qRegisterMetaType<QString>("QString");
 	reset_result_page();
 	ui.tabWidget->setCurrentIndex(0);
+
+	gear_type_list_armor[0] = QApplication::translate("gicClass", "Plate");
+	gear_type_list_armor[1] = QApplication::translate("gicClass", "Mail/Leather/Cloth");
+	gear_type_list_weapon[0] = QApplication::translate("gicClass", "1H Sword/Axe/Mace/Fist");
+	gear_type_list_weapon[1] = QApplication::translate("gicClass", "2H Sword/Axe/Mace/Polearm");
+	gear_type_list_weapon[2] = QApplication::translate("gicClass", "Dagger");
 
 	// Show current version.
 	QString ver_str(QApplication::translate("gicClass", "  Current Version: ", 0));
@@ -826,7 +832,7 @@ void gic::gear_summary_calculate()
 	current_stat.gear_vers = vers;
 
 	if (ui.checkRaidBuffFlask->isChecked()) str += 250;
-	if (ui.checkRaidBuffFood->isChecked()) crit += 125;
+	if (ui.checkRaidBuffFood->isChecked()) crit += 125 * (ui.comboRace->currentIndex() == 14 ? 2 : 1);
 
 
 

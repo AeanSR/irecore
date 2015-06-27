@@ -135,8 +135,14 @@ typedef struct{
 	int stat;
 	int value;
 } enchant_t;
+typedef struct{
+	int id;
+	int subclass;
+} item_subclass_t;
 extern "C" enchant_t enchant_list[];
 extern "C" enchant_t gem_list[];
+extern "C" int plate_list[];
+extern "C" item_subclass_t weapon_type_list[];
 typedef struct{
 	int type;
 	int str;

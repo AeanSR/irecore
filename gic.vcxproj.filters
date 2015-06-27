@@ -67,7 +67,7 @@
     <ClCompile Include="battlenet.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="ench_dbc.c">
+    <ClCompile Include="dbc.c">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

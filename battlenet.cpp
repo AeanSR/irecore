@@ -25,20 +25,30 @@ rapidjson::Document getjson::get(){
 
 QString qsprint(int v);
 
-int gic::retrive_item_subclass(int id, std::string& region){
+/*int gic::retrive_item_subclass(int id, std::string& region){
 	getjson bn;
 	QString url;
 	char buf[32];
 	bn.set_parent(this);
-	url = "https://us.api.battle.net/wow/item/";
-	url.append(itoa(id,buf,10));
+	if (region.compare("cn")){
+		url = "https://us.api.battle.net/wow/item/";
+	}
+	else{
+		url = "https://api.battlenet.com.cn/wow/item/";
+	}
+	url.append(itoa(id, buf, 10));
 	url.append("?locale=en_US&apikey=");
 	url.append(API_KEY);
 	bn.set_url(url);
 	rapidjson::Document j = bn.get();
 
 	if (j["availableContexts"][0].GetStringLength()){
-		url = "https://us.api.battle.net/wow/item/";
+		if (region.compare("cn")){
+			url = "https://us.api.battle.net/wow/item/";
+		}
+		else{
+			url = "https://api.battlenet.com.cn/wow/item/";
+		}
 		url.append(itoa(id, buf, 10));
 		url.append("/");
 		url.append(j["availableContexts"][0].GetString());
@@ -68,7 +78,7 @@ int gic::retrive_item_subclass(int id, std::string& region){
 	else{
 		return 0;
 	}
-}
+}*/
 
 // stat 4,72,74 -> strength
 //      32 -> crit
@@ -153,6 +163,10 @@ void gic::import_player(std::string& realm, std::string& name, std::string& regi
 		"head", "neck", "shoulder", "back", "chest", "wrist", "mainHand", "offHand",
 		"hands", "waist", "legs", "feet", "finger1", "finger2", "trinket1", "trinket2",
 	};
+	static const int plate_slot[] = {
+		1, 0, 1, 0, 1, 1, 0, 0,
+		1, 1, 1, 1, 0, 0, 0, 0,
+	};
 	int t17_count = 0;
 	int t18_count = 0;
 	archmages_greater_incandescence = 0;
@@ -174,6 +188,7 @@ void gic::import_player(std::string& realm, std::string& name, std::string& regi
 		rapidjson::Value& item = items[slotname[i]];
 		int itemid = item["id"].GetInt();
 		int itemlvl = item["itemLevel"].GetInt();
+		if (itemid == 0) continue;
 		if (itemid >= 115580 && itemid <= 115584) t17_count++;
 		if (itemid == 124319 || itemid == 124329 || itemid == 124334 || itemid == 124340 || itemid == 124346) t18_count++;
 		if (itemid == 118305) archmages_greater_incandescence = 1;
@@ -368,7 +383,20 @@ void gic::import_player(std::string& realm, std::string& name, std::string& regi
 			mh_low = item["weaponInfo"]["damage"]["min"].GetInt();
 			mh_high = item["weaponInfo"]["damage"]["max"].GetInt();
 			mh_speed = item["weaponInfo"]["weaponSpeed"].GetDouble();
-			
+			gear_list[i].type = 2;
+			for (auto p = weapon_type_list; p->id; p++){
+				if (p->id == itemid){
+					switch (p->subclass){
+					case 0: case 4: case 7: case 13:
+						gear_list[i].type = 1; break;
+					case 1: case 5: case 6: case 8: case 10:
+						gear_list[i].type = 0; break;
+					case 15: default:
+						gear_list[i].type = 2; break;
+					}
+					break;
+				}
+			}
 		}
 		if (i == 7){
 			if (enchid == 5330) ui.comboOHEnchant->setCurrentIndex(1);
@@ -378,6 +406,20 @@ void gic::import_player(std::string& realm, std::string& name, std::string& regi
 			oh_low = item["weaponInfo"]["damage"]["min"].GetInt();
 			oh_high = item["weaponInfo"]["damage"]["max"].GetInt();
 			oh_speed = item["weaponInfo"]["weaponSpeed"].GetDouble();
+			gear_list[i].type = 2;
+			for (auto p = weapon_type_list; p->id; p++){
+				if (p->id == itemid){
+					switch (p->subclass){
+					case 0: case 4: case 7: case 13:
+						gear_list[i].type = 1; break;
+					case 1: case 5: case 6: case 8: case 10:
+						gear_list[i].type = 0; break;
+					case 15: default:
+						gear_list[i].type = 2; break;
+					}
+					break;
+				}
+			}
 		}
 		if (enchid){
 			enchant_t* ench = enchant_list;
@@ -395,8 +437,15 @@ void gic::import_player(std::string& realm, std::string& name, std::string& regi
 			default:break;
 			}
 		}
-		gear_list[i].type = retrive_item_subclass(itemid, region);
-		
+		if (plate_slot[i]){
+			gear_list[i].type = 1;
+			for (int* p = plate_list; *p; p++){
+				if (*p == itemid){
+					gear_list[i].type = 0;
+					break;
+				}
+			}
+		}
 	}
 
 	ui.comboRace->setCurrentIndex(race);

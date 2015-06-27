@@ -1,6 +1,7 @@
 #include "irecore.h"
 #include "gic.h"
 
+#define API_KEY "nyv354w3rnf3jf95ryn5ddmyar933pzw"
 
 rapidjson::Document getjson::get(){
 	reply = qnam.get(QNetworkRequest(url));
@@ -29,38 +30,20 @@ int gic::retrive_item_subclass(int id, std::string& region){
 	QString url;
 	char buf[32];
 	bn.set_parent(this);
-	if (region.compare("cn")){
-		url = "http://";
-		url.append(region.c_str());
-		url.append(".battle.net/api/wow/item/");
-		url.append(itoa(id,buf,10));
-		url.append("?locale=en_US");
-	}
-	else{
-		url = "http://www.battlenet.com.cn/api/wow/item/";
-		url.append(itoa(id, buf, 10));
-		url.append("?locale=en_US");
-	}
+	url = "https://us.api.battle.net/wow/item/";
+	url.append(itoa(id,buf,10));
+	url.append("?locale=en_US&apikey=");
+	url.append(API_KEY);
 	bn.set_url(url);
 	rapidjson::Document j = bn.get();
 
 	if (j["availableContexts"][0].GetStringLength()){
-		if (region.compare("cn")){
-			url = "http://";
-			url.append(region.c_str());
-			url.append(".battle.net/api/wow/item/");
-			url.append(itoa(id, buf, 10));
-			url.append("/");
-			url.append(j["availableContexts"][0].GetString());
-			url.append("?locale=en_US");
-		}
-		else{
-			url = "http://www.battlenet.com.cn/api/wow/item/";
-			url.append(itoa(id, buf, 10));
-			url.append("/");
-			url.append(j["availableContexts"][0].GetString());
-			url.append("?locale=en_US");
-		}
+		url = "https://us.api.battle.net/wow/item/";
+		url.append(itoa(id, buf, 10));
+		url.append("/");
+		url.append(j["availableContexts"][0].GetString());
+		url.append("?locale=en_US&apikey=");
+		url.append(API_KEY);
 		bn.set_url(url);
 		j = bn.get();
 	}
@@ -75,9 +58,9 @@ int gic::retrive_item_subclass(int id, std::string& region){
 	else if (itemClass == 2){
 		switch (j["itemSubClass"].GetInt()){
 		case 0: case 4: case 7: case 13: 
-			return 0;
-		case 1: case 5: case 6: case 8: case 10:
 			return 1;
+		case 1: case 5: case 6: case 8: case 10:
+			return 0;
 		case 15: default:
 			return 2;
 		}
@@ -94,17 +77,20 @@ int gic::retrive_item_subclass(int id, std::string& region){
 //      59 -> multistrike
 //      40 -> versatility
 void gic::import_player(std::string& realm, std::string& name, std::string& region){
+	ui.btnImport->setDisabled(true);
+
 	getjson bn;
 	QString url;
 	bn.set_parent(this);
 	if (region.compare("cn")){
-		url = "http://";
+		url = "https://";
 		url.append( region.c_str());
-		url.append(".battle.net/api/wow/character/");
+		url.append("api.battle.net/wow/character/");
 		url.append(realm.c_str());
 		url.append("/");
 		url.append(name.c_str());
-		url.append("?fields=talents,items&locale=en_US");
+		url.append("?fields=talents,items&locale=en_US&apikey=");
+		url.append(API_KEY);
 	}
 	else{
 		url = "http://www.battlenet.com.cn/api/wow/character/";
@@ -171,6 +157,7 @@ void gic::import_player(std::string& realm, std::string& name, std::string& regi
 	int t18_count = 0;
 	archmages_greater_incandescence = 0;
 	archmages_incandescence = 0;
+	legendary_ring = 0;
 	mh_low = 0;
 	mh_high = 0;
 	oh_low = 0;
@@ -191,6 +178,9 @@ void gic::import_player(std::string& realm, std::string& name, std::string& regi
 		if (itemid == 124319 || itemid == 124329 || itemid == 124334 || itemid == 124340 || itemid == 124346) t18_count++;
 		if (itemid == 118305) archmages_greater_incandescence = 1;
 		if (itemid == 118300) archmages_incandescence = 1;
+		if (itemid == 124634){
+			legendary_ring = 2500.0 * pow(1.009357190938255, itemlvl = 735);
+		}
 		/* 	"none",0
 	"vial_of_convulsive_shadows",1
 	"forgemasters_insignia",2
@@ -412,7 +402,8 @@ void gic::import_player(std::string& realm, std::string& name, std::string& regi
 	ui.comboRace->setCurrentIndex(race);
 	select_gear_slot();
 	gear_summary_calculate();
-	if (archmages_greater_incandescence) ui.comboIncandescence->setCurrentIndex(2);
+	if (legendary_ring){ ui.comboIncandescence->setCurrentIndex(3); ui.txtLegendaryRing->setText(qsprint(legendary_ring)); }
+	else if (archmages_greater_incandescence) ui.comboIncandescence->setCurrentIndex(2);
 	else if (archmages_incandescence) ui.comboIncandescence->setCurrentIndex(1);
 	else ui.comboIncandescence->setCurrentIndex(0);
 	ui.checkT172P->setChecked(t17_count >= 2);
@@ -444,4 +435,5 @@ void gic::import_player(std::string& realm, std::string& name, std::string& regi
 	ui.comboTalent1->setCurrentIndex(talent % 10);
 	talent /= 10;
 	ui.checkGlyphOfUnendingRage->setChecked(glyph);
+	ui.btnImport->setDisabled(false);
 }

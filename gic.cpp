@@ -79,8 +79,8 @@ gic::gic(QWidget *parent)
 
 	gear_type_list_armor[0] = QApplication::translate("gicClass", "Plate");
 	gear_type_list_armor[1] = QApplication::translate("gicClass", "Mail/Leather/Cloth");
-	gear_type_list_weapon[0] = QApplication::translate("gicClass", "1H Sword/Axe/Mace/Fist");
-	gear_type_list_weapon[1] = QApplication::translate("gicClass", "2H Sword/Axe/Mace/Polearm");
+	gear_type_list_weapon[0] = QApplication::translate("gicClass", "2H Sword/Axe/Mace/Polearm");
+	gear_type_list_weapon[1] = QApplication::translate("gicClass", "1H Sword/Axe/Mace/Fist");
 	gear_type_list_weapon[2] = QApplication::translate("gicClass", "Dagger");
 
 	// Show current version.
@@ -288,6 +288,8 @@ gic::gic(QWidget *parent)
 	ui.comboIncandescence->addItem(QApplication::translate("gicClass", "No Legendary Ring"));
 	ui.comboIncandescence->addItem(QApplication::translate("gicClass", "Incandescence(690)"));
 	ui.comboIncandescence->addItem(QApplication::translate("gicClass", "Greater Incandescence(715)"));
+	ui.comboIncandescence->addItem(QApplication::translate("gicClass", "Thorasus(735~795)"));
+	ui.txtLegendaryRing->setEnabled(false);
 
 	ui.comboMHEnchant->addItem(QApplication::translate("gicClass", "No Enchantment."));
 	ui.comboOHEnchant->addItem(QApplication::translate("gicClass", "No Enchantment."));
@@ -524,6 +526,7 @@ void gic::run_simulation(){
 	t18_4pc = ui.checkT184P->isChecked();
 	archmages_incandescence = (ui.comboIncandescence->currentIndex() == 1);
 	archmages_greater_incandescence = (ui.comboIncandescence->currentIndex() == 2);
+	legendary_ring = (ui.comboIncandescence->currentIndex() == 3) ? ui.txtLegendaryRing->text().toInt() : 0;
 	thunderlord_mh = (ui.comboMHEnchant->currentIndex() == 1);
 	bleeding_hollow_mh = (ui.comboMHEnchant->currentIndex() == 2);
 	shattered_hand_mh = (ui.comboMHEnchant->currentIndex() == 3);
@@ -585,6 +588,8 @@ void gic::run_simulation(){
 	}
 	parameters_consistency();
 	generate_predef();
+	
+	if (developer_debug) *report_path << predef;
 
 	*report_path << QApplication::translate("gicClass", "Initializing compute cnvironment...\n").toStdString();
 	
@@ -696,6 +701,10 @@ void gic::on_listConditions_itemDoubleClicked()
 {
 	if (ui.listConditions->currentItem())
 		ui.txtAPL->textCursor().insertText(ui.listConditions->currentItem()->text());
+}
+
+void gic::on_comboIncandescence_currentIndexChanged(int idx){
+	ui.txtLegendaryRing->setEnabled(ui.comboIncandescence->currentIndex() == 3);
 }
 
 void gic::on_btnImport_clicked()

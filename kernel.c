@@ -56,6 +56,7 @@
 #define TALENT_TIER7 1
 #define archmages_incandescence 0
 #define archmages_greater_incandescence 1
+#define legendary_ring 2500
 #define t17_2pc 0
 #define t17_4pc 0
 #define t18_2pc 1
@@ -365,6 +366,11 @@ typedef struct {
     RPPM_t proc;
 } incandescence_t;
 typedef struct {
+	time_t expire;
+	time_t cd;
+	float dmg_snapshot;
+} thorasus_the_stone_heart_of_draenor_t;
+typedef struct {
     time_t expire;
     k32u extend;
     RPPM_t proc;
@@ -488,6 +494,9 @@ typedef struct {
 #endif
 #if (archmages_incandescence || archmages_greater_incandescence)
     incandescence_t incandescence;
+#endif
+#if defined(legendary_ring)
+	thorasus_the_stone_heart_of_draenor_t thorasus_the_stone_heart_of_draenor;
 #endif
 #if (thunderlord_mh)
     thunderlord_t	enchant_mh;
@@ -1020,6 +1029,11 @@ void refresh_crit( rtinfo_t* rti ) {
     if ( BUFF_CRIT ) crit += 0.05f;
     if ( ( RACE == RACE_NIGHTELF_DAY ) || ( RACE == RACE_BLOODELF ) || ( RACE == RACE_WORGEN ) )
         crit += 0.01f;
+#if (t17_4pc)
+	if (UP(rampage.expire)) {
+		crit += 0.06f * rti->player.rampage.stack;
+	}
+#endif
     rti->player.stat.crit = crit;
 }
 
@@ -1061,11 +1075,13 @@ float weapon_dmg( rtinfo_t* rti, float weapon_multiplier, kbool normalized, kboo
     dmg *= weapon_multiplier;
     /* Crazed Berserker */
     if ( offhand ) dmg *= 0.5f * ( SINGLE_MINDED ? 1.5f : 1.25f );
+	if (SINGLE_MINDED) dmg *= 1.3f;
     return dmg;
 }
 
 float ap_dmg( rtinfo_t* rti, float ap_multiplier ) {
     float dmg = ap_multiplier * rti->player.stat.ap;
+	if (SINGLE_MINDED) dmg *= 1.3f;
     return dmg;
 }
 
@@ -1154,6 +1170,11 @@ enum {
     routnum_incandescence_trigger,
     routnum_incandescence_expire,
 #endif
+#if defined(legendary_ring)
+	routnum_thorasus_the_stone_heart_of_draenor_start,
+	routnum_thorasus_the_stone_heart_of_draenor_expire,
+	routnum_thorasus_the_stone_heart_of_draenor_cd,
+#endif
 #if (thunderlord_mh || bleedinghollow_mh || shatteredhand_mh)
     routnum_enchant_mh_trigger,
     routnum_enchant_mh_expire,
@@ -1238,6 +1259,7 @@ enum {
 
 enum {
     DMGTYPE_NONE,
+	DMGTYPE_BLOODBATH,
     DMGTYPE_MELEE,
     DMGTYPE_SPECIAL,
     DMGTYPE_DRAGONROAR,
@@ -1247,7 +1269,21 @@ void special_procs( rtinfo_t* rti );
 
 k32s deal_damage( rtinfo_t* rti, float dmg, k32u dmgtype, float extra_crit_rate, float extra_crit_bonus ) {
     switch( dmgtype ) {
-    case DMGTYPE_NONE:
+	case DMGTYPE_NONE:
+		if (UP(enrage.expire)) {
+			dmg *= 1.1f;
+			dmg *= 1.0f + rti->player.stat.mastery;
+		}
+		dmg *= 1.0f + rti->player.stat.vers;
+#if (TALENT_TIER6 == 1)
+		if (UP(avatar.expire))
+			dmg *= 1.2f;
+#endif
+#if defined(legendary_ring)
+		if (UP(thorasus_the_stone_heart_of_draenor.expire))
+			dmg *= 1.0f + legendary_ring * 0.0001;
+#endif
+	case DMGTYPE_BLOODBATH:
         lprintf( ( "damage %.0f", dmg ) );
         rti->damage_collected += dmg;
         return 0;
@@ -1263,7 +1299,6 @@ k32s deal_damage( rtinfo_t* rti, float dmg, k32u dmgtype, float extra_crit_rate,
         float bbcounter = rti->damage_collected;
 #endif
 
-        if ( SINGLE_MINDED ) dmg *= 1.3f;
         if ( UP( enrage.expire ) ) {
             dmg *= 1.1f;
             dmg *= 1.0f + rti->player.stat.mastery;
@@ -1274,11 +1309,6 @@ k32s deal_damage( rtinfo_t* rti, float dmg, k32u dmgtype, float extra_crit_rate,
             if( dmgtype == DMGTYPE_SPECIAL ) cr += 0.3f;
             cdb *= 1.1f;
         }
-#if (t17_4pc)
-        if ( UP( rampage.expire ) ) {
-            cr += 0.06f * rti->player.rampage.stack;
-        }
-#endif
 #if (TALENT_TIER4 == 3)
         if ( dmgtype == DMGTYPE_DRAGONROAR ) cr = 1.0f;
         else
@@ -1287,6 +1317,10 @@ k32s deal_damage( rtinfo_t* rti, float dmg, k32u dmgtype, float extra_crit_rate,
 #if (TALENT_TIER6 == 1)
         if ( UP( avatar.expire ) )
             dmg *= 1.2f;
+#endif
+#if defined(legendary_ring)
+		if (UP(thorasus_the_stone_heart_of_draenor.expire))
+			dmg *= 1.0f + legendary_ring * 0.0001;
 #endif
 
         fdmg = dmg;
@@ -1805,6 +1839,7 @@ DECL_EVENT( recklessness_execute ) {
 DECL_EVENT( rampage_expire ) {
     lprintf( ( "rampage expire" ) );
     rti->player.rampage.stack = 0;
+	refresh_crit(rti);
 }
 
 DECL_EVENT( rampage_refresh ) {
@@ -1813,6 +1848,7 @@ DECL_EVENT( rampage_refresh ) {
         eq_enqueue( rti, rti->player.rampage.expire, routnum_rampage_expire );
     }
     rti->player.rampage.stack++;
+	refresh_crit(rti);
     if ( rti->player.rampage.stack < 10 )
         eq_enqueue( rti, TIME_OFFSET( FROM_SECONDS( 1 ) ), routnum_rampage_refresh );
 }
@@ -2206,7 +2242,7 @@ DECL_EVENT( bloodbath_tick ) {
     if ( rti->player.bloodbath.dot_start + FROM_SECONDS( 7.0f - rti->player.bloodbath.ticks ) != rti->timestamp ) return;
     float dmg = rti->player.bloodbath.pool / rti->player.bloodbath.ticks;
     rti->player.bloodbath.pool -= dmg;
-    deal_damage( rti, dmg, DMGTYPE_NONE, 0, 0 );
+    deal_damage( rti, dmg, DMGTYPE_BLOODBATH, 0, 0 );
     lprintf( ( "bloodbath ticks" ) );
     rti->player.bloodbath.ticks -= 1.0f;
     if ( rti->player.bloodbath.ticks >= 1.0f )
@@ -2246,6 +2282,33 @@ DECL_EVENT( incandescence_expire ) {
     }
 }
 #endif
+#if defined(legendary_ring)
+DECL_EVENT(thorasus_the_stone_heart_of_draenor_start) {
+	rti->player.thorasus_the_stone_heart_of_draenor.expire = TIME_OFFSET(FROM_SECONDS(15));
+	eq_enqueue(rti, rti->player.thorasus_the_stone_heart_of_draenor.expire, routnum_thorasus_the_stone_heart_of_draenor_expire);
+	rti->player.thorasus_the_stone_heart_of_draenor.dmg_snapshot = rti->damage_collected;
+	lprintf(("thorasus the stone heart of draenor start"));
+}
+DECL_EVENT(thorasus_the_stone_heart_of_draenor_expire) {
+	float dmg = rti->damage_collected - rti->player.thorasus_the_stone_heart_of_draenor.dmg_snapshot;
+	dmg *= legendary_ring * 0.0001;
+	deal_damage(rti, dmg, DMGTYPE_BLOODBATH, 0, 0);
+	lprintf(("thorasus the stone heart of draenor expire"));
+}
+DECL_EVENT(thorasus_the_stone_heart_of_draenor_cd){
+	lprintf(("thorasus the stone heart of draenor cd"));
+}
+DECL_SPELL(thorasus_the_stone_heart_of_draenor) {
+	if (rti->player.thorasus_the_stone_heart_of_draenor.cd > rti->timestamp) return;
+#if (TALENT_TIER6 == 3)
+	if (UP(bladestorm.expire)) return;
+#endif
+	rti->player.thorasus_the_stone_heart_of_draenor.cd = TIME_OFFSET(FROM_SECONDS(120));
+	eq_enqueue(rti, rti->player.thorasus_the_stone_heart_of_draenor.cd, routnum_thorasus_the_stone_heart_of_draenor_cd);
+	eq_enqueue(rti, rti->timestamp, routnum_thorasus_the_stone_heart_of_draenor_start);
+	lprintf(("cast thorasus the stone heart of draenor"));
+}
+#endif
 
 // === enchants ===============================================================
 #if (thunderlord_mh || bleedinghollow_mh || shatteredhand_mh)
@@ -2268,17 +2331,7 @@ DECL_EVENT( enchant_mh_trigger ) {
     refresh_mastery( rti );
 #endif
 #if (shatteredhand_mh)
-	float dmg = 1500.0f;
-	if ( UP( enrage.expire ) ) {
-		dmg *= 1.1f;
-		dmg *= 1.0f + rti->player.stat.mastery;
-	}
-	dmg *= 1.0f + rti->player.stat.vers;
-#if (TALENT_TIER6 == 1)
-	if (UP(avatar.expire))
-		dmg *= 1.2f;
-#endif
-    deal_damage( rti, dmg, DMGTYPE_NONE, 0, 0 );
+    deal_damage( rti, 1500.0f, DMGTYPE_SPECIAL, 0, 0 );
     rti->player.enchant_mh.expire = TIME_OFFSET( FROM_SECONDS( 6 ) );
     rti->player.enchant_mh.ticks = 6.0f;
     eq_enqueue( rti, TIME_OFFSET( FROM_SECONDS( 1 ) ), routnum_enchant_mh_tick );
@@ -2307,17 +2360,7 @@ DECL_EVENT( enchant_oh_trigger ) {
     refresh_mastery( rti );
 #endif
 #if (shatteredhand_oh)
-	float dmg = 1500.0f;
-    if ( UP( enrage.expire ) ) {
-		dmg *= 1.1f;
-		dmg *= 1.0f + rti->player.stat.mastery;
-	}
-	dmg *= 1.0f + rti->player.stat.vers;
-#if (TALENT_TIER6 == 1)
-	if (UP(avatar.expire))
-		dmg *= 1.2f;
-#endif
-    deal_damage( rti, dmg, DMGTYPE_NONE, 0, 0 );
+    deal_damage( rti, 1500.0f, DMGTYPE_SPECIAL, 0, 0 );
     rti->player.enchant_oh.expire = TIME_OFFSET( FROM_SECONDS( 6 ) );
     rti->player.enchant_oh.ticks = 6.0f;
     eq_enqueue( rti, TIME_OFFSET( FROM_SECONDS( 1 ) ), routnum_enchant_oh_tick );
@@ -2422,15 +2465,6 @@ DECL_SPELL( bloodfury ) {
 DECL_EVENT( touch_of_the_grave_trigger ) {
     float d = 1932.0f;
     d += uni_rng( rti ) * ( 2244.0f - 1932.0f );
-	if (UP(enrage.expire)) {
-		d *= 1.1f;
-		d *= 1.0f + rti->player.stat.mastery;
-	}
-	d *= 1.0f + rti->player.stat.vers;
-#if (TALENT_TIER6 == 1)
-	if (UP(avatar.expire))
-		d *= 1.2f;
-#endif
     deal_damage( rti, d, DMGTYPE_NONE, 0, 0 );
 }
 #endif
@@ -2825,6 +2859,11 @@ void routine_entries( rtinfo_t* rti, _event_t e ) {
 #if (archmages_incandescence || archmages_greater_incandescence)
         HOOK_EVENT( incandescence_trigger );
         HOOK_EVENT( incandescence_expire );
+#endif
+#if defined(legendary_ring)
+		HOOK_EVENT(thorasus_the_stone_heart_of_draenor_start);
+		HOOK_EVENT(thorasus_the_stone_heart_of_draenor_expire);
+		HOOK_EVENT(thorasus_the_stone_heart_of_draenor_cd);
 #endif
 #if (thunderlord_mh || bleedinghollow_mh || shatteredhand_mh)
         HOOK_EVENT( enchant_mh_trigger );

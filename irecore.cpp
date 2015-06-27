@@ -32,6 +32,7 @@ int calculate_scale_factors;
 
 int archmages_incandescence;
 int archmages_greater_incandescence;
+int legendary_ring;
 int t17_2pc;
 int t17_4pc;
 int t18_2pc;
@@ -147,6 +148,7 @@ void set_default_parameters(){
 
 	archmages_incandescence = 0;
 	archmages_greater_incandescence = 0;
+	legendary_ring = 0;
 	t17_2pc = 0;
 	t17_4pc = 0;
 	t18_2pc = 0;
@@ -486,11 +488,12 @@ void parse_parameters(std::vector<kvpair_t>& arglist){
 		}
 		else if (0 == i->key.compare("archmages_incandescence")){
 			archmages_incandescence = !!atoi(i->value.c_str());
-			if (archmages_incandescence) archmages_greater_incandescence = 0;
 		}
 		else if (0 == i->key.compare("archmages_greater_incandescence")){
 			archmages_greater_incandescence = !!atoi(i->value.c_str());
-			if (archmages_greater_incandescence) archmages_incandescence = 0;
+		}
+		else if (0 == i->key.compare("legendary_ring")){
+			legendary_ring = atoi(i->value.c_str());
 		}
 		else if (0 == i->key.compare("t17_2pc")){
 			t17_2pc = !!atoi(i->value.c_str());
@@ -723,6 +726,10 @@ void generate_predef(){
 	sprintf(buffer, "%d", archmages_greater_incandescence);
 	predef.append(buffer); predef.append("\r\n");
 
+	predef.append("#define legendary_ring ");
+	sprintf(buffer, "%d", legendary_ring);
+	predef.append(buffer); predef.append("\r\n");
+
 	predef.append("#define t17_2pc ");
 	sprintf(buffer, "%d", t17_2pc);
 	predef.append(buffer); predef.append("\r\n");
@@ -787,10 +794,12 @@ void generate_predef(){
 void auto_apl(){
 	apl = "if(!UP(enrage.expire)||(REMAIN(bloodthirst.cd)>FROM_SECONDS(3)&&rti->player.ragingblow.stack<2))SPELL(berserkerrage);\n";
 
+	if (legendary_ring) apl.append("if(UP(recklessness.expire)||TIME_DISTANT(rti->expected_combat_length)<FROM_SECONDS(25))SPELL(thorasus_the_stone_heart_of_draenor);\n");
+
 	if (TALENT_TIER(7) == 1 || TALENT_TIER(6) != 2) apl.append("SPELL(recklessness);\n");
 		else apl.append("if(UP(bloodbath.expire))SPELL(recklessness);\n");
 
-	if (TALENT_TIER(6) == 1) apl.append("if(UP(recklessness.expire)||REMAIN(recklessness.cd)>FROM_SECONDS(60)||rti->expected_combat_length-rti->timestamp<FROM_SECONDS(30))SPELL(avatar);\n");
+	if (TALENT_TIER(6) == 1) apl.append("if(UP(recklessness.expire)||REMAIN(recklessness.cd)>FROM_SECONDS(60)||TIME_DISTANT(rti->expected_combat_length)<FROM_SECONDS(30))SPELL(avatar);\n");
 
 	if (0 == strcmp(race_str_param[race], "troll"))
 		if(TALENT_TIER(6) == 2) apl.append("if(UP(bloodbath.expire)||UP(recklessness.expire))SPELL(berserking);\n");
@@ -802,16 +811,16 @@ void auto_apl(){
 
 	if (0 == strcmp(race_str_param[race], "bloodelf")) apl.append("if(rti->player.power<power_max-40)SPELL(arcane_torrent);\n");
 
-	if (raidbuff.potion) apl.append("if((enemy_health_percent(rti)<20&&UP(recklessness.expire))||rti->expected_combat_length-rti->timestamp<FROM_SECONDS(25))SPELL(potion);\n");
+	if (raidbuff.potion) apl.append("if((enemy_health_percent(rti)<20&&UP(recklessness.expire))||TIME_DISTANT(rti->expected_combat_length)<FROM_SECONDS(25))SPELL(potion);\n");
 
 	if (0 == trinket1_name.compare("vial_of_convulsive_shadows") || 0 == trinket2_name.compare("vial_of_convulsive_shadows"))
-		if (TALENT_TIER(7) == 1) apl.append("if(UP(recklessness.expire)||rti->expected_combat_length-rti->timestamp<FROM_SECONDS(25))SPELL(vial_of_convulsive_shadows);\n");
+		if (TALENT_TIER(7) == 1) apl.append("if(UP(recklessness.expire)||TIME_DISTANT(rti->expected_combat_length)<FROM_SECONDS(25))SPELL(vial_of_convulsive_shadows);\n");
 		else apl.append("SPELL(vial_of_convulsive_shadows);\n");
 
 	if (0 == trinket1_name.compare("scabbard_of_kyanos") || 0 == trinket2_name.compare("scabbard_of_kyanos")) apl.append("SPELL(scabbard_of_kyanos);\n");
 	
 	if (0 == trinket1_name.compare("badge_of_victory") || 0 == trinket2_name.compare("badge_of_victory"))
-		if (TALENT_TIER(7) == 1) apl.append("if(UP(recklessness.expire)||rti->expected_combat_length-rti->timestamp<FROM_SECONDS(25))SPELL(badge_of_victory);\n");
+		if (TALENT_TIER(7) == 1) apl.append("if(UP(recklessness.expire)||TIME_DISTANT(rti->expected_combat_length)<FROM_SECONDS(25))SPELL(badge_of_victory);\n");
 		else apl.append("SPELL(badge_of_victory);\n");
 
 	if (TALENT_TIER(6) == 2) apl.append("SPELL(bloodbath);\n");
@@ -833,7 +842,7 @@ void auto_apl(){
 
 	apl.append("if(UP(bloodsurge.expire))SPELL(wildstrike);\n");
 
-	apl.append("if(UP(enrage.expire)||rti->expected_combat_length-rti->timestamp<FROM_SECONDS(12))SPELL(execute);\n");
+	apl.append("if(UP(enrage.expire)||TIME_DISTANT(rti->expected_combat_length)<FROM_SECONDS(12))SPELL(execute);\n");
 
 	if (TALENT_TIER(4) == 3)
 		if (TALENT_TIER(6) == 2) apl.append("if(UP(bloodbath.expire))SPELL(dragonroar);\n");

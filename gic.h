@@ -31,6 +31,7 @@ private slots:
 	void on_btnImport_clicked();
 	void on_listActions_itemDoubleClicked();
 	void on_listConditions_itemDoubleClicked();
+	void on_comboIncandescence_currentIndexChanged(int);
 	void TxtBoxNotify(QString);
 	void mh_dps_calculate();
 	void oh_dps_calculate();

@@ -70,6 +70,7 @@ extern int list_available_devices;
 extern int calculate_scale_factors;
 extern int archmages_incandescence;
 extern int archmages_greater_incandescence;
+extern int legendary_ring;
 extern int t17_2pc;
 extern int t17_4pc;
 extern int t18_2pc;

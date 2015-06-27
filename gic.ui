@@ -813,8 +813,8 @@
          <widget class="QWidget" name="">
           <property name="geometry">
            <rect>
-            <x>11</x>
-            <y>25</y>
+            <x>12</x>
+            <y>26</y>
             <width>251</width>
             <height>221</height>
            </rect>
@@ -856,14 +856,37 @@
             </widget>
            </item>
            <item>
-            <widget class="QComboBox" name="comboIncandescence">
-             <property name="minimumSize">
-              <size>
-               <width>161</width>
-               <height>0</height>
-              </size>
-             </property>
-            </widget>
+            <layout class="QHBoxLayout" name="horizontalLayout_22">
+             <item>
+              <widget class="QComboBox" name="comboIncandescence">
+               <property name="minimumSize">
+                <size>
+                 <width>161</width>
+                 <height>0</height>
+                </size>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QLineEdit" name="txtLegendaryRing">
+               <property name="minimumSize">
+                <size>
+                 <width>60</width>
+                 <height>0</height>
+                </size>
+               </property>
+               <property name="maximumSize">
+                <size>
+                 <width>60</width>
+                 <height>16777215</height>
+                </size>
+               </property>
+               <property name="placeholderText">
+                <string>Value</string>
+               </property>
+              </widget>
+             </item>
+            </layout>
            </item>
            <item>
             <layout class="QHBoxLayout" name="horizontalLayout_21">

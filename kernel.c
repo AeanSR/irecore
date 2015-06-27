@@ -2268,7 +2268,17 @@ DECL_EVENT( enchant_mh_trigger ) {
     refresh_mastery( rti );
 #endif
 #if (shatteredhand_mh)
-    deal_damage( rti, 1500.0f, DMGTYPE_NONE, 0, 0 );
+	float dmg = 1500.0f;
+	if ( UP( enrage.expire ) ) {
+		dmg *= 1.1f;
+		dmg *= 1.0f + rti->player.stat.mastery;
+	}
+	dmg *= 1.0f + rti->player.stat.vers;
+#if (TALENT_TIER6 == 1)
+	if (UP(avatar.expire))
+		dmg *= 1.2f;
+#endif
+    deal_damage( rti, dmg, DMGTYPE_NONE, 0, 0 );
     rti->player.enchant_mh.expire = TIME_OFFSET( FROM_SECONDS( 6 ) );
     rti->player.enchant_mh.ticks = 6.0f;
     eq_enqueue( rti, TIME_OFFSET( FROM_SECONDS( 1 ) ), routnum_enchant_mh_tick );
@@ -2297,7 +2307,17 @@ DECL_EVENT( enchant_oh_trigger ) {
     refresh_mastery( rti );
 #endif
 #if (shatteredhand_oh)
-    deal_damage( rti, 1500.0f, DMGTYPE_NONE, 0, 0 );
+	float dmg = 1500.0f;
+    if ( UP( enrage.expire ) ) {
+		dmg *= 1.1f;
+		dmg *= 1.0f + rti->player.stat.mastery;
+	}
+	dmg *= 1.0f + rti->player.stat.vers;
+#if (TALENT_TIER6 == 1)
+	if (UP(avatar.expire))
+		dmg *= 1.2f;
+#endif
+    deal_damage( rti, dmg, DMGTYPE_NONE, 0, 0 );
     rti->player.enchant_oh.expire = TIME_OFFSET( FROM_SECONDS( 6 ) );
     rti->player.enchant_oh.ticks = 6.0f;
     eq_enqueue( rti, TIME_OFFSET( FROM_SECONDS( 1 ) ), routnum_enchant_oh_tick );
@@ -2402,8 +2422,15 @@ DECL_SPELL( bloodfury ) {
 DECL_EVENT( touch_of_the_grave_trigger ) {
     float d = 1932.0f;
     d += uni_rng( rti ) * ( 2244.0f - 1932.0f );
-    if( UP( enrage.expire ) ) d *= 1.1f * ( 1.0f + rti->player.stat.mastery ); /* TotG scales with enrage? */
-    d *= 1.0f + rti->player.stat.vers; /* scales with versatility? */
+	if (UP(enrage.expire)) {
+		d *= 1.1f;
+		d *= 1.0f + rti->player.stat.mastery;
+	}
+	d *= 1.0f + rti->player.stat.vers;
+#if (TALENT_TIER6 == 1)
+	if (UP(avatar.expire))
+		d *= 1.2f;
+#endif
     deal_damage( rti, d, DMGTYPE_NONE, 0, 0 );
 }
 #endif

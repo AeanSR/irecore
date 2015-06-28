@@ -65,6 +65,9 @@ const char* trinket_list[] = {
 	"skull_of_war",
 	"mote_of_the_mountain",
 	"worldbreakers_resolve",
+	"discordant_chorus",
+	"empty_drinking_horn",
+	"unending_hunger",
 	NULL
 };
 

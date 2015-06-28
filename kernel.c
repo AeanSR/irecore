@@ -13,7 +13,7 @@
 /*
 	TODO list:
 	Touch of the Grave (Undead trait) is a mystery. Need more feedbacks since I play nelf only.
-	Now implemented as 20%-15s ICD, 1932~2244 damage scales with enrage, mastery and vers.
+	Now implemented as 20%-15s ICD, 1932~2244 damage scales with enrage, mastery and vers. Do not crit.
 */
 
 #define SHOW_LOG
@@ -79,7 +79,9 @@
 //#define trinket_skull_of_war 2120
 //#define trinket_mote_of_the_mountain 1517
 //#define trinket_worldbreakers_resolve 220
-#define trinket_horn_of_screaming_spirits 2652
+//#define trinket_discordant_chorus 20564
+//#define trinket_empty_drinking_horn 259
+#define trinket_unending_hunger 54
 #endif /* !defined(__OPENCL_VERSION__) */
 
 /* Debug on Host! */
@@ -601,6 +603,22 @@ typedef struct {
 		time_t expire;
 		k32u   stack;
 	} worldbreakers_resolve;
+#endif
+#if defined(trinket_discordant_chorus)
+	RPPM_t discordant_chorus;
+#endif
+#if defined(trinket_empty_drinking_horn)
+	struct {
+		time_t expire;
+		k32u stack;
+	} empty_drinking_horn;
+#endif
+#if defined(trinket_unending_hunger)
+	struct {
+		time_t expire;
+		k32u stack;
+		RPPM_t proc;
+	} unending_hunger;
 #endif
     time_t gcd;
 }
@@ -1255,6 +1273,18 @@ enum {
 #if defined(trinket_worldbreakers_resolve)
 	routnum_worldbreakers_resolve_expire,
 	routnum_worldbreakers_resolve_trigger,
+#endif
+#if defined(trinket_discordant_chorus)
+	routnum_discordant_chorus_trigger,
+#endif
+#if defined(trinket_empty_drinking_horn)
+	routnum_empty_drinking_horn_trigger,
+	routnum_empty_drinking_horn_expire,
+	routnum_empty_drinking_horn_tick,
+#endif
+#if defined(trinket_unending_hunger)
+	routnum_unending_hunger_trigger,
+	routnum_unending_hunger_expire,
 #endif
 };
 
@@ -2728,6 +2758,59 @@ DECL_EVENT(worldbreakers_resolve_trigger) {
 }
 #endif
 
+#if defined(trinket_discordant_chorus)
+DECL_EVENT(discordant_chorus_trigger) {
+	lprintf(("discordant chorus trigger"));
+	deal_damage(rti, trinket_discordant_chorus, DMGTYPE_SPECIAL, 0, 0, 0);
+}
+#endif
+
+#if defined(trinket_empty_drinking_horn)
+DECL_EVENT(empty_drinking_horn_trigger) {
+	if (UP(empty_drinking_horn.expire)){
+		rti->player.empty_drinking_horn.stack ++;
+	}
+	else{
+		rti->player.empty_drinking_horn.expire = TIME_OFFSET(FROM_SECONDS(15));
+		rti->player.empty_drinking_horn.stack = 1;
+		eq_enqueue(rti, rti->player.empty_drinking_horn.expire, routnum_empty_drinking_horn_expire);
+		eq_enqueue(rti, TIME_OFFSET(FROM_SECONDS(3)), routnum_empty_drinking_horn_tick);
+	}
+	lprintf(("empty_drinking_horn stack %d", rti->player.empty_drinking_horn.stack));
+}
+DECL_EVENT(empty_drinking_horn_expire) {
+	rti->player.empty_drinking_horn.stack = 0;
+	lprintf(("empty_drinking_horn stack %d", rti->player.empty_drinking_horn.stack));
+}
+DECL_EVENT(empty_drinking_horn_tick) {
+	float dmg = trinket_empty_drinking_horn / 5.0f;
+	dmg *= rti->player.empty_drinking_horn.stack;
+	deal_damage(rti, dmg, DMGTYPE_SPECIAL, 0, 0, 1);
+	time_t next_tick = TIME_OFFSET(FROM_SECONDS(3));
+	if (next_tick <= rti->player.empty_drinking_horn.expire)
+		eq_enqueue(rti, next_tick, routnum_empty_drinking_horn_tick);
+}
+#endif
+
+#if defined(trinket_unending_hunger)
+DECL_EVENT(unending_hunger_trigger) {
+	rti->player.unending_hunger.expire = TIME_OFFSET(FROM_SECONDS(20));
+	rti->player.unending_hunger.stack = 1;
+	eq_enqueue(rti, rti->player.unending_hunger.expire, routnum_unending_hunger_expire);
+	rti->player.stat.gear_str += trinket_unending_hunger;
+	refresh_str(rti);
+	refresh_ap(rti);
+}
+DECL_EVENT(unending_hunger_expire){
+	rti->player.stat.gear_str -= trinket_unending_hunger * rti->player.unending_hunger.stack;
+	rti->player.unending_hunger.stack = 0;
+	rti->player.unending_hunger.expire = 0;
+	refresh_str(rti);
+	refresh_ap(rti);
+}
+#endif
+
+
 // === anger_management =======================================================
 void anger_management_count( rtinfo_t* rti, float rage ) {
     time_t t = FROM_SECONDS( rage / 30.0f );
@@ -2944,6 +3027,18 @@ void routine_entries( rtinfo_t* rti, _event_t e ) {
 		HOOK_EVENT(worldbreakers_resolve_trigger);
 		HOOK_EVENT(worldbreakers_resolve_expire);
 #endif
+#if defined(trinket_discordant_chorus)
+		HOOK_EVENT(discordant_chorus_trigger);
+#endif
+#if defined(trinket_empty_drinking_horn)
+		HOOK_EVENT(empty_drinking_horn_trigger);
+		HOOK_EVENT(empty_drinking_horn_tick);
+		HOOK_EVENT(empty_drinking_horn_expire);
+#endif
+#if defined(trinket_unending_hunger)
+		HOOK_EVENT(unending_hunger_trigger);
+		HOOK_EVENT(unending_hunger_expire);
+#endif
     default:
         assert( 0 );
     }
@@ -3015,6 +3110,14 @@ void module_init( rtinfo_t* rti ) {
     rti->player.mote_of_the_mountain.proc.lasttimeattemps = ( time_t ) - ( k32s )FROM_SECONDS( 10 );
     rti->player.mote_of_the_mountain.proc.lasttimeprocs = ( time_t ) - ( k32s )FROM_SECONDS( 180 );
 #endif
+#if defined(trinket_discordant_chorus)
+	rti->player.discordant_chorus.lasttimeattemps = (time_t)-(k32s)FROM_SECONDS(10);
+	rti->player.discordant_chorus.lasttimeprocs = (time_t)-(k32s)FROM_SECONDS(180);
+#endif
+#if defined(trinket_unending_hunger)
+	rti->player.unending_hunger.proc.lasttimeattemps = (time_t)-(k32s)FROM_SECONDS(10);
+	rti->player.unending_hunger.proc.lasttimeprocs = (time_t)-(k32s)FROM_SECONDS(180);
+#endif
 }
 
 void special_procs( rtinfo_t* rti ) {
@@ -3073,6 +3176,23 @@ void special_procs( rtinfo_t* rti ) {
     if ( !UP( mote_of_the_mountain.expire ) ) {
         proc_RPPM( rti, &rti->player.mote_of_the_mountain.proc, 0.92f, routnum_mote_of_the_mountain_trigger );
     }
+#endif
+#if defined(trinket_discordant_chorus)
+	proc_RPPM(rti, &rti->player.discordant_chorus, 6.0f * (1.0f + rti->player.stat.haste), routnum_discordant_chorus_trigger);
+#endif
+#if defined(trinket_empty_drinking_horn)
+	eq_enqueue(rti, rti->timestamp, routnum_empty_drinking_horn_trigger);
+#endif
+#if defined(trinket_unending_hunger)
+	if (!UP(unending_hunger.expire)){
+		proc_RPPM(rti, &rti->player.unending_hunger.proc, 1.0f, routnum_unending_hunger_trigger);
+	}
+	else{
+		rti->player.unending_hunger.stack++;
+		rti->player.stat.gear_str += trinket_unending_hunger;
+		refresh_str(rti);
+		refresh_ap(rti);
+	}
 #endif
 }
 

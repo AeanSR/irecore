@@ -2,6 +2,7 @@
 #include "gic.h"
 
 #define API_KEY "nyv354w3rnf3jf95ryn5ddmyar933pzw"
+const double ilvlScaleCoeff = 1.009357190938255;
 
 rapidjson::Document getjson::get(){
 	reply = qnam.get(QNetworkRequest(url));
@@ -194,7 +195,7 @@ void gic::import_player(std::string& realm, std::string& name, std::string& regi
 		if (itemid == 118305) archmages_greater_incandescence = 1;
 		if (itemid == 118300) archmages_incandescence = 1;
 		if (itemid == 124634){
-			legendary_ring = 2500.0 * pow(1.009357190938255, itemlvl = 735);
+			legendary_ring = 2500.0 * pow(ilvlScaleCoeff, itemlvl - 735);
 		}
 		/* 	"none",0
 	"vial_of_convulsive_shadows",1
@@ -221,7 +222,7 @@ void gic::import_player(std::string& realm, std::string& name, std::string& regi
 				case 691: input->setText(qsprint(1870)); break;
 				case 700: input->setText(qsprint(2033)); break;
 				case 706: input->setText(qsprint(2150)); break;
-				default:  input->setText(qsprint((int)(2033.0 * pow(1.0098, itemlvl - 700)))); break;
+				default:  input->setText(qsprint((int)(2033.0 * pow(ilvlScaleCoeff, itemlvl - 700)))); break;
 				}
 			}
 			if (itemid == 113983){
@@ -233,7 +234,7 @@ void gic::import_player(std::string& realm, std::string& name, std::string& regi
 				case 691: input->setText(qsprint(167)); break;
 				case 700: input->setText(qsprint(181)); break;
 				case 706: input->setText(qsprint(192)); break;
-				default:  input->setText(qsprint((int)(181.0 * pow(1.0098, itemlvl - 700)))); break;
+				default:  input->setText(qsprint((int)(181.0 * pow(ilvlScaleCoeff, itemlvl - 700)))); break;
 				}
 			}
 			if (itemid == 119193){
@@ -245,14 +246,14 @@ void gic::import_player(std::string& realm, std::string& name, std::string& regi
 				case 691: input->setText(qsprint(2439)); break;
 				case 700: input->setText(qsprint(2652)); break;
 				case 706: input->setText(qsprint(2804)); break;
-				default:  input->setText(qsprint((int)(2652.0 * pow(1.0098, itemlvl - 700)))); break;
+				default:  input->setText(qsprint((int)(2652.0 * pow(ilvlScaleCoeff, itemlvl - 700)))); break;
 				}
 			}
 			if (itemid == 118882){
 				combo->setCurrentIndex(4);
 				switch (itemlvl){
 				case 665: input->setText(qsprint(2200)); break;
-				default:  input->setText(qsprint((int)(2200.0 * pow(1.0098, itemlvl - 665)))); break;
+				default:  input->setText(qsprint((int)(2200.0 * pow(ilvlScaleCoeff, itemlvl - 665)))); break;
 				}
 			}
 			if (itemid == 115159 || itemid == 119936 || itemid == 111232 || itemid == 115759 || itemid == 125041 || itemid == 125518 || itemid == 126632 || itemid == 126155 || itemid == 124867 || itemid == 125344 || itemid == 125981 || itemid == 126458){
@@ -265,7 +266,7 @@ void gic::import_player(std::string& realm, std::string& name, std::string& regi
 				case 680: input->setText(qsprint(798)); break;
 				case 700: input->setText(qsprint(1057)); break;
 				case 705: input->setText(qsprint(1108)); break;
-				default:  input->setText(qsprint((int)(728.0 * pow(1.0098, itemlvl-660)))); break;
+				default:  input->setText(qsprint((int)(728.0 * pow(ilvlScaleCoeff, itemlvl - 660)))); break;
 				}
 			}
 			if (itemid == 115160 || itemid == 119937 || itemid == 111233 || itemid == 115760 || itemid == 125042 || itemid == 125519 || itemid == 126633 || itemid == 126156 || itemid == 124868 || itemid == 125345 || itemid == 125982 || itemid == 126459){
@@ -278,7 +279,7 @@ void gic::import_player(std::string& realm, std::string& name, std::string& regi
 				case 680: input->setText(qsprint(951)); break;
 				case 700: input->setText(qsprint(1259)); break;
 				case 705: input->setText(qsprint(1319)); break;
-				default:  input->setText(qsprint((int)(867.0 * pow(1.0098, itemlvl - 660)))); break;
+				default:  input->setText(qsprint((int)(867.0 * pow(ilvlScaleCoeff, itemlvl - 660)))); break;
 				}
 			}
 			if (itemid == 113645){
@@ -290,14 +291,14 @@ void gic::import_player(std::string& realm, std::string& name, std::string& regi
 				case 676: input->setText(qsprint(2122)); break;
 				case 685: input->setText(qsprint(2304)); break;
 				case 691: input->setText(qsprint(2439)); break;
-				default:  input->setText(qsprint((int)(2304.0 * pow(1.0098, itemlvl - 685)))); break;
+				default:  input->setText(qsprint((int)(2304.0 * pow(ilvlScaleCoeff, itemlvl - 685)))); break;
 				}
 			}
 			if (itemid == 114613){
 				combo->setCurrentIndex(8);
 				switch (itemlvl){
 				case 655: input->setText(qsprint(1743)); break;
-				default:  input->setText(qsprint((int)(1743.0 * pow(1.0098, itemlvl - 655)))); break;
+				default:  input->setText(qsprint((int)(1743.0 * pow(ilvlScaleCoeff, itemlvl - 655)))); break;
 				}
 			}
 			if (itemid == 109262 || (itemid >= 122601 && itemid <= 122604)){
@@ -308,7 +309,7 @@ void gic::import_player(std::string& realm, std::string& name, std::string& regi
 				case 655: input->setText(qsprint(1069)); break;
 				case 670: input->setText(qsprint(1229)); break;
 				case 685: input->setText(qsprint(1414)); break;
-				default:  input->setText(qsprint((int)(1414.0 * pow(1.0098, itemlvl - 685)))); break;
+				default:  input->setText(qsprint((int)(1414.0 * pow(ilvlScaleCoeff, itemlvl - 685)))); break;
 				}
 			}
 			if (itemid == 112318){
@@ -320,7 +321,7 @@ void gic::import_player(std::string& realm, std::string& name, std::string& regi
 				case 685: input->setText(qsprint(2120)); break;
 				case 700: input->setText(qsprint(2440)); break;
 				case 715: input->setText(qsprint(2804)); break;
-				default:  input->setText(qsprint((int)(2804.0 * pow(1.0098, itemlvl - 715)))); break;
+				default:  input->setText(qsprint((int)(2804.0 * pow(ilvlScaleCoeff, itemlvl - 715)))); break;
 				}
 			}
 			if (itemid == 116292){
@@ -328,7 +329,7 @@ void gic::import_player(std::string& realm, std::string& name, std::string& regi
 				switch (itemlvl){
 				case 640: input->setText(qsprint(1517)); break;
 				case 646: input->setText(qsprint(1604)); break;
-				default:  input->setText(qsprint((int)(1517.0 * pow(1.0098, itemlvl - 640)))); break;
+				default:  input->setText(qsprint((int)(1517.0 * pow(ilvlScaleCoeff, itemlvl - 640)))); break;
 				}
 			}
 			if (itemid == 124523){
@@ -340,7 +341,43 @@ void gic::import_player(std::string& realm, std::string& name, std::string& regi
 				case 726: input->setText(qsprint(267)); break;
 				case 735: input->setText(qsprint(290)); break;
 				case 741: input->setText(qsprint(307)); break;
-				default:  input->setText(qsprint((int)(290.0 * pow(1.0098, itemlvl - 735)))); break;
+				default:  input->setText(qsprint((int)(290.0 * pow(ilvlScaleCoeff, itemlvl - 735)))); break;
+				}
+			}
+			if (itemid == 124237){
+				combo->setCurrentIndex(13);
+				switch (itemlvl){
+				case 700: input->setText(qsprint(20564)); break;
+				case 706: input->setText(qsprint(21744)); break;
+				case 715: input->setText(qsprint(23632)); break;
+				case 721: input->setText(qsprint(24981)); break;
+				case 730: input->setText(qsprint(27172)); break;
+				case 736: input->setText(qsprint(28757)); break;
+				default:  input->setText(qsprint((int)(27172.0 * pow(ilvlScaleCoeff, itemlvl - 730)))); break;
+				}
+			}
+			if (itemid == 124238){
+				combo->setCurrentIndex(14);
+				switch (itemlvl){
+				case 700: input->setText(qsprint(259)); break;
+				case 706: input->setText(qsprint(274)); break;
+				case 715: input->setText(qsprint(298)); break;
+				case 721: input->setText(qsprint(315)); break;
+				case 730: input->setText(qsprint(342)); break;
+				case 736: input->setText(qsprint(362)); break;
+				default:  input->setText(qsprint((int)(342.0 * pow(ilvlScaleCoeff, itemlvl - 730)))); break;
+				}
+			}
+			if (itemid == 124236){
+				combo->setCurrentIndex(15);
+				switch (itemlvl){
+				case 695: input->setText(qsprint(54)); break;
+				case 701: input->setText(qsprint(57)); break;
+				case 710: input->setText(qsprint(62)); break;
+				case 716: input->setText(qsprint(65)); break;
+				case 725: input->setText(qsprint(71)); break;
+				case 731: input->setText(qsprint(75)); break;
+				default:  input->setText(qsprint((int)(71.0 * pow(ilvlScaleCoeff, itemlvl - 725)))); break;
 				}
 			}
 		}

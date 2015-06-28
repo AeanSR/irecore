@@ -320,7 +320,10 @@ gic::gic(QWidget *parent)
 		QApplication::translate("gicClass", "Draenic Stone") <<
 		QApplication::translate("gicClass", "Skull of War") <<
 		QApplication::translate("gicClass", "Mote of the Mountain") <<
-		QApplication::translate("gicClass", "Worldbreaker's Resolve");
+		QApplication::translate("gicClass", "Worldbreaker's Resolve") <<
+		QApplication::translate("gicClass", "Discordant Chorus") << 
+		QApplication::translate("gicClass", "Empty Drinking Horn") << 
+		QApplication::translate("gicClass", "Unending Hunger");
 	ui.comboTrinketSpecial1->addItems(lists);
 	ui.comboTrinketSpecial2->addItems(lists);
 	lists.clear();

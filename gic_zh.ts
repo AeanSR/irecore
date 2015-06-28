@@ -75,19 +75,19 @@
     </message>
     <message>
         <location filename="gic.ui" line="258"/>
-        <location filename="gic.cpp" line="376"/>
+        <location filename="gic.cpp" line="387"/>
         <source>Crit</source>
         <translation>爆击</translation>
     </message>
     <message>
         <location filename="gic.ui" line="268"/>
-        <location filename="gic.cpp" line="377"/>
+        <location filename="gic.cpp" line="388"/>
         <source>Haste</source>
         <translation>急速</translation>
     </message>
     <message>
         <location filename="gic.ui" line="278"/>
-        <location filename="gic.cpp" line="378"/>
+        <location filename="gic.cpp" line="389"/>
         <source>Mastery</source>
         <translation>精通</translation>
     </message>
@@ -258,7 +258,7 @@
     </message>
     <message>
         <location filename="gic.ui" line="727"/>
-        <location filename="gic.cpp" line="374"/>
+        <location filename="gic.cpp" line="385"/>
         <source>Strength</source>
         <translation>力量</translation>
     </message>
@@ -318,557 +318,578 @@
         <translation>T18 4件特效</translation>
     </message>
     <message>
-        <location filename="gic.ui" line="889"/>
-        <location filename="gic.ui" line="916"/>
+        <location filename="gic.ui" line="885"/>
+        <location filename="gic.ui" line="912"/>
+        <location filename="gic.ui" line="939"/>
         <source>Value</source>
         <translation>触发量</translation>
     </message>
     <message>
-        <location filename="gic.ui" line="935"/>
+        <location filename="gic.ui" line="958"/>
         <source>Main-Hand Weapon</source>
         <translation>主手武器</translation>
     </message>
     <message>
-        <location filename="gic.ui" line="963"/>
-        <location filename="gic.ui" line="1069"/>
+        <location filename="gic.ui" line="986"/>
+        <location filename="gic.ui" line="1092"/>
         <source>Lower Dmg.</source>
         <translation>伤害下限</translation>
     </message>
     <message>
-        <location filename="gic.ui" line="982"/>
-        <location filename="gic.ui" line="1088"/>
+        <location filename="gic.ui" line="1005"/>
+        <location filename="gic.ui" line="1111"/>
         <source>Higher Dmg.</source>
         <translation>伤害上限</translation>
     </message>
     <message>
-        <location filename="gic.ui" line="1001"/>
-        <location filename="gic.ui" line="1107"/>
+        <location filename="gic.ui" line="1024"/>
+        <location filename="gic.ui" line="1130"/>
         <source>Speed</source>
         <translation>速度</translation>
     </message>
     <message>
-        <location filename="gic.ui" line="1014"/>
-        <location filename="gic.ui" line="1120"/>
-        <location filename="gic.ui" line="1698"/>
+        <location filename="gic.ui" line="1037"/>
+        <location filename="gic.ui" line="1143"/>
+        <location filename="gic.ui" line="1721"/>
         <source>DPS:</source>
         <translation>DPS：</translation>
     </message>
     <message>
-        <location filename="gic.ui" line="1041"/>
+        <location filename="gic.ui" line="1064"/>
         <source>Off-Hand Weapon</source>
         <translation>副手武器</translation>
     </message>
     <message>
-        <location filename="gic.ui" line="1147"/>
+        <location filename="gic.ui" line="1170"/>
         <source>Talents &amp;&amp; Traits</source>
         <translation>天赋/种族天赋</translation>
     </message>
     <message>
-        <location filename="gic.ui" line="1170"/>
+        <location filename="gic.ui" line="1193"/>
         <source>Race:</source>
         <translation>种族：</translation>
     </message>
     <message>
-        <location filename="gic.ui" line="1203"/>
+        <location filename="gic.ui" line="1226"/>
         <source>Tier 1:</source>
         <translation>第一层：</translation>
     </message>
     <message>
-        <location filename="gic.ui" line="1236"/>
+        <location filename="gic.ui" line="1259"/>
         <source>Tier 2:</source>
         <translation>第二层：</translation>
     </message>
     <message>
-        <location filename="gic.ui" line="1269"/>
+        <location filename="gic.ui" line="1292"/>
         <source>Tier 3:</source>
         <translation>第三层：</translation>
     </message>
     <message>
-        <location filename="gic.ui" line="1302"/>
+        <location filename="gic.ui" line="1325"/>
         <source>Tier 4:</source>
         <translation>第四层：</translation>
     </message>
     <message>
-        <location filename="gic.ui" line="1335"/>
+        <location filename="gic.ui" line="1358"/>
         <source>Tier 5:</source>
         <translation>第五层：</translation>
     </message>
     <message>
-        <location filename="gic.ui" line="1368"/>
+        <location filename="gic.ui" line="1391"/>
         <source>Tier 6:</source>
         <translation>第六层：</translation>
     </message>
     <message>
-        <location filename="gic.ui" line="1401"/>
+        <location filename="gic.ui" line="1424"/>
         <source>Tier 7:</source>
         <translation>第七层：</translation>
     </message>
     <message>
-        <location filename="gic.ui" line="1436"/>
+        <location filename="gic.ui" line="1459"/>
         <source>Gear Summary</source>
         <translation>装备总览</translation>
     </message>
     <message>
-        <location filename="gic.ui" line="1493"/>
+        <location filename="gic.ui" line="1516"/>
         <source>Policy</source>
         <translation>策略</translation>
     </message>
     <message>
-        <location filename="gic.ui" line="1505"/>
+        <location filename="gic.ui" line="1528"/>
         <source>Use Default Action Priority Lists (Recommended)</source>
         <translation>使用默认的动作优先级列表（推荐）</translation>
     </message>
     <message>
-        <location filename="gic.ui" line="1566"/>
+        <location filename="gic.ui" line="1589"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;When Default Actions is set, default action lists will override the editor below. Default action lists take care of all talent, trinket, racial-traits and bonuses stuff.&lt;/p&gt;&lt;p&gt;IreCore APLs is a piece of C code, inserted into kernel source directly as a function. All valid C code is valid for IreCore APL, so you can have more liberal policies, e.g. define your custom variables.&lt;/p&gt;&lt;p&gt;Frequently used lexicals are listed on the right side, double click to insert.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;启用默认动作后，默认动作将覆盖下面的编辑器。默认动作列表会自动考虑到所有的天赋、饰品、种族天赋和特效。&lt;/p&gt;&lt;p&gt;IreCore APL是一段C语言代码，作为一个函数直接插入内核源码中。所有合法的C语言代码都可以作为IreCore APL使用，所以你可以有更多的发挥空间，例如定义自己的变量。&lt;/p&gt;&lt;p&gt;常用的词素列在右侧，你可以双击它们直接插入。&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="gic.ui" line="1575"/>
+        <location filename="gic.ui" line="1598"/>
         <source>Override</source>
         <translation>覆盖</translation>
     </message>
     <message>
-        <location filename="gic.ui" line="1587"/>
+        <location filename="gic.ui" line="1610"/>
         <source>Textual configuration will override graphic options.</source>
         <translation>将配置文本写在这里覆盖图形界面选项。</translation>
     </message>
     <message>
-        <location filename="gic.ui" line="1593"/>
+        <location filename="gic.ui" line="1616"/>
         <source>Result</source>
         <translation>结果</translation>
     </message>
     <message>
-        <location filename="gic.ui" line="1621"/>
+        <location filename="gic.ui" line="1644"/>
         <source>DPS Range(Std. Dev):</source>
         <translation>DPS范围（标准差）：</translation>
     </message>
     <message>
-        <location filename="gic.ui" line="1634"/>
-        <location filename="gic.ui" line="1666"/>
-        <location filename="gic.ui" line="1711"/>
+        <location filename="gic.ui" line="1657"/>
+        <location filename="gic.ui" line="1689"/>
+        <location filename="gic.ui" line="1734"/>
         <source>N/A</source>
         <translation>N/A</translation>
     </message>
     <message>
-        <location filename="gic.ui" line="1653"/>
+        <location filename="gic.ui" line="1676"/>
         <source>Error(0.95 Confident):</source>
         <translation>误差（0.95置信水平）：</translation>
     </message>
     <message>
-        <location filename="gic.ui" line="1682"/>
+        <location filename="gic.ui" line="1705"/>
         <source>Stat Weights:</source>
         <translation>属性权重：</translation>
     </message>
     <message>
-        <location filename="gic.ui" line="2487"/>
+        <location filename="gic.ui" line="2510"/>
         <source>Current Version</source>
         <translation>当前版本</translation>
     </message>
     <message>
-        <location filename="gic.ui" line="2500"/>
+        <location filename="gic.ui" line="2523"/>
         <source>Run</source>
         <translation>运行</translation>
     </message>
     <message>
-        <location filename="battlenet.cpp" line="16"/>
-        <location filename="battlenet.cpp" line="120"/>
-        <location filename="battlenet.cpp" line="124"/>
-        <location filename="battlenet.cpp" line="146"/>
+        <location filename="battlenet.cpp" line="18"/>
+        <location filename="battlenet.cpp" line="117"/>
+        <location filename="battlenet.cpp" line="121"/>
+        <location filename="battlenet.cpp" line="143"/>
         <source>Import Fail</source>
         <translation>导入失败</translation>
     </message>
     <message>
-        <location filename="battlenet.cpp" line="16"/>
+        <location filename="battlenet.cpp" line="18"/>
         <source>Cannot connect Battle.Net:
 </source>
         <translation>无法连接战网：
 </translation>
     </message>
     <message>
-        <location filename="battlenet.cpp" line="120"/>
+        <location filename="battlenet.cpp" line="117"/>
         <source>This character is not a warrior.</source>
         <translation>这个角色不是战士。</translation>
     </message>
     <message>
-        <location filename="battlenet.cpp" line="124"/>
+        <location filename="battlenet.cpp" line="121"/>
         <source>This character is not 100 lvl.</source>
         <translation>这个角色没有达到100级。</translation>
     </message>
     <message>
-        <location filename="battlenet.cpp" line="146"/>
+        <location filename="battlenet.cpp" line="143"/>
         <source>This character do not have fury spec.</source>
         <translation>这个角色没有狂暴专精。</translation>
     </message>
     <message>
-        <location filename="gic.cpp" line="13"/>
+        <location filename="gic.cpp" line="80"/>
         <source>Plate</source>
         <translation>板甲</translation>
     </message>
     <message>
-        <location filename="gic.cpp" line="14"/>
+        <location filename="gic.cpp" line="81"/>
         <source>Mail/Leather/Cloth</source>
         <translation>布/皮/锁</translation>
     </message>
     <message>
-        <location filename="gic.cpp" line="18"/>
+        <location filename="gic.cpp" line="83"/>
         <source>1H Sword/Axe/Mace/Fist</source>
         <translation>单手武器/拳套</translation>
     </message>
     <message>
-        <location filename="gic.cpp" line="19"/>
+        <location filename="gic.cpp" line="82"/>
         <source>2H Sword/Axe/Mace/Polearm</source>
         <translation>双手武器</translation>
     </message>
     <message>
-        <location filename="gic.cpp" line="20"/>
+        <location filename="gic.cpp" line="84"/>
         <source>Dagger</source>
         <translation>匕首</translation>
     </message>
     <message>
-        <location filename="gic.cpp" line="81"/>
+        <location filename="gic.cpp" line="87"/>
         <source>  Current Version: </source>
         <translation>  当前版本： </translation>
     </message>
     <message>
-        <location filename="gic.cpp" line="282"/>
+        <location filename="gic.cpp" line="288"/>
         <source>No Legendary Ring</source>
         <translation>没有传说戒指</translation>
     </message>
     <message>
-        <location filename="gic.cpp" line="283"/>
+        <location filename="gic.cpp" line="289"/>
         <source>Incandescence(690)</source>
         <translation>大法师的灼热（690）</translation>
     </message>
     <message>
-        <location filename="gic.cpp" line="284"/>
+        <location filename="gic.cpp" line="290"/>
         <source>Greater Incandescence(715)</source>
         <translation>大法师的炽燃（715）</translation>
     </message>
     <message>
-        <location filename="gic.cpp" line="286"/>
-        <location filename="gic.cpp" line="287"/>
+        <location filename="gic.cpp" line="291"/>
+        <source>Thorasus(735~795)</source>
+        <translation>索拉苏斯（735~795）</translation>
+    </message>
+    <message>
+        <location filename="gic.cpp" line="294"/>
+        <location filename="gic.cpp" line="295"/>
         <source>No Enchantment.</source>
         <translation>没有附魔</translation>
     </message>
     <message>
-        <location filename="gic.cpp" line="288"/>
-        <location filename="gic.cpp" line="289"/>
+        <location filename="gic.cpp" line="296"/>
+        <location filename="gic.cpp" line="297"/>
         <source>Thunderlord</source>
         <translation>雷神之印</translation>
     </message>
     <message>
-        <location filename="gic.cpp" line="290"/>
-        <location filename="gic.cpp" line="291"/>
+        <location filename="gic.cpp" line="298"/>
+        <location filename="gic.cpp" line="299"/>
         <source>Bleeding Hollow</source>
         <translation>血环之印</translation>
     </message>
     <message>
-        <location filename="gic.cpp" line="292"/>
-        <location filename="gic.cpp" line="293"/>
+        <location filename="gic.cpp" line="300"/>
+        <location filename="gic.cpp" line="301"/>
         <source>Shattered Hand</source>
         <translation>碎手之印</translation>
     </message>
     <message>
-        <location filename="gic.cpp" line="303"/>
+        <location filename="gic.cpp" line="311"/>
         <source>No Trinket Special.</source>
         <translation>没有饰品特效</translation>
     </message>
     <message>
-        <location filename="gic.cpp" line="304"/>
+        <location filename="gic.cpp" line="312"/>
         <source>Vial of Convulsive Shadows</source>
         <translation>抽搐暗影之瓶</translation>
     </message>
     <message>
-        <location filename="gic.cpp" line="305"/>
+        <location filename="gic.cpp" line="313"/>
         <source>Forgemaster&apos;s Insignia</source>
         <translation>熔炉主管的徽记</translation>
     </message>
     <message>
-        <location filename="gic.cpp" line="306"/>
+        <location filename="gic.cpp" line="314"/>
         <source>Horn of Screaming Spirits</source>
         <translation>尖啸之魂号角</translation>
     </message>
     <message>
-        <location filename="gic.cpp" line="307"/>
+        <location filename="gic.cpp" line="315"/>
         <source>Scabbard of Kyanos</source>
         <translation>奇亚诺斯的剑鞘</translation>
     </message>
     <message>
-        <location filename="gic.cpp" line="308"/>
+        <location filename="gic.cpp" line="316"/>
         <source>Badge of Victory</source>
         <translation>胜利徽章</translation>
     </message>
     <message>
-        <location filename="gic.cpp" line="309"/>
+        <location filename="gic.cpp" line="317"/>
         <source>Insignia of Victory</source>
         <translation>胜利徽记</translation>
     </message>
     <message>
-        <location filename="gic.cpp" line="310"/>
+        <location filename="gic.cpp" line="318"/>
         <source>Tectus&apos; Beating Heart</source>
         <translation>泰克图斯的脉动之心</translation>
     </message>
     <message>
-        <location filename="gic.cpp" line="311"/>
+        <location filename="gic.cpp" line="319"/>
         <source>Formidable Fang</source>
         <translation>威凌之牙</translation>
     </message>
     <message>
-        <location filename="gic.cpp" line="312"/>
+        <location filename="gic.cpp" line="320"/>
         <source>Draenic Stone</source>
         <translation>点金石</translation>
     </message>
     <message>
-        <location filename="gic.cpp" line="313"/>
+        <location filename="gic.cpp" line="321"/>
         <source>Skull of War</source>
         <translation>战争之颅</translation>
     </message>
     <message>
-        <location filename="gic.cpp" line="314"/>
+        <location filename="gic.cpp" line="322"/>
         <source>Mote of the Mountain</source>
         <translation>活体之山微粒</translation>
     </message>
     <message>
-        <location filename="gic.cpp" line="315"/>
+        <location filename="gic.cpp" line="323"/>
         <source>Worldbreaker&apos;s Resolve</source>
         <translation>灭世者的决意</translation>
     </message>
     <message>
-        <location filename="gic.cpp" line="321"/>
-        <location filename="gic.cpp" line="339"/>
-        <location filename="gic.cpp" line="344"/>
-        <location filename="gic.cpp" line="349"/>
-        <location filename="gic.cpp" line="354"/>
-        <location filename="gic.cpp" line="359"/>
-        <location filename="gic.cpp" line="364"/>
-        <location filename="gic.cpp" line="369"/>
+        <location filename="gic.cpp" line="324"/>
+        <source>Discordant Chorus</source>
+        <translation>不谐合声</translation>
+    </message>
+    <message>
+        <location filename="gic.cpp" line="325"/>
+        <source>Empty Drinking Horn</source>
+        <translation>空角杯</translation>
+    </message>
+    <message>
+        <location filename="gic.cpp" line="326"/>
+        <source>Unending Hunger</source>
+        <translation>无餍之饥</translation>
+    </message>
+    <message>
+        <location filename="gic.cpp" line="332"/>
+        <location filename="gic.cpp" line="350"/>
+        <location filename="gic.cpp" line="355"/>
+        <location filename="gic.cpp" line="360"/>
+        <location filename="gic.cpp" line="365"/>
+        <location filename="gic.cpp" line="370"/>
+        <location filename="gic.cpp" line="375"/>
+        <location filename="gic.cpp" line="380"/>
         <source>Not set.</source>
         <translation>未设置</translation>
     </message>
     <message>
-        <location filename="gic.cpp" line="322"/>
+        <location filename="gic.cpp" line="333"/>
         <source>Human</source>
         <translation>人类</translation>
     </message>
     <message>
-        <location filename="gic.cpp" line="323"/>
+        <location filename="gic.cpp" line="334"/>
         <source>Dwarf</source>
         <translation>矮人</translation>
     </message>
     <message>
-        <location filename="gic.cpp" line="324"/>
+        <location filename="gic.cpp" line="335"/>
         <source>Gnome</source>
         <translation>侏儒</translation>
     </message>
     <message>
-        <location filename="gic.cpp" line="325"/>
+        <location filename="gic.cpp" line="336"/>
         <source>Night Elf(day)</source>
         <translation>暗夜精灵（白天）</translation>
     </message>
     <message>
-        <location filename="gic.cpp" line="326"/>
+        <location filename="gic.cpp" line="337"/>
         <source>Night Elf(night)</source>
         <translation>暗夜精灵（夜晚）</translation>
     </message>
     <message>
-        <location filename="gic.cpp" line="327"/>
+        <location filename="gic.cpp" line="338"/>
         <source>Draenei</source>
         <translation>德莱尼</translation>
     </message>
     <message>
-        <location filename="gic.cpp" line="328"/>
+        <location filename="gic.cpp" line="339"/>
         <source>Worgen</source>
         <translation>狼人</translation>
     </message>
     <message>
-        <location filename="gic.cpp" line="329"/>
+        <location filename="gic.cpp" line="340"/>
         <source>Orc</source>
         <translation>兽人</translation>
     </message>
     <message>
-        <location filename="gic.cpp" line="330"/>
+        <location filename="gic.cpp" line="341"/>
         <source>Troll</source>
         <translation>巨魔</translation>
     </message>
     <message>
-        <location filename="gic.cpp" line="331"/>
+        <location filename="gic.cpp" line="342"/>
         <source>Tauren</source>
         <translation>牛头人</translation>
     </message>
     <message>
-        <location filename="gic.cpp" line="332"/>
+        <location filename="gic.cpp" line="343"/>
         <source>Undead</source>
         <translation>亡灵</translation>
     </message>
     <message>
-        <location filename="gic.cpp" line="333"/>
+        <location filename="gic.cpp" line="344"/>
         <source>Blood Elf</source>
         <translation>血精灵</translation>
     </message>
     <message>
-        <location filename="gic.cpp" line="334"/>
+        <location filename="gic.cpp" line="345"/>
         <source>Goblin</source>
         <translation>地精</translation>
     </message>
     <message>
-        <location filename="gic.cpp" line="335"/>
+        <location filename="gic.cpp" line="346"/>
         <source>Pandaren</source>
         <translation>熊猫人</translation>
     </message>
     <message>
-        <location filename="gic.cpp" line="340"/>
+        <location filename="gic.cpp" line="351"/>
         <source>Juggernaut</source>
         <translation>主宰</translation>
     </message>
     <message>
-        <location filename="gic.cpp" line="341"/>
+        <location filename="gic.cpp" line="352"/>
         <source>Double Time</source>
         <translation>再度冲锋</translation>
     </message>
     <message>
-        <location filename="gic.cpp" line="342"/>
+        <location filename="gic.cpp" line="353"/>
         <source>Warbringer</source>
         <translation>战神</translation>
     </message>
     <message>
-        <location filename="gic.cpp" line="345"/>
+        <location filename="gic.cpp" line="356"/>
         <source>Enraged Regeneration</source>
         <translation>狂暴回复</translation>
     </message>
     <message>
-        <location filename="gic.cpp" line="346"/>
+        <location filename="gic.cpp" line="357"/>
         <source>Second Wind</source>
         <translation>复苏之风</translation>
     </message>
     <message>
-        <location filename="gic.cpp" line="347"/>
+        <location filename="gic.cpp" line="358"/>
         <source>Impending Victory</source>
         <translation>胜利在望</translation>
     </message>
     <message>
-        <location filename="gic.cpp" line="350"/>
+        <location filename="gic.cpp" line="361"/>
         <source>Furious Strike</source>
         <translation>狂怒打击</translation>
     </message>
     <message>
-        <location filename="gic.cpp" line="351"/>
+        <location filename="gic.cpp" line="362"/>
         <source>Sudden Death</source>
         <translation>猝死</translation>
     </message>
     <message>
-        <location filename="gic.cpp" line="352"/>
+        <location filename="gic.cpp" line="363"/>
         <source>Unquenchable Thirst</source>
         <translation>无尽渴望</translation>
     </message>
     <message>
-        <location filename="gic.cpp" line="355"/>
+        <location filename="gic.cpp" line="366"/>
         <source>Storm Bolt</source>
         <translation>风暴之锤</translation>
     </message>
     <message>
-        <location filename="gic.cpp" line="356"/>
+        <location filename="gic.cpp" line="367"/>
         <source>Shockwave</source>
         <translation>震荡波</translation>
     </message>
     <message>
-        <location filename="gic.cpp" line="357"/>
+        <location filename="gic.cpp" line="368"/>
         <source>Dragon Roar</source>
         <translation>巨龙怒吼</translation>
     </message>
     <message>
-        <location filename="gic.cpp" line="360"/>
+        <location filename="gic.cpp" line="371"/>
         <source>Mass Spell Reflection</source>
         <translation>群体反射</translation>
     </message>
     <message>
-        <location filename="gic.cpp" line="361"/>
+        <location filename="gic.cpp" line="372"/>
         <source>Safeguard</source>
         <translation>捍卫</translation>
     </message>
     <message>
-        <location filename="gic.cpp" line="362"/>
+        <location filename="gic.cpp" line="373"/>
         <source>Vigilance</source>
         <translation>警戒</translation>
     </message>
     <message>
-        <location filename="gic.cpp" line="365"/>
+        <location filename="gic.cpp" line="376"/>
         <source>Avatar</source>
         <translation>天神下凡</translation>
     </message>
     <message>
-        <location filename="gic.cpp" line="366"/>
+        <location filename="gic.cpp" line="377"/>
         <source>Bloodbath</source>
         <translation>浴血奋战</translation>
     </message>
     <message>
-        <location filename="gic.cpp" line="367"/>
+        <location filename="gic.cpp" line="378"/>
         <source>Bladestorm</source>
         <translation>剑刃风暴</translation>
     </message>
     <message>
-        <location filename="gic.cpp" line="370"/>
+        <location filename="gic.cpp" line="381"/>
         <source>Anger Management</source>
         <translation>愤怒掌控</translation>
     </message>
     <message>
-        <location filename="gic.cpp" line="371"/>
+        <location filename="gic.cpp" line="382"/>
         <source>Ravager</source>
         <translation>破坏者</translation>
     </message>
     <message>
-        <location filename="gic.cpp" line="372"/>
+        <location filename="gic.cpp" line="383"/>
         <source>Siegebreaker</source>
         <translation>破城者</translation>
     </message>
     <message>
-        <location filename="gic.cpp" line="375"/>
+        <location filename="gic.cpp" line="386"/>
         <source>AP</source>
         <translation>攻击强度</translation>
     </message>
     <message>
-        <location filename="gic.cpp" line="379"/>
+        <location filename="gic.cpp" line="390"/>
         <source>Mult</source>
         <translation>溅射</translation>
     </message>
     <message>
-        <location filename="gic.cpp" line="380"/>
+        <location filename="gic.cpp" line="391"/>
         <source>Vers</source>
         <translation>全能</translation>
     </message>
     <message>
-        <location filename="gic.cpp" line="381"/>
+        <location filename="gic.cpp" line="392"/>
         <source>Gear</source>
         <translation>装备</translation>
     </message>
     <message>
-        <location filename="gic.cpp" line="382"/>
+        <location filename="gic.cpp" line="393"/>
         <source>Buffed</source>
         <translation>Buff后</translation>
     </message>
     <message>
-        <location filename="gic.cpp" line="463"/>
+        <location filename="gic.cpp" line="474"/>
         <source>Set arguments...
 </source>
         <translation>设置参数...
 </translation>
     </message>
     <message>
-        <location filename="gic.cpp" line="583"/>
+        <location filename="gic.cpp" line="597"/>
         <source>Initializing compute cnvironment...
 </source>
         <translation>初始化运算环境...
 </translation>
     </message>
     <message>
-        <location filename="gic.cpp" line="588"/>
+        <location filename="gic.cpp" line="602"/>
         <source>Start simulation...
 </source>
         <translation>启动模拟...
 </translation>
     </message>
     <message>
-        <location filename="gic.cpp" line="591"/>
+        <location filename="gic.cpp" line="605"/>
         <source>Simulation finished.
 </source>
         <translation>模拟完成

@@ -69,7 +69,7 @@
 #define shatteredhand_oh 0
 //#define trinket_vial_of_convulsive_shadows 2033
 //#define trinket_forgemasters_insignia 181
-#define trinket_horn_of_screaming_spirits 2652
+//#define trinket_horn_of_screaming_spirits 2652
 //#define trinket_scabbard_of_kyanos 2200
 //#define trinket_badge_of_victory 1456
 //#define trinket_insignia_of_victory 867
@@ -78,7 +78,8 @@
 //#define trinket_draenic_stone 1414
 //#define trinket_skull_of_war 2120
 //#define trinket_mote_of_the_mountain 1517
-#define trinket_worldbreakers_resolve 220
+//#define trinket_worldbreakers_resolve 220
+#define trinket_horn_of_screaming_spirits 2652
 #endif /* !defined(__OPENCL_VERSION__) */
 
 /* Debug on Host! */
@@ -1261,13 +1262,13 @@ enum {
     DMGTYPE_NONE,
 	DMGTYPE_BLOODBATH,
     DMGTYPE_MELEE,
-    DMGTYPE_SPECIAL,
-    DMGTYPE_DRAGONROAR,
+    DMGTYPE_ABILITY,
+	DMGTYPE_SPECIAL,
 };
 
 void special_procs( rtinfo_t* rti );
 
-k32s deal_damage( rtinfo_t* rti, float dmg, k32u dmgtype, float extra_crit_rate, float extra_crit_bonus ) {
+k32s deal_damage( rtinfo_t* rti, float dmg, k32u dmgtype, float extra_crit_rate, float extra_crit_bonus, kbool ignore_armor ) {
     switch( dmgtype ) {
 	case DMGTYPE_NONE:
 		if (UP(enrage.expire)) {
@@ -1306,13 +1307,11 @@ k32s deal_damage( rtinfo_t* rti, float dmg, k32u dmgtype, float extra_crit_rate,
         dmg *= 1.0f + rti->player.stat.vers;
 
         if ( UP( recklessness.expire ) ) {
-            if( dmgtype == DMGTYPE_SPECIAL ) cr += 0.3f;
+            if( dmgtype == DMGTYPE_ABILITY ) cr += 0.3f;
             cdb *= 1.1f;
         }
-#if (TALENT_TIER4 == 3)
-        if ( dmgtype == DMGTYPE_DRAGONROAR ) cr = 1.0f;
-        else
-#endif
+
+        if ( !ignore_armor )
             dmg *= 0.650684f;
 #if (TALENT_TIER6 == 1)
         if ( UP( avatar.expire ) )
@@ -1375,7 +1374,7 @@ k32s deal_damage( rtinfo_t* rti, float dmg, k32u dmgtype, float extra_crit_rate,
         }
 
 #if (TALENT_TIER6 == 2)
-        if ( dmgtype != DMGTYPE_MELEE && UP( bloodbath.expire ) ) {
+        if ( dmgtype == DMGTYPE_ABILITY && UP( bloodbath.expire ) ) {
             rti->player.bloodbath.pool += ( rti->damage_collected - bbcounter ) * 0.3f;
             rti->player.bloodbath.ticks = 6.0f;
             if ( rti->player.bloodbath.dot_start < rti->timestamp ) {
@@ -1407,7 +1406,7 @@ DECL_EVENT( gcd_expire ) {
 DECL_EVENT( auto_attack_mh ) {
     float d = weapon_dmg( rti, 1.0f, 0, 0 );
 
-    k32s ret = deal_damage( rti, d, DMGTYPE_MELEE, 0, 0 );
+    k32s ret = deal_damage( rti, d, DMGTYPE_MELEE, 0, 0, 0 );
     if ( ret == -1 ) {
         /* Miss */
         lprintf( ( "mh miss" ) );
@@ -1440,7 +1439,7 @@ DECL_EVENT( auto_attack_mh ) {
 
 DECL_EVENT( auto_attack_oh ) {
     float d = weapon_dmg( rti, 1.0f, 0, 1 );
-    k32s ret = deal_damage( rti, d, DMGTYPE_MELEE, 0, 0 );
+    k32s ret = deal_damage( rti, d, DMGTYPE_MELEE, 0, 0, 0 );
     if ( ret == -1 ) {
         /* Miss */
         lprintf( ( "oh miss" ) );
@@ -1499,7 +1498,7 @@ DECL_EVENT( bloodthirst_execute ) {
         eq_enqueue( rti, rti->timestamp, routnum_bloodsurge_trigger );
     }
 
-    if ( deal_damage( rti, d, DMGTYPE_SPECIAL, 0.4f, 0 ) ) {
+    if ( deal_damage( rti, d, DMGTYPE_ABILITY, 0.4f, 0, 0 ) ) {
         /* Crit */
         eq_enqueue( rti, rti->timestamp, routnum_enrage_trigger );
         lprintf( ( "bloodthirst crit" ) );
@@ -1538,7 +1537,7 @@ DECL_EVENT( ragingblow_execute ) {
         lprintf( ( "ragingblow expire" ) );
     }
 
-    if ( deal_damage( rti, d, DMGTYPE_SPECIAL, 0, 0 ) ) {
+	if (deal_damage(rti, d, DMGTYPE_ABILITY, 0, 0, 0)) {
         /* Crit */
         lprintf( ( "ragingblow crit" ) );
 #if (t17_2pc)
@@ -1553,7 +1552,7 @@ DECL_EVENT( ragingblow_execute ) {
 
     /* Off hand. */
     d = weapon_dmg( rti, 2.0, 1, 1 );
-    if ( deal_damage( rti, d, DMGTYPE_SPECIAL, 0, 0 ) ) {
+	if (deal_damage(rti, d, DMGTYPE_ABILITY, 0, 0, 0)) {
         /* Crit */
         lprintf( ( "ragingblow oh crit" ) );
 #if (t17_2pc)
@@ -1601,7 +1600,7 @@ DECL_EVENT( execute_execute ) {
     float d = weapon_dmg( rti, 3.5f * 1.2f, 1, 0 );
     if ( SINGLE_MINDED ) d *= 1.15f;
 
-    if ( deal_damage( rti, d, DMGTYPE_SPECIAL, 0, 0 ) ) {
+	if (deal_damage(rti, d, DMGTYPE_ABILITY, 0, 0, 0)) {
         /* Crit */
         lprintf( ( "execute crit" ) );
 
@@ -1614,7 +1613,7 @@ DECL_EVENT( execute_execute ) {
     d = weapon_dmg( rti, 3.5f * 1.2f, 1, 1 );
     if ( SINGLE_MINDED ) d *= 1.15f;
 
-    if ( deal_damage( rti, d, DMGTYPE_SPECIAL, 0, 0 ) ) {
+	if (deal_damage(rti, d, DMGTYPE_ABILITY, 0, 0, 0)) {
         /* Crit */
         lprintf( ( "execute oh crit" ) );
 
@@ -1665,9 +1664,9 @@ DECL_EVENT(wildstrike_execute) {
 	float d = weapon_dmg(rti, 3.75f, 1, 1);
 
 #if (t18_2pc)
-	if (deal_damage(rti, d, DMGTYPE_SPECIAL, UP(bloodsurge.expire) ? 1.0 : 0, UP(bloodsurge.expire) ? 0.12 : 0)) {
+	if (deal_damage(rti, d, DMGTYPE_ABILITY, UP(bloodsurge.expire) ? 1.0 : 0, UP(bloodsurge.expire) ? 0.12 : 0, 0)) {
 #else
-	if (deal_damage(rti, d, DMGTYPE_SPECIAL, 0, 0)) {
+	if (deal_damage(rti, d, DMGTYPE_ABILITY, 0, 0, 0)) {
 #endif
 
 #if (t18_4pc)
@@ -1894,7 +1893,7 @@ DECL_EVENT( stormbolt_cd ) {
 DECL_EVENT( stormbolt_execute ) {
     float d = weapon_dmg( rti, 0.6f * 4.0f, 1, 0 );
 
-    if ( deal_damage( rti, d, DMGTYPE_SPECIAL, 0, 0 ) ) {
+	if (deal_damage(rti, d, DMGTYPE_ABILITY, 0, 0, 0)) {
         /* Crit */
         lprintf( ( "stormbolt crit" ) );
 
@@ -1904,7 +1903,7 @@ DECL_EVENT( stormbolt_execute ) {
     }
     d = weapon_dmg( rti, 0.6f * 4.0f, 1, 1 );
 
-    if ( deal_damage( rti, d, DMGTYPE_SPECIAL, 0, 0 ) ) {
+	if (deal_damage(rti, d, DMGTYPE_ABILITY, 0, 0, 0)) {
         /* Crit */
         lprintf( ( "stormbolt_oh crit" ) );
 
@@ -1952,7 +1951,7 @@ DECL_EVENT( shockwave_cd ) {
 DECL_EVENT( shockwave_execute ) {
     float d = ap_dmg( rti, 1.25f );
 
-    if ( deal_damage( rti, d, DMGTYPE_SPECIAL, 0, 0 ) ) {
+	if ( deal_damage( rti, d, DMGTYPE_ABILITY, 0, 0, 0 ) ) {
         /* Crit */
         lprintf( ( "shockwave crit" ) );
 
@@ -2000,7 +1999,7 @@ DECL_EVENT( dragonroar_cd ) {
 DECL_EVENT( dragonroar_execute ) {
     float d = ap_dmg( rti, 1.65f );
 
-    if ( deal_damage( rti, d, DMGTYPE_DRAGONROAR, 0, 0 ) ) {
+	if ( deal_damage( rti, d, DMGTYPE_ABILITY, 1, 0, 1 ) ) {
         /* Crit */
         lprintf( ( "dragonroar crit" ) );
 
@@ -2036,7 +2035,7 @@ DECL_EVENT( ravager_cd ) {
 DECL_EVENT( ravager_tick ) {
     float d = ap_dmg( rti, 0.615f );
 
-    if ( deal_damage( rti, d, DMGTYPE_SPECIAL, 0, 0 ) ) {
+	if ( deal_damage( rti, d, DMGTYPE_ABILITY, 0, 0, 0 ) ) {
         /* Crit */
         lprintf( ( "ravager crit" ) );
 
@@ -2071,7 +2070,7 @@ DECL_EVENT( siegebreaker_cd ) {
 DECL_EVENT( siegebreaker_execute ) {
     float d = weapon_dmg( rti, 4.5f, 1, 0 );
 
-    if ( deal_damage( rti, d, DMGTYPE_SPECIAL, 0, 0 ) ) {
+	if ( deal_damage( rti, d, DMGTYPE_ABILITY, 0, 0, 0 ) ) {
         /* Crit */
         lprintf( ( "siegebreaker crit" ) );
 
@@ -2081,7 +2080,7 @@ DECL_EVENT( siegebreaker_execute ) {
     }
     d = weapon_dmg( rti, 4.5f, 1, 1 );
 
-    if ( deal_damage( rti, d, DMGTYPE_SPECIAL, 0, 0 ) ) {
+	if ( deal_damage( rti, d, DMGTYPE_ABILITY, 0, 0, 0 ) ) {
         /* Crit */
         lprintf( ( "siegebreaker_oh crit" ) );
 
@@ -2125,7 +2124,7 @@ DECL_EVENT( bladestorm_cd ) {
 DECL_EVENT( bladestorm_tick ) {
     float d = weapon_dmg( rti, 1.6f, 1, 0 );
 
-    if ( deal_damage( rti, d, DMGTYPE_SPECIAL, 0, 0 ) ) {
+	if ( deal_damage( rti, d, DMGTYPE_ABILITY, 0, 0, 0 ) ) {
         /* Crit */
         lprintf( ( "bladestorm crit" ) );
 
@@ -2135,7 +2134,7 @@ DECL_EVENT( bladestorm_tick ) {
     }
     d = weapon_dmg( rti, 1.6f, 1, 1 );
 
-    if ( deal_damage( rti, d, DMGTYPE_SPECIAL, 0, 0 ) ) {
+	if ( deal_damage( rti, d, DMGTYPE_ABILITY, 0, 0, 0 ) ) {
         /* Crit */
         lprintf( ( "bladestorm_oh crit" ) );
 
@@ -2242,7 +2241,7 @@ DECL_EVENT( bloodbath_tick ) {
     if ( rti->player.bloodbath.dot_start + FROM_SECONDS( 7.0f - rti->player.bloodbath.ticks ) != rti->timestamp ) return;
     float dmg = rti->player.bloodbath.pool / rti->player.bloodbath.ticks;
     rti->player.bloodbath.pool -= dmg;
-    deal_damage( rti, dmg, DMGTYPE_BLOODBATH, 0, 0 );
+    deal_damage( rti, dmg, DMGTYPE_BLOODBATH, 0, 0, 0 );
     lprintf( ( "bloodbath ticks" ) );
     rti->player.bloodbath.ticks -= 1.0f;
     if ( rti->player.bloodbath.ticks >= 1.0f )
@@ -2292,7 +2291,7 @@ DECL_EVENT(thorasus_the_stone_heart_of_draenor_start) {
 DECL_EVENT(thorasus_the_stone_heart_of_draenor_expire) {
 	float dmg = rti->damage_collected - rti->player.thorasus_the_stone_heart_of_draenor.dmg_snapshot;
 	dmg *= legendary_ring * 0.0001;
-	deal_damage(rti, dmg, DMGTYPE_BLOODBATH, 0, 0);
+	deal_damage(rti, dmg, DMGTYPE_BLOODBATH, 0, 0, 0);
 	lprintf(("thorasus the stone heart of draenor expire"));
 }
 DECL_EVENT(thorasus_the_stone_heart_of_draenor_cd){
@@ -2331,7 +2330,7 @@ DECL_EVENT( enchant_mh_trigger ) {
     refresh_mastery( rti );
 #endif
 #if (shatteredhand_mh)
-    deal_damage( rti, 1500.0f, DMGTYPE_SPECIAL, 0, 0 );
+    deal_damage( rti, 1500.0f, DMGTYPE_SPECIAL, 0, 0, 0 );
     rti->player.enchant_mh.expire = TIME_OFFSET( FROM_SECONDS( 6 ) );
     rti->player.enchant_mh.ticks = 6.0f;
     eq_enqueue( rti, TIME_OFFSET( FROM_SECONDS( 1 ) ), routnum_enchant_mh_tick );
@@ -2360,7 +2359,7 @@ DECL_EVENT( enchant_oh_trigger ) {
     refresh_mastery( rti );
 #endif
 #if (shatteredhand_oh)
-    deal_damage( rti, 1500.0f, DMGTYPE_SPECIAL, 0, 0 );
+    deal_damage( rti, 1500.0f, DMGTYPE_SPECIAL, 0, 0, 0 );
     rti->player.enchant_oh.expire = TIME_OFFSET( FROM_SECONDS( 6 ) );
     rti->player.enchant_oh.ticks = 6.0f;
     eq_enqueue( rti, TIME_OFFSET( FROM_SECONDS( 1 ) ), routnum_enchant_oh_tick );
@@ -2373,7 +2372,7 @@ DECL_EVENT( enchant_oh_trigger ) {
 DECL_EVENT( enchant_mh_tick ) {
     if ( TIME_OFFSET( FROM_SECONDS( rti->player.enchant_mh.ticks - 1.0f ) ) == rti->player.enchant_mh.expire ) {
         rti->player.enchant_mh.ticks -= 1.0f;
-        deal_damage( rti, 750.0f, DMGTYPE_NONE, 0, 0 );
+        deal_damage( rti, 750.0f, DMGTYPE_NONE, 0, 0, 0 );
         if ( rti->player.enchant_mh.ticks >= 1.0f )
             eq_enqueue( rti, TIME_OFFSET( FROM_SECONDS( 1 ) ), routnum_enchant_mh_tick );
     }
@@ -2383,7 +2382,7 @@ DECL_EVENT( enchant_mh_tick ) {
 DECL_EVENT( enchant_oh_tick ) {
     if ( TIME_OFFSET( FROM_SECONDS( rti->player.enchant_oh.ticks - 1.0f ) ) == rti->player.enchant_oh.expire ) {
         rti->player.enchant_oh.ticks -= 1.0f;
-        deal_damage( rti, 750.0f, DMGTYPE_NONE, 0, 0 );
+        deal_damage( rti, 750.0f, DMGTYPE_NONE, 0, 0, 0 );
         if ( rti->player.enchant_oh.ticks >= 1.0f )
             eq_enqueue( rti, TIME_OFFSET( FROM_SECONDS( 1 ) ), routnum_enchant_oh_tick );
     }
@@ -2465,7 +2464,7 @@ DECL_SPELL( bloodfury ) {
 DECL_EVENT( touch_of_the_grave_trigger ) {
     float d = 1932.0f;
     d += uni_rng( rti ) * ( 2244.0f - 1932.0f );
-    deal_damage( rti, d, DMGTYPE_NONE, 0, 0 );
+    deal_damage( rti, d, DMGTYPE_NONE, 0, 0, 0 );
 }
 #endif
 

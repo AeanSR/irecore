@@ -198,6 +198,7 @@ gic::gic(QWidget *parent)
 		<< "SPELL(arcanetorrent);"
 		<< "SPELL(berserking);"
 		<< "SPELL(bloodfury);"
+		<< "SPELL(thorasus_the_stone_heart_of_draenor);"
 		<< "SPELL(vial_of_convulsive_shadows);"
 		<< "SPELL(scabbard_of_kyanos);"
 		<< "SPELL(badge_of_victory);";
@@ -207,6 +208,7 @@ gic::gic(QWidget *parent)
 		<< "enemy_health_percent(rti)"
 		<< "rti->player.power"
 		<< "power_max"
+		<< "TIME_DISTANT(rti->expected_combat_length)"
 		<< "UP(bloodthirst.cd)"
 		<< "REMAIN(bloodthirst.cd)"
 		<< "rti->player.ragingblow.stack"
@@ -238,7 +240,10 @@ gic::gic(QWidget *parent)
 		<< "REMAIN(siegebreaker.cd)"
 		<< "UP(potion.expire)"
 		<< "REMAIN(potion.expire)"
-		<< "REMAIN(potion.cd)";
+		<< "REMAIN(potion.cd)"
+		<< "UP(thorasus_the_stone_heart_of_draenor.expire)"
+		<< "REMAIN(thorasus_the_stone_heart_of_draenor.expire)"
+		<< "REMAIN(thorasus_the_stone_heart_of_draenor.cd)";
 	ui.listConditions->addItems(lists);
 	lists.clear();
 	auto_apl();
@@ -712,6 +717,7 @@ void gic::on_comboIncandescence_currentIndexChanged(int idx){
 
 void gic::on_btnImport_clicked()
 {
+	ui.btnImport->setDisabled(true);
 	std::string region;
 	std::string realm;
 	std::string name;
@@ -719,7 +725,7 @@ void gic::on_btnImport_clicked()
 	realm = ui.txtRealm->text().toStdString();
 	name = ui.txtCharacter->text().toStdString();
 	import_player(realm, name, region);
-
+	ui.btnImport->setDisabled(false);
 }
 
 

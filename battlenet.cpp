@@ -88,8 +88,6 @@ QString qsprint(int v);
 //      59 -> multistrike
 //      40 -> versatility
 void gic::import_player(std::string& realm, std::string& name, std::string& region){
-	ui.btnImport->setDisabled(true);
-
 	getjson bn;
 	QString url;
 	bn.set_parent(this);
@@ -521,5 +519,4 @@ void gic::import_player(std::string& realm, std::string& name, std::string& regi
 	ui.comboTalent1->setCurrentIndex(talent % 10);
 	talent /= 10;
 	ui.checkGlyphOfUnendingRage->setChecked(glyph);
-	ui.btnImport->setDisabled(false);
 }

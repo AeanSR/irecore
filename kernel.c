@@ -2774,7 +2774,7 @@ DECL_EVENT(empty_drinking_horn_trigger) {
 		rti->player.empty_drinking_horn.expire = TIME_OFFSET(FROM_SECONDS(15));
 		rti->player.empty_drinking_horn.stack = 1;
 		eq_enqueue(rti, rti->player.empty_drinking_horn.expire, routnum_empty_drinking_horn_expire);
-		eq_enqueue(rti, TIME_OFFSET(FROM_SECONDS(3)), routnum_empty_drinking_horn_tick);
+		eq_enqueue(rti, TIME_OFFSET(FROM_SECONDS(1)), routnum_empty_drinking_horn_tick);
 	}
 	lprintf(("empty_drinking_horn stack %d", rti->player.empty_drinking_horn.stack));
 }
@@ -2783,10 +2783,10 @@ DECL_EVENT(empty_drinking_horn_expire) {
 	lprintf(("empty_drinking_horn stack %d", rti->player.empty_drinking_horn.stack));
 }
 DECL_EVENT(empty_drinking_horn_tick) {
-	float dmg = trinket_empty_drinking_horn / 5.0f;
+	float dmg = trinket_empty_drinking_horn * 0.5; /* Nerfed to half. */
 	dmg *= rti->player.empty_drinking_horn.stack;
 	deal_damage(rti, dmg, DMGTYPE_SPECIAL, 0, 0, 1);
-	time_t next_tick = TIME_OFFSET(FROM_SECONDS(3));
+	time_t next_tick = TIME_OFFSET(FROM_SECONDS(1));
 	if (next_tick <= rti->player.empty_drinking_horn.expire)
 		eq_enqueue(rti, next_tick, routnum_empty_drinking_horn_tick);
 }

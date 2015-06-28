@@ -812,7 +812,7 @@ void auto_apl(){
 		if(TALENT_TIER(6) == 2) apl.append("if(UP(bloodbath.expire)||UP(recklessness.expire))SPELL(bloodfury);\n");
 		else apl.append("SPELL(bloodfury);\n");
 
-	if (0 == strcmp(race_str_param[race], "bloodelf")) apl.append("if(rti->player.power<power_max-40)SPELL(arcane_torrent);\n");
+	if (0 == strcmp(race_str_param[race], "bloodelf")) apl.append("if(rti->player.power<power_max-40)SPELL(arcanetorrent);\n");
 
 	if (raidbuff.potion) apl.append("if((enemy_health_percent(rti)<20&&UP(recklessness.expire))||TIME_DISTANT(rti->expected_combat_length)<FROM_SECONDS(25))SPELL(potion);\n");
 

@@ -1413,8 +1413,8 @@ k32s deal_damage( rtinfo_t* rti, float dmg, k32u dmgtype, float extra_crit_rate,
             }
         }
 #endif
-        special_procs( rti );
-
+		if (dmgtype == DMGTYPE_ABILITY || dmgtype == DMGTYPE_MELEE)
+			special_procs(rti);
         return ret;
     }
     break;

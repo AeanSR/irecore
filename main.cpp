@@ -26,12 +26,12 @@ int main(int argc, char *argv[])
 	else // create a new detached gui process, and close this one.
 	{
 		DWORD dwCreationFlags = CREATE_DEFAULT_ERROR_MODE | DETACHED_PROCESS;
-		STARTUPINFOA startinfo;
+		STARTUPINFO startinfo;
 		PROCESS_INFORMATION procinfo;
 		ZeroMemory(&startinfo, sizeof(startinfo));
 		startinfo.cb = sizeof(startinfo);
-		if (!CreateProcessA(NULL, argv[0], NULL, NULL, FALSE, dwCreationFlags, NULL, NULL, &startinfo, &procinfo))
+		if (!CreateProcess(NULL, GetCommandLine(), NULL, NULL, FALSE, dwCreationFlags, NULL, NULL, &startinfo, &procinfo))
 			MessageBox(0, TEXT("CreateProcess failed."), TEXT(""), 0);
-		exit(0);
+		return 0;
 	}
 }

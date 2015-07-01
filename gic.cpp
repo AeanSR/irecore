@@ -511,10 +511,10 @@ void gic::run_simulation(){
 	talent += ui.comboTalent2->currentIndex() * 100000;
 	talent += ui.comboTalent1->currentIndex() * 1000000;
 	race = ui.comboRace->currentIndex();
-	trinket1_name = trinket_list[ui.comboTrinketSpecial1->currentIndex()];
-	trinket2_name = trinket_list[ui.comboTrinketSpecial2->currentIndex()];
-	trinket1_value = ui.txtTrinketValue1->text().toInt();
-	trinket2_value = ui.txtTrinketValue2->text().toInt();
+	trinket1 = ui.comboTrinketSpecial1->currentIndex();
+	trinket2 = ui.comboTrinketSpecial2->currentIndex();
+	trinket1_ilvl = ui.txtTrinketValue1->text().toInt();
+	trinket2_ilvl = ui.txtTrinketValue2->text().toInt();
 	
 	mh_high = ui.txtMHHigh->text().toInt();
 	oh_high = ui.txtOHHigh->text().toInt();
@@ -782,6 +782,7 @@ void gic::select_gear_slot()
 	if (ui.radioFinger2->isChecked()) selected_gear_slot = 13;
 	if (ui.radioTrinket1->isChecked()) selected_gear_slot = 14;
 	if (ui.radioTrinket2->isChecked()) selected_gear_slot = 15;
+	ui.lblItemName->setText(QString(gear_list[selected_gear_slot].name.c_str()));
 	ui.txtItemStr->setText(qsprint(gear_list[selected_gear_slot].str));
 	ui.txtItemCrit->setText(qsprint(gear_list[selected_gear_slot].crit));
 	ui.txtItemHaste->setText(qsprint(gear_list[selected_gear_slot].haste));

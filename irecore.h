@@ -17,6 +17,8 @@
 #include <CL/cl.h>
 #endif
 
+const double ilvlScaleCoeff = 1.009357190938255;
+
 typedef struct {
 	std::string name;
 	cl_uint gear_str;
@@ -83,10 +85,10 @@ extern int shattered_hand_mh;
 extern int shattered_hand_oh;
 extern int developer_debug;
 extern int list_available_devices;
-extern std::string trinket1_name;
-extern std::string trinket2_name;
-extern int trinket1_value;
-extern int trinket2_value;
+extern int trinket1;
+extern int trinket2;
+extern int trinket1_ilvl;
+extern int trinket2_ilvl;
 extern std::ostream* report_path;
 
 class ocl_t{
@@ -143,7 +145,8 @@ extern "C" enchant_t enchant_list[];
 extern "C" enchant_t gem_list[];
 extern "C" int plate_list[];
 extern "C" item_subclass_t weapon_type_list[];
-typedef struct{
+struct item_t{
+	std::string name;
 	int type;
 	int str;
 	int crit;
@@ -151,5 +154,9 @@ typedef struct{
 	int mastery;
 	int mult;
 	int vers;
-} item_t;
+	item_t() : type(0), str(0), crit(0), haste(0), mastery(0), mult(0), vers(0), name(""){}
+};
 extern item_t gear_list[16];
+
+int trinket_from_id(int id);
+int trinket_scaling(int trinket, int itemlvl);

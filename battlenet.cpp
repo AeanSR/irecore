@@ -2,7 +2,6 @@
 #include "gic.h"
 
 #define API_KEY "nyv354w3rnf3jf95ryn5ddmyar933pzw"
-const double ilvlScaleCoeff = 1.009357190938255;
 
 rapidjson::Document getjson::get(){
 	reply = qnam.get(QNetworkRequest(url));
@@ -106,7 +105,7 @@ void gic::import_player(std::string& realm, std::string& name, std::string& regi
 		url.append(realm.c_str());
 		url.append("/");
 		url.append(name.c_str());
-		url.append("?fields=talents,items&locale=en_US");
+		url.append("?fields=talents,items");
 	}
 	bn.set_url(url);
 	rapidjson::Document j = bn.get();
@@ -186,198 +185,21 @@ void gic::import_player(std::string& realm, std::string& name, std::string& regi
 		gear_list[i] = item_t();
 		rapidjson::Value& item = items[slotname[i]];
 		int itemid = item["id"].GetInt();
-		int itemlvl = item["itemLevel"].GetInt();
 		if (itemid == 0) continue;
+		int itemlvl = item["itemLevel"].GetInt();
+		gear_list[i].name = item["name"].GetString();
 		if (itemid >= 115580 && itemid <= 115584) t17_count++;
 		if (itemid == 124319 || itemid == 124329 || itemid == 124334 || itemid == 124340 || itemid == 124346) t18_count++;
 		if (itemid == 118305) archmages_greater_incandescence = 1;
 		if (itemid == 118300) archmages_incandescence = 1;
-		if (itemid == 124634){
+		if (itemid == 124634){ 
 			legendary_ring = 2500.0 * pow(ilvlScaleCoeff, itemlvl - 735);
 		}
-		/* 	"none",0
-	"vial_of_convulsive_shadows",1
-	"forgemasters_insignia",2
-	"horn_of_screaming_spirits",3
-	"scabbard_of_kyanos",4
-	"badge_of_victory",5
-	"insignia_of_victory",6
-	"tectus_beating_heart",7
-	"formidable_fang",8
-	"draenic_stone",9
-	"skull_of_war",10
-	"mote_of_the_mountain",11
-	"worldbreakers_resolve",12 */
 		if (i == 14 || i == 15){ /* Trinket setup */
 			QComboBox* combo = (i == 14) ? ui.comboTrinketSpecial1 : ui.comboTrinketSpecial2;
 			QLineEdit* input = (i == 14) ? ui.txtTrinketValue1 : ui.txtTrinketValue2;
-			if (itemid == 113969){
-				combo->setCurrentIndex(1);
-				switch (itemlvl){
-				case 670: input->setText(qsprint(1537)); break;
-				case 676: input->setText(qsprint(1627)); break;
-				case 685: input->setText(qsprint(1767)); break;
-				case 691: input->setText(qsprint(1870)); break;
-				case 700: input->setText(qsprint(2033)); break;
-				case 706: input->setText(qsprint(2150)); break;
-				default:  input->setText(qsprint((int)(2033.0 * pow(ilvlScaleCoeff, itemlvl - 700)))); break;
-				}
-			}
-			if (itemid == 113983){
-				combo->setCurrentIndex(2);
-				switch (itemlvl){
-				case 670: input->setText(qsprint(137)); break;
-				case 676: input->setText(qsprint(145)); break;
-				case 685: input->setText(qsprint(157)); break;
-				case 691: input->setText(qsprint(167)); break;
-				case 700: input->setText(qsprint(181)); break;
-				case 706: input->setText(qsprint(192)); break;
-				default:  input->setText(qsprint((int)(181.0 * pow(ilvlScaleCoeff, itemlvl - 700)))); break;
-				}
-			}
-			if (itemid == 119193){
-				combo->setCurrentIndex(3);
-				switch (itemlvl){
-				case 670: input->setText(qsprint(2004)); break;
-				case 676: input->setText(qsprint(2122)); break;
-				case 685: input->setText(qsprint(2304)); break;
-				case 691: input->setText(qsprint(2439)); break;
-				case 700: input->setText(qsprint(2652)); break;
-				case 706: input->setText(qsprint(2804)); break;
-				default:  input->setText(qsprint((int)(2652.0 * pow(ilvlScaleCoeff, itemlvl - 700)))); break;
-				}
-			}
-			if (itemid == 118882){
-				combo->setCurrentIndex(4);
-				switch (itemlvl){
-				case 665: input->setText(qsprint(2200)); break;
-				default:  input->setText(qsprint((int)(2200.0 * pow(ilvlScaleCoeff, itemlvl - 665)))); break;
-				}
-			}
-			if (itemid == 115159 || itemid == 119936 || itemid == 111232 || itemid == 115759 || itemid == 125041 || itemid == 125518 || itemid == 126632 || itemid == 126155 || itemid == 124867 || itemid == 125344 || itemid == 125981 || itemid == 126458){
-				combo->setCurrentIndex(5);
-				switch (itemlvl){
-				case 620: input->setText(qsprint(456)); break;
-				case 626: input->setText(qsprint(483)); break;
-				case 660: input->setText(qsprint(728)); break;
-				case 670: input->setText(qsprint(727)); break;
-				case 680: input->setText(qsprint(798)); break;
-				case 700: input->setText(qsprint(1057)); break;
-				case 705: input->setText(qsprint(1108)); break;
-				default:  input->setText(qsprint((int)(728.0 * pow(ilvlScaleCoeff, itemlvl - 660)))); break;
-				}
-			}
-			if (itemid == 115160 || itemid == 119937 || itemid == 111233 || itemid == 115760 || itemid == 125042 || itemid == 125519 || itemid == 126633 || itemid == 126156 || itemid == 124868 || itemid == 125345 || itemid == 125982 || itemid == 126459){
-				combo->setCurrentIndex(6);
-				switch (itemlvl){
-				case 620: input->setText(qsprint(543)); break;
-				case 626: input->setText(qsprint(575)); break;
-				case 660: input->setText(qsprint(867)); break;
-				case 670: input->setText(qsprint(866)); break;
-				case 680: input->setText(qsprint(951)); break;
-				case 700: input->setText(qsprint(1259)); break;
-				case 705: input->setText(qsprint(1319)); break;
-				default:  input->setText(qsprint((int)(867.0 * pow(ilvlScaleCoeff, itemlvl - 660)))); break;
-				}
-			}
-			if (itemid == 113645){
-				combo->setCurrentIndex(7);
-				switch (itemlvl){
-				case 655: input->setText(qsprint(1743)); break;
-				case 661: input->setText(qsprint(1843)); break;
-				case 670: input->setText(qsprint(2004)); break;
-				case 676: input->setText(qsprint(2122)); break;
-				case 685: input->setText(qsprint(2304)); break;
-				case 691: input->setText(qsprint(2439)); break;
-				default:  input->setText(qsprint((int)(2304.0 * pow(ilvlScaleCoeff, itemlvl - 685)))); break;
-				}
-			}
-			if (itemid == 114613){
-				combo->setCurrentIndex(8);
-				switch (itemlvl){
-				case 655: input->setText(qsprint(1743)); break;
-				default:  input->setText(qsprint((int)(1743.0 * pow(ilvlScaleCoeff, itemlvl - 655)))); break;
-				}
-			}
-			if (itemid == 109262 || (itemid >= 122601 && itemid <= 122604)){
-				combo->setCurrentIndex(9);
-				switch (itemlvl){
-				case 620: input->setText(qsprint(771)); break;
-				case 640: input->setText(qsprint(931)); break;
-				case 655: input->setText(qsprint(1069)); break;
-				case 670: input->setText(qsprint(1229)); break;
-				case 685: input->setText(qsprint(1414)); break;
-				default:  input->setText(qsprint((int)(1414.0 * pow(ilvlScaleCoeff, itemlvl - 685)))); break;
-				}
-			}
-			if (itemid == 112318){
-				combo->setCurrentIndex(10);
-				switch (itemlvl){
-				case 640: input->setText(qsprint(1396)); break;
-				case 655: input->setText(qsprint(1604)); break;
-				case 670: input->setText(qsprint(1844)); break;
-				case 685: input->setText(qsprint(2120)); break;
-				case 700: input->setText(qsprint(2440)); break;
-				case 715: input->setText(qsprint(2804)); break;
-				default:  input->setText(qsprint((int)(2804.0 * pow(ilvlScaleCoeff, itemlvl - 715)))); break;
-				}
-			}
-			if (itemid == 116292){
-				combo->setCurrentIndex(11);
-				switch (itemlvl){
-				case 640: input->setText(qsprint(1517)); break;
-				case 646: input->setText(qsprint(1604)); break;
-				default:  input->setText(qsprint((int)(1517.0 * pow(ilvlScaleCoeff, itemlvl - 640)))); break;
-				}
-			}
-			if (itemid == 124523){
-				combo->setCurrentIndex(12);
-				switch (itemlvl){
-				case 705: input->setText(qsprint(220)); break;
-				case 711: input->setText(qsprint(232)); break;
-				case 720: input->setText(qsprint(253)); break;
-				case 726: input->setText(qsprint(267)); break;
-				case 735: input->setText(qsprint(290)); break;
-				case 741: input->setText(qsprint(307)); break;
-				default:  input->setText(qsprint((int)(290.0 * pow(ilvlScaleCoeff, itemlvl - 735)))); break;
-				}
-			}
-			if (itemid == 124237){
-				combo->setCurrentIndex(13);
-				switch (itemlvl){
-				case 700: input->setText(qsprint(20564)); break;
-				case 706: input->setText(qsprint(21744)); break;
-				case 715: input->setText(qsprint(23632)); break;
-				case 721: input->setText(qsprint(24981)); break;
-				case 730: input->setText(qsprint(27172)); break;
-				case 736: input->setText(qsprint(28757)); break;
-				default:  input->setText(qsprint((int)(27172.0 * pow(ilvlScaleCoeff, itemlvl - 730)))); break;
-				}
-			}
-			if (itemid == 124238){
-				combo->setCurrentIndex(14);
-				switch (itemlvl){
-				case 700: input->setText(qsprint(259)); break;
-				case 706: input->setText(qsprint(274)); break;
-				case 715: input->setText(qsprint(298)); break;
-				case 721: input->setText(qsprint(315)); break;
-				case 730: input->setText(qsprint(342)); break;
-				case 736: input->setText(qsprint(362)); break;
-				default:  input->setText(qsprint((int)(342.0 * pow(ilvlScaleCoeff, itemlvl - 730)))); break;
-				}
-			}
-			if (itemid == 124236){
-				combo->setCurrentIndex(15);
-				switch (itemlvl){
-				case 695: input->setText(qsprint(54)); break;
-				case 701: input->setText(qsprint(57)); break;
-				case 710: input->setText(qsprint(62)); break;
-				case 716: input->setText(qsprint(65)); break;
-				case 725: input->setText(qsprint(71)); break;
-				case 731: input->setText(qsprint(75)); break;
-				default:  input->setText(qsprint((int)(71.0 * pow(ilvlScaleCoeff, itemlvl - 725)))); break;
-				}
-			}
+			combo->setCurrentIndex(trinket_from_id(itemid));
+			input->setText(qsprint(itemlvl));			
 		}
 		rapidjson::Value& piecestat = item["stats"];
 		for (int k = 0; k < piecestat.Size(); k++){

@@ -46,10 +46,10 @@ int shattered_hand_oh;
 
 int developer_debug;
 int list_available_devices;
-std::string trinket1_name;
-std::string trinket2_name;
-int trinket1_value;
-int trinket2_value;
+int trinket1;
+int trinket2;
+int trinket1_ilvl;
+int trinket2_ilvl;
 
 const char* trinket_list[] = {
 	"none",
@@ -70,6 +70,182 @@ const char* trinket_list[] = {
 	"unending_hunger",
 	NULL
 };
+
+int trinket_scaling(int trinket, int itemlvl){
+	if (trinket == 1){
+		switch (itemlvl){
+		case 670: return 1537;
+		case 676: return 1627;
+		case 685: return 1767;
+		case 691: return 1870;
+		case 700: return 2033;
+		case 706: return 2150;
+		default:  return (int)(2033.0 * pow(ilvlScaleCoeff, itemlvl - 700));
+		}
+	}
+	else if (trinket == 2){
+		switch (itemlvl){
+		case 670: return 137;
+		case 676: return 145;
+		case 685: return 157;
+		case 691: return 167;
+		case 700: return 181;
+		case 706: return 192;
+		default:  return (int)(181.0 * pow(ilvlScaleCoeff, itemlvl - 700));
+		}
+	}
+	else if (trinket == 3){
+		switch (itemlvl){
+		case 670: return 2004;
+		case 676: return 2122;
+		case 685: return 2304;
+		case 691: return 2439;
+		case 700: return 2652;
+		case 706: return 2804;
+		default:  return (int)(2652.0 * pow(ilvlScaleCoeff, itemlvl - 700));
+		}
+	}
+	else if (trinket == 4){
+		switch (itemlvl){
+		case 665: return 2200;
+		default:  return (int)(2200.0 * pow(ilvlScaleCoeff, itemlvl - 665));
+		}
+	}
+	else if (trinket == 5){
+		switch (itemlvl){
+		case 620: return 456;
+		case 626: return 483;
+		case 660: return 728;
+		case 670: return 727;
+		case 680: return 798;
+		case 700: return 1057;
+		case 705: return 1108;
+		default:  return (int)(728.0 * pow(ilvlScaleCoeff, itemlvl - 660));
+		}
+	}
+	else if (trinket == 6){
+		switch (itemlvl){
+		case 620: return 543;
+		case 626: return 575;
+		case 660: return 867;
+		case 670: return 866;
+		case 680: return 951;
+		case 700: return 1259;
+		case 705: return 1319;
+		default:  return (int)(867.0 * pow(ilvlScaleCoeff, itemlvl - 660));
+		}
+	}
+	else if (trinket == 7){
+		switch (itemlvl){
+		case 655: return 1743;
+		case 661: return 1843;
+		case 670: return 2004;
+		case 676: return 2122;
+		case 685: return 2304;
+		case 691: return 2439;
+		default:  return (int)(2304.0 * pow(ilvlScaleCoeff, itemlvl - 685));
+		}
+	}
+	else if (trinket == 8){
+		switch (itemlvl){
+		case 655: return 1743;
+		default:  return (int)(1743.0 * pow(ilvlScaleCoeff, itemlvl - 655));
+		}
+	}
+	else if (trinket == 9){
+		switch (itemlvl){
+		case 620: return 771;
+		case 640: return 931;
+		case 655: return 1069;
+		case 670: return 1229;
+		case 685: return 1414;
+		default:  return (int)(1414.0 * pow(ilvlScaleCoeff, itemlvl - 685));
+		}
+	}
+	else if (trinket == 10){
+		switch (itemlvl){
+		case 640: return 1396;
+		case 655: return 1604;
+		case 670: return 1844;
+		case 685: return 2120;
+		case 700: return 2440;
+		case 715: return 2804;
+		default:  return (int)(2804.0 * pow(ilvlScaleCoeff, itemlvl - 715));
+		}
+	}
+	else if (trinket == 11){
+		switch (itemlvl){
+		case 640: return 1517;
+		case 646: return 1604;
+		default:  return (int)(1517.0 * pow(ilvlScaleCoeff, itemlvl - 640));
+		}
+	}
+	else if (trinket == 12){
+		switch (itemlvl){
+		case 705: return 220;
+		case 711: return 232;
+		case 720: return 253;
+		case 726: return 267;
+		case 735: return 290;
+		case 741: return 307;
+		default:  return (int)(290.0 * pow(ilvlScaleCoeff, itemlvl - 735));
+		}
+	}
+	else if (trinket == 13){
+		switch (itemlvl){
+		case 700: return 20564;
+		case 706: return 21744;
+		case 715: return 23632;
+		case 721: return 24981;
+		case 730: return 27172;
+		case 736: return 28757;
+		default:  return (int)(27172.0 * pow(ilvlScaleCoeff, itemlvl - 730));
+		}
+	}
+	else if (trinket == 14){
+		switch (itemlvl){
+		case 700: return 259;
+		case 706: return 274;
+		case 715: return 298;
+		case 721: return 315;
+		case 730: return 342;
+		case 736: return 362;
+		default:  return (int)(342.0 * pow(ilvlScaleCoeff, itemlvl - 730));
+		}
+	}
+	else if (trinket == 15){
+		switch (itemlvl){
+		case 695: return 54;
+		case 701: return 57;
+		case 710: return 62;
+		case 716: return 65;
+		case 725: return 71;
+		case 731: return 75;
+		default:  return (int)(71.0 * pow(ilvlScaleCoeff, itemlvl - 725));
+		}
+	}
+	else return 0;
+}
+int trinket_from_id(int id){
+	switch (id){
+	case 113969: return 1;
+	case 113983: return 2;
+	case 119193: return 3;
+	case 118882: return 4;
+	case 115159: case 119936: case 111232: case 115759: case 125041: case 125518: case 126632: case 126155: case 124867: case 125344: case 125981: case 126458: return 5;
+	case 115160: case 119937: case 111233: case 115760: case 125042: case 125519: case 126633: case 126156: case 124868: case 125345: case 125982: case 126459: return 6;
+	case 113645: return 7;
+	case 114613: return 8;
+	case 109262: case 122601: case 122602: case 122603: case 122604: return 9;
+	case 112318: return 10;
+	case 116292: return 11;
+	case 124523: return 12;
+	case 124237: return 13;
+	case 124238: return 14;
+	case 124236: return 15;
+	default: return 0;
+	}
+}
 
 const char* race_str_kernel[] = {
 	"RACE_NONE",
@@ -163,8 +339,8 @@ void set_default_parameters(){
 	shattered_hand_mh = 0;
 	shattered_hand_oh = 0;
 
-	trinket1_name = "none";
-	trinket2_name = "none";
+	trinket1 = 0;
+	trinket2 = 0;
 
 	report_path = &std::cout;
 	calculate_scale_factors = 0;
@@ -496,7 +672,8 @@ void parse_parameters(std::vector<kvpair_t>& arglist){
 			archmages_greater_incandescence = !!atoi(i->value.c_str());
 		}
 		else if (0 == i->key.compare("legendary_ring")){
-			legendary_ring = atoi(i->value.c_str());
+			int itemlvl = atoi(i->value.c_str());
+			legendary_ring = 2500.0 * pow(ilvlScaleCoeff, itemlvl - 735);
 		}
 		else if (0 == i->key.compare("t17_2pc")){
 			t17_2pc = !!atoi(i->value.c_str());
@@ -534,17 +711,20 @@ void parse_parameters(std::vector<kvpair_t>& arglist){
 					break;
 				}
 			}
-			if (!*p || p[0]!='v' || p[1]!='a' || p[2]!='l' || p[3]!='u' || p[4]!='e' || p[5]!='=')
-				if (strcmp(buf, "none")){ *report_path << "Unexpected trinket grammar. Correct grammar:\n\ttrinket1=trinket_name,value=123\n\ttrinket1=none" << std::endl; continue; }
-			trinket1_name = buf;
+			if (!*p || p[0]!='i' || p[1]!='l' || p[2]!='v' || p[3]!='l' || p[4]!='=')
+				if (strcmp(buf, "none")){ *report_path << "Unexpected trinket grammar. Correct grammar:\n\ttrinket1=trinket_name,ilvl=123\n\ttrinket1=none" << std::endl; continue; }
+			std::string trinket1_name = buf;
 			if(strcmp(buf,"none"))
-				trinket1_value = atoi(p+6);
+				trinket1_ilvl = atoi(p+5);
 			int x;
 			for (x = 0; trinket_list[x]; x++){
-				if ( 0 == trinket1_name.compare(trinket_list[x]) ) break;
+				if (0 == trinket1_name.compare(trinket_list[x])){
+					trinket1 = x;
+					break;
+				}
 			}
-			if (!trinket_list[x]){ *report_path << "No such trinket \"" << trinket1_name << "\"." << std::endl; trinket1_name = "none"; continue; }
-			if (0 == trinket1_name.compare(trinket2_name) && 0 != trinket1_name.compare("none")){ *report_path << "Duplicated trinkets \"" << trinket1_name << "\" not allowed." << std::endl; trinket1_name = "none"; continue; }
+			if (!trinket_list[x]){ *report_path << "No such trinket \"" << trinket1_name << "\"." << std::endl; trinket1 = 0; continue; }
+			if (trinket1 == trinket2 && 0 != trinket1){ *report_path << "Duplicated trinkets \"" << trinket1_name << "\" not allowed." << std::endl; trinket1 = 0; continue; }
 			delete[] buf;
 		}
 		else if (0 == i->key.compare("trinket2")){
@@ -557,17 +737,20 @@ void parse_parameters(std::vector<kvpair_t>& arglist){
 					break;
 				}
 			}
-			if (!*p || p[0]!='v' || p[1]!='a' || p[2]!='l' || p[3]!='u' || p[4]!='e' || p[5]!='=')
-				if (strcmp(buf, "none")){ *report_path << "Unexpected trinket grammar. Correct grammar:\n\ttrinket2=trinket_name,value=123\n\ttrinket2=none" << std::endl; continue; }
-			trinket2_name = buf;
+			if (!*p || p[0] != 'i' || p[1] != 'l' || p[2] != 'v' || p[3] != 'l' || p[4] != '=')
+				if (strcmp(buf, "none")){ *report_path << "Unexpected trinket grammar. Correct grammar:\n\ttrinket2=trinket_name,ilvl=123\n\ttrinket2=none" << std::endl; continue; }
+			std::string trinket2_name = buf;
 			if(strcmp(buf,"none"))
-				trinket2_value = atoi(p+6);
+				trinket2_ilvl = atoi(p+5);
 			int x;
 			for (x = 0; trinket_list[x]; x++){
-				if ( 0 == trinket2_name.compare(trinket_list[x]) ) break;
+				if (0 == trinket2_name.compare(trinket_list[x])){
+					trinket2 = x;
+					break;
+				}
 			}
-			if (!trinket_list[x]){ *report_path << "No such trinket \"" << trinket2_name << "\"." << std::endl; trinket2_name = "none"; continue; }
-			if (0 == trinket1_name.compare(trinket2_name) && 0 != trinket1_name.compare("none")){ *report_path << "Duplicated trinkets \"" << trinket2_name << "\" not allowed." << std::endl; trinket2_name = "none"; continue; }
+			if (!trinket_list[x]){ *report_path << "No such trinket \"" << trinket2_name << "\"." << std::endl; trinket2 = 0; continue; }
+			if (trinket1 == trinket2 && 0 != trinket2){ *report_path << "Duplicated trinkets \"" << trinket2_name << "\" not allowed." << std::endl; trinket2 = 0; continue; }
 			delete[] buf;
 		}
 		else if (0 == i->key.compare("rng_engine")){
@@ -776,19 +959,19 @@ void generate_predef(){
 	if(rng_engine == 127) predef.append("#define RNG_MT127\r\n");
 	else if(rng_engine == 64) predef.append("#define RNG_MWC64X\r\n");
 
-	if (trinket1_name.compare("none")){
+	if (trinket1){
 		predef.append("#define trinket_");
-		predef.append(trinket1_name);
+		predef.append(trinket_list[trinket1]);
 		predef.append(" ");
-		sprintf(buffer, "%d", trinket1_value);
+		sprintf(buffer, "%d", trinket_scaling(trinket1, trinket1_ilvl));
 		predef.append(buffer);
 		predef.append("\r\n");
 	}
-	if (trinket2_name.compare("none")){
+	if (trinket2){
 		predef.append("#define trinket_");
-		predef.append(trinket2_name);
+		predef.append(trinket_list[trinket2]);
 		predef.append(" ");
-		sprintf(buffer, "%d", trinket2_value);
+		sprintf(buffer, "%d", trinket_scaling(trinket2, trinket2_ilvl));
 		predef.append(buffer);
 		predef.append("\r\n");
 	}
@@ -816,13 +999,13 @@ void auto_apl(){
 
 	if (raidbuff.potion) apl.append("if((enemy_health_percent(rti)<20&&UP(recklessness.expire))||TIME_DISTANT(rti->expected_combat_length)<FROM_SECONDS(25))SPELL(potion);\n");
 
-	if (0 == trinket1_name.compare("vial_of_convulsive_shadows") || 0 == trinket2_name.compare("vial_of_convulsive_shadows"))
+	if (0 == strcmp(trinket_list[trinket1], "vial_of_convulsive_shadows") || 0 == strcmp(trinket_list[trinket2], "vial_of_convulsive_shadows"))
 		if (TALENT_TIER(7) == 1) apl.append("if(UP(recklessness.expire)||TIME_DISTANT(rti->expected_combat_length)<FROM_SECONDS(25))SPELL(vial_of_convulsive_shadows);\n");
 		else apl.append("SPELL(vial_of_convulsive_shadows);\n");
 
-	if (0 == trinket1_name.compare("scabbard_of_kyanos") || 0 == trinket2_name.compare("scabbard_of_kyanos")) apl.append("SPELL(scabbard_of_kyanos);\n");
+	if (0 == strcmp(trinket_list[trinket1], "scabbard_of_kyanos") || 0 == strcmp(trinket_list[trinket2], "scabbard_of_kyanos")) apl.append("SPELL(scabbard_of_kyanos);\n");
 	
-	if (0 == trinket1_name.compare("badge_of_victory") || 0 == trinket2_name.compare("badge_of_victory"))
+	if (0 == strcmp(trinket_list[trinket1], "badge_of_victory") || 0 == strcmp(trinket_list[trinket2], "badge_of_victory"))
 		if (TALENT_TIER(7) == 1) apl.append("if(UP(recklessness.expire)||TIME_DISTANT(rti->expected_combat_length)<FROM_SECONDS(25))SPELL(badge_of_victory);\n");
 		else apl.append("SPELL(badge_of_victory);\n");
 
@@ -866,9 +1049,9 @@ void auto_apl(){
 
 void parameters_consistency(){
 	single_minded = (mh_type == 1 && oh_type == 1);
-	if (0 == trinket1_name.compare(trinket2_name) && 0 != trinket1_name.compare("none")){
-		*report_path << "Duplicated trinkets \"" << trinket2_name << "\" not allowed. Trinket 2 reset to none." << std::endl;
-		trinket2_name = "none";
+	if (trinket1 == trinket2 && 0 != trinket1){
+		*report_path << "Duplicated trinkets \"" << trinket_list[trinket2] << "\" not allowed. Trinket 2 reset to none." << std::endl;
+		trinket2 = 0;
 	}
 	if (mh_high < mh_low){
 		*report_path << "MH Low Damage is higher than MH High Damage, exchanged." << std::endl;

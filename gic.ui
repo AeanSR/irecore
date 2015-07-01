@@ -549,12 +549,12 @@
          <property name="title">
           <string>Gear Stat Editor</string>
          </property>
-         <widget class="QWidget" name="layoutWidget">
+         <widget class="QWidget" name="">
           <property name="geometry">
            <rect>
-            <x>20</x>
+            <x>10</x>
             <y>20</y>
-            <width>451</width>
+            <width>476</width>
             <height>180</height>
            </rect>
           </property>
@@ -610,7 +610,7 @@
               <widget class="QRadioButton" name="radioBack">
                <property name="minimumSize">
                 <size>
-                 <width>120</width>
+                 <width>90</width>
                  <height>0</height>
                 </size>
                </property>
@@ -623,7 +623,7 @@
               <widget class="QRadioButton" name="radioFeet">
                <property name="minimumSize">
                 <size>
-                 <width>120</width>
+                 <width>90</width>
                  <height>0</height>
                 </size>
                </property>
@@ -691,17 +691,81 @@
             </layout>
            </item>
            <item>
-            <spacer name="horizontalSpacer">
-             <property name="orientation">
-              <enum>Qt::Horizontal</enum>
-             </property>
-             <property name="sizeHint" stdset="0">
-              <size>
-               <width>40</width>
-               <height>20</height>
-              </size>
-             </property>
-            </spacer>
+            <layout class="QVBoxLayout" name="verticalLayout_10">
+             <item>
+              <widget class="QLabel" name="lblItemName">
+               <property name="minimumSize">
+                <size>
+                 <width>150</width>
+                 <height>0</height>
+                </size>
+               </property>
+               <property name="text">
+                <string/>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QLabel" name="label_16">
+               <property name="text">
+                <string>Str:</string>
+               </property>
+               <property name="alignment">
+                <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QLabel" name="label_18">
+               <property name="text">
+                <string>Crit:</string>
+               </property>
+               <property name="alignment">
+                <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QLabel" name="label_28">
+               <property name="text">
+                <string>Haste:</string>
+               </property>
+               <property name="alignment">
+                <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QLabel" name="label_29">
+               <property name="text">
+                <string>Mastery:</string>
+               </property>
+               <property name="alignment">
+                <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QLabel" name="label_30">
+               <property name="text">
+                <string>Mult:</string>
+               </property>
+               <property name="alignment">
+                <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QLabel" name="label_31">
+               <property name="text">
+                <string>Vers:</string>
+               </property>
+               <property name="alignment">
+                <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+               </property>
+              </widget>
+             </item>
+            </layout>
            </item>
            <item>
             <layout class="QVBoxLayout" name="verticalLayout_3">
@@ -709,8 +773,14 @@
               <widget class="QComboBox" name="comboItemType">
                <property name="minimumSize">
                 <size>
-                 <width>131</width>
+                 <width>120</width>
                  <height>0</height>
+                </size>
+               </property>
+               <property name="maximumSize">
+                <size>
+                 <width>120</width>
+                 <height>16777215</height>
                 </size>
                </property>
               </widget>
@@ -719,8 +789,14 @@
               <widget class="QLineEdit" name="txtItemStr">
                <property name="minimumSize">
                 <size>
-                 <width>131</width>
+                 <width>120</width>
                  <height>0</height>
+                </size>
+               </property>
+               <property name="maximumSize">
+                <size>
+                 <width>120</width>
+                 <height>16777215</height>
                 </size>
                </property>
                <property name="placeholderText">
@@ -732,8 +808,14 @@
               <widget class="QLineEdit" name="txtItemCrit">
                <property name="minimumSize">
                 <size>
-                 <width>131</width>
+                 <width>120</width>
                  <height>0</height>
+                </size>
+               </property>
+               <property name="maximumSize">
+                <size>
+                 <width>120</width>
+                 <height>16777215</height>
                 </size>
                </property>
                <property name="placeholderText">
@@ -745,8 +827,14 @@
               <widget class="QLineEdit" name="txtItemHaste">
                <property name="minimumSize">
                 <size>
-                 <width>131</width>
+                 <width>120</width>
                  <height>0</height>
+                </size>
+               </property>
+               <property name="maximumSize">
+                <size>
+                 <width>120</width>
+                 <height>16777215</height>
                 </size>
                </property>
                <property name="placeholderText">
@@ -758,8 +846,14 @@
               <widget class="QLineEdit" name="txtItemMastery">
                <property name="minimumSize">
                 <size>
-                 <width>131</width>
+                 <width>120</width>
                  <height>0</height>
+                </size>
+               </property>
+               <property name="maximumSize">
+                <size>
+                 <width>120</width>
+                 <height>16777215</height>
                 </size>
                </property>
                <property name="placeholderText">
@@ -771,8 +865,14 @@
               <widget class="QLineEdit" name="txtItemMult">
                <property name="minimumSize">
                 <size>
-                 <width>131</width>
+                 <width>120</width>
                  <height>0</height>
+                </size>
+               </property>
+               <property name="maximumSize">
+                <size>
+                 <width>120</width>
+                 <height>16777215</height>
                 </size>
                </property>
                <property name="placeholderText">
@@ -784,8 +884,14 @@
               <widget class="QLineEdit" name="txtItemVers">
                <property name="minimumSize">
                 <size>
-                 <width>131</width>
+                 <width>120</width>
                  <height>0</height>
+                </size>
+               </property>
+               <property name="maximumSize">
+                <size>
+                 <width>120</width>
+                 <height>16777215</height>
                 </size>
                </property>
                <property name="placeholderText">
@@ -810,7 +916,7 @@
          <property name="title">
           <string>Special Bonuses</string>
          </property>
-         <widget class="QWidget" name="">
+         <widget class="QWidget" name="layoutWidget">
           <property name="geometry">
            <rect>
             <x>12</x>
@@ -882,7 +988,7 @@
                 </size>
                </property>
                <property name="placeholderText">
-                <string>Value</string>
+                <string>iLvl</string>
                </property>
               </widget>
              </item>
@@ -904,12 +1010,18 @@
               <widget class="QLineEdit" name="txtTrinketValue1">
                <property name="minimumSize">
                 <size>
-                 <width>0</width>
+                 <width>60</width>
                  <height>0</height>
                 </size>
                </property>
+               <property name="maximumSize">
+                <size>
+                 <width>60</width>
+                 <height>16777215</height>
+                </size>
+               </property>
                <property name="placeholderText">
-                <string>Value</string>
+                <string>iLvl</string>
                </property>
               </widget>
              </item>
@@ -931,12 +1043,18 @@
               <widget class="QLineEdit" name="txtTrinketValue2">
                <property name="minimumSize">
                 <size>
-                 <width>0</width>
+                 <width>60</width>
                  <height>0</height>
                 </size>
                </property>
+               <property name="maximumSize">
+                <size>
+                 <width>60</width>
+                 <height>16777215</height>
+                </size>
+               </property>
                <property name="placeholderText">
-                <string>Value</string>
+                <string>iLvl</string>
                </property>
               </widget>
              </item>

@@ -29,8 +29,8 @@ gear_haste=751
 gear_mastery=1504
 gear_mult=478
 gear_vers=0
-trinket1=vial_of_convulsive_shadows,value=2033
-trinket2=horn_of_screaming_spirits,value=2652
+trinket1=vial_of_convulsive_shadows,ilvl=700
+trinket2=horn_of_screaming_spirits,ilvl=700
 
 actions=if(!UP(enrage.expire)||(REMAIN(bloodthirst.cd)>FROM_SECONDS(3)&&rti->player.ragingblow.stack<2))SPELL(berserkerrage);
 actions+=SPELL(recklessness);

@@ -70,6 +70,9 @@
     <ClCompile Include="dbc.c">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="climb.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <CustomBuild Include="gic.h">

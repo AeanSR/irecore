@@ -97,11 +97,12 @@ private:
     cl_context context;
     cl_command_queue queue;
 	cl_device_id device_used;
+	cl_program program_reuse;
 	int initialized;
 public:
 	int opencl_device_id;
     int init();
-    float run(std::string& apl_cstr, std::string& predef);
+    float run(std::string& apl_cstr, std::string& predef, int reuse = 0);
     int free();
     ocl_t() : initialized(0){
     } 
@@ -160,3 +161,6 @@ extern item_t gear_list[16];
 
 int trinket_from_id(int id);
 int trinket_scaling(int trinket, int itemlvl);
+
+void descent(int init_interval = 320, int min_interval = 40, int iteration_limit = 800000);
+void plot(unsigned mask, int interval = 50, double error_tolerance = 5.0, int iteration_limit = 400000);

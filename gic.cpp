@@ -693,6 +693,46 @@ void gic::run_simulation(){
 	sprintf(temp, "%.3f", stat_array[0].dpse);
 	ui.lblDPSError->setText(temp);
 
+	if (ui.checkCalculateMaxima->isChecked()){
+		*report_path << QApplication::translate("gicClass", "Maxima Descent Start.\n").toStdString();
+		int init_interval = ui.txtDescentInitInterval->text().toInt();
+		int min_interval = ui.txtDescentMinInterval->text().toInt();
+		int max_iteration_limit = ui.txtDescentIterationLimit->text().toInt();
+		if (!init_interval) init_interval = 320;
+		if (!min_interval) min_interval = 40;
+		if (!max_iteration_limit) max_iteration_limit = 800000;
+		descent(init_interval,min_interval, max_iteration_limit);
+		*report_path << QApplication::translate("gicClass", "Maxima Descent Finished.\n").toStdString();
+	}
+	if (ui.checkCalculatePlot->isChecked()){
+		*report_path << QApplication::translate("gicClass", "Contour Plot Start.\n").toStdString();
+		int interval = ui.txtPlotInterval->text().toInt();
+		double error_tolerance = ui.txtPlotErrorTolerance->text().toDouble();
+		int max_iteration_limit = ui.txtPlotMaxIterationLimit->text().toInt();
+		if (!interval) interval = 50;
+		if (!error_tolerance) error_tolerance = 5.0;
+		if (!max_iteration_limit) max_iteration_limit = 400000;
+		unsigned mask = 0, checkmask, correct = 1;
+		if (ui.checkPlotCrit->isChecked()) mask |= 1;
+		if (ui.checkPlotHaste->isChecked()) mask |= 2;
+		if (ui.checkPlotMastery->isChecked()) mask |= 4;
+		if (ui.checkPlotMult->isChecked()) mask |= 8;
+		if (ui.checkPlotVers->isChecked()) mask |= 16;
+		checkmask = mask;
+		if (!checkmask) correct = 0;
+		checkmask &= checkmask - 1;
+		if (!checkmask) correct = 0;
+		checkmask &= checkmask - 1;
+		if (!checkmask) correct = 0;
+		checkmask &= checkmask - 1;
+		if (checkmask) correct = 0;
+		if (!correct){
+			*report_path << QApplication::translate("gicClass", "Contour Plot stats not set properly. Exact 3 stats should be checked.\nReset to Crit-Haste-Mastery.\n").toStdString();
+			mask = 7;
+		}
+		plot(mask, interval, error_tolerance, max_iteration_limit);
+		*report_path << QApplication::translate("gicClass", "Contour Plot Finished.\n").toStdString();
+	}
 
 	report_path->flush();
 	ocl().free();

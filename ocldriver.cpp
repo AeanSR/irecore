@@ -134,12 +134,6 @@ int ocl_t::init()
 		return 0;
 	}
 
-	cl_res = clCreateBuffer(context, CL_MEM_WRITE_ONLY, sizeof(cl_float)* iterations, NULL, NULL);
-	if (cl_res == 0) {
-		*report_path << "Can't create OpenCL buffer" << std::endl;
-		return 0;
-	}
-
 	FILE* f = fopen("kernel.c", "rb");
 	fseek(f, 0, SEEK_END);
 	size_t tell = ftell(f);
@@ -151,63 +145,74 @@ int ocl_t::init()
 	return 0;
 }
 
-float ocl_t::run(std::string& apl_cstr, std::string& predef){
+float ocl_t::run(std::string& apl_cstr, std::string& predef, int reuse){
 	if (!initialized) init();
 	if (list_available_devices) return -1.0f;
 
 	cl_int err;
 	auto t1 = std::chrono::high_resolution_clock::now();
+	cl_program program = 0;
 
-	*report_path << "JIT ..." << std::endl;
+	if (!reuse || !program_reuse){
+		*report_path << "JIT ..." << std::endl;
 
-	std::string source(predef);
-	source.append(ocl_src_char);
-    source.append("void scan_apl( rtinfo_t* rti ) {");
-    source.append(apl_cstr);
-    source.append("}");
-    const char* cptr = source.c_str();
+		std::string source(predef);
+		source.append(ocl_src_char);
+		source.append("void scan_apl( rtinfo_t* rti ) {");
+		source.append(apl_cstr);
+		source.append("}");
+		const char* cptr = source.c_str();
 
-    cl_program program = clCreateProgramWithSource(context, 1, &cptr, 0, 0);
-    if (program == 0) {
-        return -1.0;
-    }
-
-	if ((err = clBuildProgram(program, 0, 0, "-cl-single-precision-constant -cl-denorms-are-zero -cl-fast-relaxed-math", 0, 0)) != CL_SUCCESS) {
-		*report_path << "Can't build program" << std::endl;
-		size_t len;
-		char buffer[204800];
-		cl_build_status bldstatus;
-		*report_path << "\nError " << err << ": Failed to build program executable" << std::endl;
-		err = clGetProgramBuildInfo(program, device_used, CL_PROGRAM_BUILD_STATUS, sizeof(bldstatus), (void *)&bldstatus, &len);
-		if (err != CL_SUCCESS)
-		{
-			*report_path << "Build Status error " << err << std::endl;
+		if (program_reuse){
+			clReleaseProgram(program_reuse);
+			program_reuse = 0;
+		}
+		program_reuse = program = clCreateProgramWithSource(context, 1, &cptr, 0, 0);
+		if (program == 0) {
 			return -1.0;
 		}
-		if (bldstatus == CL_BUILD_SUCCESS) *report_path << "Build Status: CL_BUILD_SUCCESS" << std::endl;
-		if (bldstatus == CL_BUILD_NONE) *report_path << "Build Status: CL_BUILD_NONE" << std::endl;
-		if (bldstatus == CL_BUILD_ERROR) *report_path << "Build Status: CL_BUILD_ERROR" << std::endl;
-		if (bldstatus == CL_BUILD_IN_PROGRESS) *report_path << "Build Status: CL_BUILD_IN_PROGRESS" << std::endl;
-		err = clGetProgramBuildInfo(program, device_used, CL_PROGRAM_BUILD_OPTIONS, sizeof(buffer), buffer, &len);
-		if (err != CL_SUCCESS)
-		{
-			*report_path << "Build Options error " << err << std::endl;
+
+		if ((err = clBuildProgram(program, 0, 0, "-cl-single-precision-constant -cl-denorms-are-zero -cl-fast-relaxed-math", 0, 0)) != CL_SUCCESS) {
+			*report_path << "Can't build program" << std::endl;
+			size_t len;
+			char buffer[204800];
+			cl_build_status bldstatus;
+			*report_path << "\nError " << err << ": Failed to build program executable" << std::endl;
+			err = clGetProgramBuildInfo(program, device_used, CL_PROGRAM_BUILD_STATUS, sizeof(bldstatus), (void *)&bldstatus, &len);
+			if (err != CL_SUCCESS)
+			{
+				*report_path << "Build Status error " << err << std::endl;
+				return -1.0;
+			}
+			if (bldstatus == CL_BUILD_SUCCESS) *report_path << "Build Status: CL_BUILD_SUCCESS" << std::endl;
+			if (bldstatus == CL_BUILD_NONE) *report_path << "Build Status: CL_BUILD_NONE" << std::endl;
+			if (bldstatus == CL_BUILD_ERROR) *report_path << "Build Status: CL_BUILD_ERROR" << std::endl;
+			if (bldstatus == CL_BUILD_IN_PROGRESS) *report_path << "Build Status: CL_BUILD_IN_PROGRESS" << std::endl;
+			err = clGetProgramBuildInfo(program, device_used, CL_PROGRAM_BUILD_OPTIONS, sizeof(buffer), buffer, &len);
+			if (err != CL_SUCCESS)
+			{
+				*report_path << "Build Options error " << err << std::endl;
+				return -1.0;
+			}
+			*report_path << "Build Options: " << buffer << std::endl;
+			err = clGetProgramBuildInfo(program, device_used, CL_PROGRAM_BUILD_LOG, sizeof(buffer), buffer, &len);
+			if (err != CL_SUCCESS)
+			{
+				*report_path << "Build Log error " << err << std::endl;
+				return -1.0;
+			}
+			*report_path << "Build Log:\n" << buffer << std::endl;
 			return -1.0;
 		}
-		*report_path << "Build Options: " << buffer << std::endl;
-		err = clGetProgramBuildInfo(program, device_used, CL_PROGRAM_BUILD_LOG, sizeof(buffer), buffer, &len);
-		if (err != CL_SUCCESS)
-		{
-			*report_path << "Build Log error " << err << std::endl;
-			return -1.0;
-		}
-		*report_path << "Build Log:\n" << buffer << std::endl;
+	}
+	else{
+		program = program_reuse;
+	}
+
+	if (program == 0) {
+		*report_path << "Can't load or build program" << std::endl;
 		return -1.0;
 	}
-    if (program == 0) {
-		*report_path << "Can't load or build program" << std::endl;
-        return -1.0;
-    }
 
     cl_kernel sim_iterate = clCreateKernel(program, "sim_iterate", 0);
     if (sim_iterate == 0) {
@@ -216,11 +221,16 @@ float ocl_t::run(std::string& apl_cstr, std::string& predef){
         return -1.0;
     }
 
+	cl_res = clCreateBuffer(context, CL_MEM_WRITE_ONLY, sizeof(cl_float)* iterations, NULL, NULL);
+	if (cl_res == 0) {
+		*report_path << "Can't create OpenCL buffer" << std::endl;
+		return 0;
+	}
 	float* res = new float[iterations];
 	auto t2 = std::chrono::high_resolution_clock::now();
 
 	for (auto thisstat = stat_array.begin(); thisstat != stat_array.end(); thisstat++){
-		cl_uint setseed = seed ? seed : rand();
+		cl_uint setseed = (seed && !reuse) ? seed : rand();
 		clSetKernelArg(sim_iterate, 0, sizeof(cl_mem), &cl_res);
 		clSetKernelArg(sim_iterate, 1, sizeof(cl_uint), &setseed);
 		clSetKernelArg(sim_iterate, 2, sizeof(cl_uint), &thisstat->gear_str);
@@ -230,8 +240,8 @@ float ocl_t::run(std::string& apl_cstr, std::string& predef){
 		clSetKernelArg(sim_iterate, 6, sizeof(cl_uint), &thisstat->gear_mult);
 		clSetKernelArg(sim_iterate, 7, sizeof(cl_uint), &thisstat->gear_vers);
 
-
-		*report_path << "Sim " << thisstat->name << "..." << std::endl;
+		if (!reuse)
+			*report_path << "Sim " << thisstat->name << "..." << std::endl;
 		size_t work_size = iterations;
 		err = clEnqueueNDRangeKernel(queue, sim_iterate, 1, 0, &work_size, 0, 0, 0, 0);
 
@@ -254,30 +264,42 @@ float ocl_t::run(std::string& apl_cstr, std::string& predef){
 			*report_path << "Can't run kernel " << err << std::endl;
 			ret = -1.0;
 		}
+		
+		thisstat->dps = ret;
+		thisstat->dpsr = dev;
+		thisstat->dpse = 2.0 * dev / sqrt(iterations);
 
-		*report_path << "Report for Stat Set " << thisstat->name << std::endl;
-		*report_path << "DPS " << (thisstat->dps = ret) << std::endl;
-		*report_path << "DPS Range(stddev) " << (thisstat->dpsr = dev) << std::endl;
-		*report_path << "DPS Error(95% conf.) " << (thisstat->dpse = 2.0 * dev / sqrt(iterations)) << std::endl;
+		if (!reuse){
+			*report_path << "Report for Stat Set " << thisstat->name << std::endl;
+			*report_path << "DPS " << thisstat->dps << std::endl;
+			*report_path << "DPS Range(stddev) " << thisstat->dpsr << std::endl;
+			*report_path << "DPS Error(95% conf.) " << thisstat->dpse << std::endl;
+		}
 	}
     delete[] res;
     clReleaseKernel(sim_iterate);
-    clReleaseProgram(program);
+	clReleaseMemObject(cl_res);
+    //clReleaseProgram(program);
 
 	
 	auto t3 = std::chrono::high_resolution_clock::now();
 	std::chrono::duration<double> time_span1 = std::chrono::duration_cast<std::chrono::duration<double>>(t3 - t1);
 	std::chrono::duration<double> time_span2 = std::chrono::duration_cast<std::chrono::duration<double>>(t3 - t2);
-	*report_path << std::endl;
-	*report_path << "Total elapsed time " << time_span1.count() << std::endl;
-	*report_path << "Simulation time " << time_span2.count() << std::endl;
-	*report_path << "Speedup " << (int)(iterations * max_length * stat_array.size() / time_span2.count()) << "x" << std::endl;
-	*report_path << std::endl;
+	if (!reuse){
+		*report_path << std::endl;
+		*report_path << "Total elapsed time " << time_span1.count() << std::endl;
+		*report_path << "Simulation time " << time_span2.count() << std::endl;
+		*report_path << "Speedup " << (int)(iterations * max_length * stat_array.size() / time_span2.count()) << "x" << std::endl;
+		*report_path << std::endl;
+	}
     return 1;
 }
 
 int ocl_t::free(){
-	clReleaseMemObject(cl_res);
+	if (program_reuse){
+		clReleaseProgram(program_reuse);
+		program_reuse = 0;
+	}
 	clReleaseCommandQueue(queue);
 	clReleaseContext(context);
 	initialized = 0;

@@ -2768,7 +2768,8 @@ DECL_EVENT(discordant_chorus_trigger) {
 #if defined(trinket_empty_drinking_horn)
 DECL_EVENT(empty_drinking_horn_trigger) {
 	if (UP(empty_drinking_horn.expire)){
-		rti->player.empty_drinking_horn.stack ++;
+		if (rti->player.empty_drinking_horn.stack < 30)
+			rti->player.empty_drinking_horn.stack ++;
 	}
 	else{
 		rti->player.empty_drinking_horn.expire = TIME_OFFSET(FROM_SECONDS(15));
@@ -3187,7 +3188,7 @@ void special_procs( rtinfo_t* rti ) {
 	if (!UP(unending_hunger.expire)){
 		proc_RPPM(rti, &rti->player.unending_hunger.proc, 1.0f, routnum_unending_hunger_trigger);
 	}
-	else{
+	else if(rti->player.unending_hunger.stack < 20){
 		rti->player.unending_hunger.stack++;
 		rti->player.stat.gear_str += trinket_unending_hunger;
 		refresh_str(rti);

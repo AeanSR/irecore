@@ -535,6 +535,7 @@ void gic::run_simulation(){
 	archmages_incandescence = (ui.comboIncandescence->currentIndex() == 1);
 	archmages_greater_incandescence = (ui.comboIncandescence->currentIndex() == 2);
 	legendary_ring = (ui.comboIncandescence->currentIndex() == 3) ? ui.txtLegendaryRing->text().toInt() : 0;
+	legendary_ring = 2500.0 * pow(ilvlScaleCoeff, legendary_ring - 735);
 	thunderlord_mh = (ui.comboMHEnchant->currentIndex() == 1);
 	bleeding_hollow_mh = (ui.comboMHEnchant->currentIndex() == 2);
 	shattered_hand_mh = (ui.comboMHEnchant->currentIndex() == 3);

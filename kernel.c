@@ -2761,7 +2761,7 @@ DECL_EVENT(worldbreakers_resolve_trigger) {
 #if defined(trinket_discordant_chorus)
 DECL_EVENT(discordant_chorus_trigger) {
 	lprintf(("discordant chorus trigger"));
-	deal_damage(rti, trinket_discordant_chorus, DMGTYPE_SPECIAL, 0, 0, 0);
+	deal_damage(rti, 0.5 * trinket_discordant_chorus, DMGTYPE_SPECIAL, 0, 0, 0);
 }
 #endif
 

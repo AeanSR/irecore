@@ -172,7 +172,7 @@ float ocl_t::run(std::string& apl_cstr, std::string& predef, int reuse){
 			return -1.0;
 		}
 
-		if ((err = clBuildProgram(program, 0, 0, "-cl-single-precision-constant -cl-denorms-are-zero -cl-fast-relaxed-math", 0, 0)) != CL_SUCCESS) {
+		if ((err = clBuildProgram(program, 1, &device_used, "-cl-single-precision-constant -cl-denorms-are-zero -cl-fast-relaxed-math", 0, 0)) != CL_SUCCESS) {
 			*report_path << "Can't build program" << std::endl;
 			size_t len;
 			char buffer[204800];

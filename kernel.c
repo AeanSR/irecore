@@ -3,7 +3,7 @@
 	based on LuaCL kernel https://github.com/llxibo/LuaCL
 
 	*** EDIT AT YOUR OWN RISK! ***
-	All kernel source goes here exposed to the air, for your conveinence to edit.
+	All kernel source goes here exposed to the air, for your convenience to edit.
 	But it is NOT recommended if you are not definitely sure how to edit.
 
 	IreCore is distributed under the terms of The MIT License.
@@ -2795,19 +2795,25 @@ DECL_EVENT(empty_drinking_horn_tick) {
 
 #if defined(trinket_unending_hunger)
 DECL_EVENT(unending_hunger_trigger) {
+	lprintf(("unending_hunger trigger"));
 	rti->player.unending_hunger.expire = TIME_OFFSET(FROM_SECONDS(20));
-	rti->player.unending_hunger.stack = 1;
 	eq_enqueue(rti, rti->player.unending_hunger.expire, routnum_unending_hunger_expire);
-	rti->player.stat.gear_str += trinket_unending_hunger;
-	refresh_str(rti);
-	refresh_ap(rti);
+	if (!UP(unending_hunger.expire)){
+		rti->player.unending_hunger.stack = 1;
+		rti->player.stat.gear_str += trinket_unending_hunger;
+		refresh_str(rti);
+		refresh_ap(rti);
+	}
 }
 DECL_EVENT(unending_hunger_expire){
-	rti->player.stat.gear_str -= trinket_unending_hunger * rti->player.unending_hunger.stack;
-	rti->player.unending_hunger.stack = 0;
-	rti->player.unending_hunger.expire = 0;
-	refresh_str(rti);
-	refresh_ap(rti);
+	if (rti->player.unending_hunger.expire == rti->timestamp){
+		lprintf(("unending_hunger expire"));
+		rti->player.stat.gear_str -= trinket_unending_hunger * rti->player.unending_hunger.stack;
+		rti->player.unending_hunger.stack = 0;
+		rti->player.unending_hunger.expire = 0;
+		refresh_str(rti);
+		refresh_ap(rti);
+	}
 }
 #endif
 
@@ -3185,10 +3191,8 @@ void special_procs( rtinfo_t* rti ) {
 	eq_enqueue(rti, rti->timestamp, routnum_empty_drinking_horn_trigger);
 #endif
 #if defined(trinket_unending_hunger)
-	if (!UP(unending_hunger.expire)){
-		proc_RPPM(rti, &rti->player.unending_hunger.proc, 1.0f, routnum_unending_hunger_trigger);
-	}
-	else if(rti->player.unending_hunger.stack < 20){
+	proc_RPPM(rti, &rti->player.unending_hunger.proc, 1.0f, routnum_unending_hunger_trigger);
+	if(UP(unending_hunger.expire) && rti->player.unending_hunger.stack < 20){
 		rti->player.unending_hunger.stack++;
 		rti->player.stat.gear_str += trinket_unending_hunger;
 		refresh_str(rti);

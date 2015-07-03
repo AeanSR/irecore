@@ -21,7 +21,7 @@ oh_enchant=thunderlord
 
 t18_2pc=1
 t18_4pc=1
-legendary_ring=2500
+legendary_ring=735
 
 gear_str=5130
 gear_crit=2865
@@ -33,6 +33,7 @@ trinket1=empty_drinking_horn,ilvl=730
 trinket2=worldbreakers_resolve,ilvl=735
 
 actions=if(!UP(enrage.expire)||(REMAIN(bloodthirst.cd)>FROM_SECONDS(3)&&rti->player.ragingblow.stack<2))SPELL(berserkerrage);
+actions+=if(UP(recklessness.expire)||TIME_DISTANT(rti->expected_combat_length)<FROM_SECONDS(25))SPELL(thorasus_the_stone_heart_of_draenor);
 actions+=SPELL(recklessness);
 actions+=if((enemy_health_percent(rti)<20&&UP(recklessness.expire))||rti->expected_combat_length-rti->timestamp<FROM_SECONDS(25))SPELL(potion);
 actions+=SPELL(bloodbath);

@@ -3205,6 +3205,7 @@ void special_procs( rtinfo_t* rti ) {
 #if !defined(__OPENCL_VERSION__)
 void scan_apl( rtinfo_t* rti ) {
     SPELL( recklessness );
+	SPELL(thorasus_the_stone_heart_of_draenor);
     //SPELL( bloodbath );
     SPELL( bloodthirst );
     SPELL( execute );

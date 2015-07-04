@@ -684,6 +684,7 @@ void gic::run_simulation(){
 		ui.barError_6->setGeometry(QRect(56 + 175 * abs(weight[5] - weighterror[5]), 0, 175 * weighterror[5] * 2, 19));
 
 	}
+	calculate_scale_factors = 0;
 
 	char temp[32];
 	sprintf(temp, "%.1f", stat_array[0].dps);
@@ -713,6 +714,7 @@ void gic::run_simulation(){
 		current_stat.gear_mult += gear_list[i].mult;
 		current_stat.gear_vers += gear_list[i].vers;
 	}
+	parameters_consistency();
 	stat_array.push_back(current_stat);
 	generate_predef();
 
@@ -748,6 +750,7 @@ void gic::run_simulation(){
 		current_stat.gear_mult += gear_list[i].mult;
 		current_stat.gear_vers += gear_list[i].vers;
 	}
+	parameters_consistency();
 	stat_array.push_back(current_stat);
 	generate_predef();
 

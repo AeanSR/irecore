@@ -73,6 +73,9 @@
     <ClCompile Include="climb.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="trinket_cmp.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <CustomBuild Include="gic.h">

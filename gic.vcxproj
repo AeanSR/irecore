@@ -117,6 +117,7 @@
     <ClCompile Include="kernel.c" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="ocldriver.cpp" />
+    <ClCompile Include="trinket_cmp.cpp" />
   </ItemGroup>
   <ItemGroup>
     <CustomBuild Include="gic.h">

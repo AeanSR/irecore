@@ -164,3 +164,4 @@ int trinket_scaling(int trinket, int itemlvl);
 
 void descent(int init_interval = 320, int min_interval = 40, int iteration_limit = 800000);
 void plot(unsigned mask, int interval = 50, double error_tolerance = 5.0, int iteration_limit = 400000);
+void trinket_benchmark();

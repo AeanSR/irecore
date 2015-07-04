@@ -693,6 +693,29 @@ void gic::run_simulation(){
 	sprintf(temp, "%.3f", stat_array[0].dpse);
 	ui.lblDPSError->setText(temp);
 
+	stat_array.clear();
+	current_stat.gear_str = 0;
+	current_stat.gear_crit = 0;
+	current_stat.gear_haste = 0;
+	current_stat.gear_mastery = 0;
+	current_stat.gear_mult = 0;
+	current_stat.gear_vers = 0;
+	trinket1 = ui.comboTrinketSpecial1->currentIndex();
+	trinket2 = ui.comboTrinketSpecial2->currentIndex();
+	trinket1_ilvl = ui.txtTrinketValue1->text().toInt();
+	trinket2_ilvl = ui.txtTrinketValue2->text().toInt();
+	for (int i = 0; i < 16; i++){
+		plate_specialization = plate_specialization && ((gear_type_list[i] != gear_type_list_armor) || (gear_list[i].type == 0));
+		current_stat.gear_str += gear_list[i].str;
+		current_stat.gear_crit += gear_list[i].crit;
+		current_stat.gear_haste += gear_list[i].haste;
+		current_stat.gear_mastery += gear_list[i].mastery;
+		current_stat.gear_mult += gear_list[i].mult;
+		current_stat.gear_vers += gear_list[i].vers;
+	}
+	stat_array.push_back(current_stat);
+	generate_predef();
+
 	if (ui.checkCalculateMaxima->isChecked()){
 		*report_path << QApplication::translate("gicClass", "Maxima Descent Start.\n").toStdString();
 		int init_interval = ui.txtDescentInitInterval->text().toInt();
@@ -704,6 +727,30 @@ void gic::run_simulation(){
 		descent(init_interval,min_interval, max_iteration_limit);
 		*report_path << QApplication::translate("gicClass", "Maxima Descent Finished.\n").toStdString();
 	}
+
+	stat_array.clear();
+	current_stat.gear_str = 0;
+	current_stat.gear_crit = 0;
+	current_stat.gear_haste = 0;
+	current_stat.gear_mastery = 0;
+	current_stat.gear_mult = 0;
+	current_stat.gear_vers = 0;
+	trinket1 = ui.comboTrinketSpecial1->currentIndex();
+	trinket2 = ui.comboTrinketSpecial2->currentIndex();
+	trinket1_ilvl = ui.txtTrinketValue1->text().toInt();
+	trinket2_ilvl = ui.txtTrinketValue2->text().toInt();
+	for (int i = 0; i < 16; i++){
+		plate_specialization = plate_specialization && ((gear_type_list[i] != gear_type_list_armor) || (gear_list[i].type == 0));
+		current_stat.gear_str += gear_list[i].str;
+		current_stat.gear_crit += gear_list[i].crit;
+		current_stat.gear_haste += gear_list[i].haste;
+		current_stat.gear_mastery += gear_list[i].mastery;
+		current_stat.gear_mult += gear_list[i].mult;
+		current_stat.gear_vers += gear_list[i].vers;
+	}
+	stat_array.push_back(current_stat);
+	generate_predef();
+
 	if (ui.checkCalculatePlot->isChecked()){
 		*report_path << QApplication::translate("gicClass", "Contour Plot Start.\n").toStdString();
 		int interval = ui.txtPlotInterval->text().toInt();
@@ -733,6 +780,9 @@ void gic::run_simulation(){
 		plot(mask, interval, error_tolerance, max_iteration_limit);
 		*report_path << QApplication::translate("gicClass", "Contour Plot Finished.\n").toStdString();
 	}
+
+	if (ui.checkTrinketBenchmark->isChecked())
+		trinket_benchmark();
 
 	report_path->flush();
 	ocl().free();

@@ -159,6 +159,8 @@ int trinket_scaling(int trinket, int itemlvl){
 		case 655: return 1069;
 		case 670: return 1229;
 		case 685: return 1414;
+		case 700: return 1627;
+		case 715: return 1870;
 		default:  return (int)(1414.0 * pow(ilvlScaleCoeff, itemlvl - 685));
 		}
 	}
@@ -236,7 +238,7 @@ int trinket_from_id(int id){
 	case 115160: case 119937: case 111233: case 115760: case 125042: case 125519: case 126633: case 126156: case 124868: case 125345: case 125982: case 126459: return 6;
 	case 113645: return 7;
 	case 114613: return 8;
-	case 109262: case 122601: case 122602: case 122603: case 122604: return 9;
+	case 109262: case 122601: case 122602: case 122603: case 122604: case 128023: case 128024: return 9;
 	case 112318: return 10;
 	case 116292: return 11;
 	case 124523: return 12;

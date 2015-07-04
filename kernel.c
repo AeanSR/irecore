@@ -454,9 +454,9 @@ typedef struct {
     float power_regen;
 #endif
     stat_t stat;
-#if (TALENT_TIER3 != 3)
+//#if (TALENT_TIER3 != 3)
     bloodthirst_t   bloodthirst;
-#endif
+//#endif
     ragingblow_t    ragingblow;
     enrage_t        enrage;
     bloodsurge_t    bloodsurge;

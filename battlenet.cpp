@@ -93,7 +93,7 @@ void gic::import_player(std::string& realm, std::string& name, std::string& regi
 	if (region.compare("cn")){
 		url = "https://";
 		url.append( region.c_str());
-		url.append("api.battle.net/wow/character/");
+		url.append(".api.battle.net/wow/character/");
 		url.append(realm.c_str());
 		url.append("/");
 		url.append(name.c_str());

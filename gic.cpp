@@ -714,8 +714,8 @@ void gic::run_simulation(){
 		current_stat.gear_mult += gear_list[i].mult;
 		current_stat.gear_vers += gear_list[i].vers;
 	}
-	parameters_consistency();
 	stat_array.push_back(current_stat);
+	parameters_consistency();
 	generate_predef();
 
 	if (ui.checkCalculateMaxima->isChecked()){
@@ -750,8 +750,8 @@ void gic::run_simulation(){
 		current_stat.gear_mult += gear_list[i].mult;
 		current_stat.gear_vers += gear_list[i].vers;
 	}
-	parameters_consistency();
 	stat_array.push_back(current_stat);
+	parameters_consistency();
 	generate_predef();
 
 	if (ui.checkCalculatePlot->isChecked()){

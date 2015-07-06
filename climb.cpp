@@ -80,7 +80,7 @@ int transpose(point_t point){
 simresult_t sim(point_t& point){
 	int iter = 8192;
 	char digits[16];
-	current_stat = stat_array[0];
+	//current_stat = stat_array[0];
 	stat_array.clear();
 	current_stat.gear_crit = point.stat[0];
 	current_stat.gear_haste = point.stat[1];
@@ -91,6 +91,7 @@ simresult_t sim(point_t& point){
 	std::hash<point_t> h;
 	current_stat.name.append(ultoa(h(point), digits, 16));
 	stat_array.push_back(current_stat);
+	parameters_consistency();
 
 	double dps, error;
 	iterations = iter;
@@ -107,7 +108,7 @@ const simresult_t& sim(simresult_t& r, double target_error){
 	point_t point = r.point;
 	if (error * 2.0 <= target_error) return r;
 	char digits[16];
-	current_stat = stat_array[0];
+	//current_stat = stat_array[0];
 	stat_array.clear();
 	current_stat.gear_crit = point.stat[0];
 	current_stat.gear_haste = point.stat[1];
@@ -118,6 +119,8 @@ const simresult_t& sim(simresult_t& r, double target_error){
 	std::hash<point_t> h;
 	current_stat.name.append(ultoa(h(point), digits, 16));
 	stat_array.push_back(current_stat);
+	parameters_consistency();
+
 
 	if (error * 2.0 > target_error){
 		int more_iter = 1024 + static_cast<int>(iter * (error * 2.0 / target_error) * (error * 2.0 / target_error));
@@ -146,7 +149,7 @@ const simresult_t& sim(simresult_t& r, double target_error){
 };
 
 void descent(int init_interval, int min_interval, int iteration_limit){
-	point_t p(stat_array[0].gear_crit + stat_array[0].gear_haste + stat_array[0].gear_mastery + stat_array[0].gear_mult + stat_array[0].gear_vers);
+	point_t p(current_stat.gear_crit + current_stat.gear_haste + current_stat.gear_mastery + current_stat.gear_mult + current_stat.gear_vers);
 	simresult_t res = sim(p);
 	tt.clear();
 	transpose(p);
@@ -230,16 +233,16 @@ void plot(unsigned mask, int interval, double error_tolerance, int iteration_lim
 	FILE* f = fopen("plot.sci", "wb");
 	tt.clear();
 	point_t p(0);
-	int amount = (mask & MSK_CRIT ? stat_array[0].gear_crit : 0) +
-		(mask & MSK_HASTE ? stat_array[0].gear_haste : 0) +
-		(mask & MSK_MASTERY ? stat_array[0].gear_mastery : 0) +
-		(mask & MSK_MULT ? stat_array[0].gear_mult : 0) +
+	int amount = (mask & MSK_CRIT ? current_stat.gear_crit : 0) +
+		(mask & MSK_HASTE ? current_stat.gear_haste : 0) +
+		(mask & MSK_MASTERY ? current_stat.gear_mastery : 0) +
+		(mask & MSK_MULT ? current_stat.gear_mult : 0) +
 		(mask & MSK_VERS ? stat_array[0].gear_vers : 0);
-	p.stat[0] = stat_array[0].gear_crit;
-	p.stat[1] = stat_array[0].gear_haste;
-	p.stat[2] = stat_array[0].gear_mastery;
-	p.stat[3] = stat_array[0].gear_mult;
-	p.stat[4] = stat_array[0].gear_vers;
+	p.stat[0] = current_stat.gear_crit;
+	p.stat[1] = current_stat.gear_haste;
+	p.stat[2] = current_stat.gear_mastery;
+	p.stat[3] = current_stat.gear_mult;
+	p.stat[4] = current_stat.gear_vers;
 
 	unsigned long msidx[3];
 	_BitScanForward(&msidx[0], mask);

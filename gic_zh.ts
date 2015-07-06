@@ -14,6 +14,11 @@
         <translation>运算</translation>
     </message>
     <message>
+        <location filename="gic.ui" line="264"/>
+        <source>200</source>
+        <translation>200</translation>
+    </message>
+    <message>
         <location filename="gic.ui" line="457"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Select your compute device here.&lt;/p&gt;&lt;p&gt;CPU is recommended since it outperforms most GPUs, and works more stably.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;选择你的运算设备。&lt;/p&gt;&lt;p&gt;推荐使用CPU，因为它通常比GPU更快更稳定。&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
@@ -132,9 +137,8 @@
         <translation>步进：</translation>
     </message>
     <message>
-        <location filename="gic.ui" line="264"/>
         <source>50</source>
-        <translation>50</translation>
+        <translation type="vanished">50</translation>
     </message>
     <message>
         <location filename="gic.ui" line="278"/>

@@ -31,7 +31,7 @@ struct point_t{
 			stat[direct2] -= interval;
 		} else return 0;
 		for (int i = 0; i < stat_count; i++){
-			if (stat[i] <= 0) return 0;
+			if (stat[i] < 0) return 0;
 		}
 		return 1;
 	}
@@ -251,8 +251,8 @@ void plot(unsigned mask, int interval, double error_tolerance, int iteration_lim
 	simresult_t res = sim(p);
 	int data_count = 0;
 	int axis_max = 0;
-	for (p.stat[msidx[0]] = interval; p.stat[msidx[0]] <= amount; p.stat[msidx[0]] += interval){
-		for (p.stat[msidx[1]] = interval; p.stat[msidx[1]] <= amount; p.stat[msidx[1]] += interval){
+	for (p.stat[msidx[0]] = 0; p.stat[msidx[0]] <= amount; p.stat[msidx[0]] += interval){
+		for (p.stat[msidx[1]] = 0; p.stat[msidx[1]] <= amount; p.stat[msidx[1]] += interval){
 			p.stat[msidx[2]] = amount - p.stat[msidx[1]] - p.stat[msidx[0]];
 			if (p.stat[msidx[2]] > amount || p.stat[msidx[2]] <= 0) continue;
 			res = sim(p);
@@ -274,7 +274,7 @@ void plot(unsigned mask, int interval, double error_tolerance, int iteration_lim
 	fprintf(f, "for i=1:%d if rawmin>raw(i,3) then rawmin=raw(i,3); end end\r\n", data_count);
 	fprintf(f, "for i=1:%d if rawmax<raw(i,3) then rawmax=raw(i,3); end end\r\n", data_count);
 	fprintf(f, "nz=linspace(rawmin,rawmax,30);\r\n");
-	fprintf(f, "%s=linspace(%d,%d,%d);\r\n", stat_name[msidx[0]], interval, axis_max, axis_max / interval);
+	fprintf(f, "%s=linspace(%d,%d,%d);\r\n", stat_name[msidx[0]], 0, axis_max, 1 + axis_max / interval);
 	fprintf(f, "%s=%s;\r\n", stat_name[msidx[1]], stat_name[msidx[0]]);
 	fprintf(f, "contourf(%s, %s, z, nz);\r\n", stat_name[msidx[0]], stat_name[msidx[1]]);
 	fprintf(f, "f=gcf();\r\n"

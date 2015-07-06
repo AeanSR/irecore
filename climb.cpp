@@ -254,7 +254,7 @@ void plot(unsigned mask, int interval, double error_tolerance, int iteration_lim
 	for (p.stat[msidx[0]] = 0; p.stat[msidx[0]] <= amount; p.stat[msidx[0]] += interval){
 		for (p.stat[msidx[1]] = 0; p.stat[msidx[1]] <= amount; p.stat[msidx[1]] += interval){
 			p.stat[msidx[2]] = amount - p.stat[msidx[1]] - p.stat[msidx[0]];
-			if (p.stat[msidx[2]] > amount || p.stat[msidx[2]] <= 0) continue;
+			if (p.stat[msidx[2]] > amount || p.stat[msidx[2]] < 0) continue;
 			res = sim(p);
 			while (res.error * 2 > error_tolerance){
 				res = sim(res, error_tolerance);
@@ -268,7 +268,7 @@ void plot(unsigned mask, int interval, double error_tolerance, int iteration_lim
 		axis_max = p.stat[msidx[0]];
 	}
 	fprintf(f, "];\r\n");
-	fprintf(f, "for i=1:%d z(raw(i,1)/%d,raw(i,2)/%d)=raw(i,3); end\r\n", data_count, interval, interval);
+	fprintf(f, "for i=1:%d z(1+(raw(i,1)/%d),1+(raw(i,2)/%d))=raw(i,3); end\r\n", data_count, interval, interval);
 	fprintf(f, "rawmin=raw(1,3);\r\n");
 	fprintf(f, "rawmax=raw(1,3);\r\n");
 	fprintf(f, "for i=1:%d if rawmin>raw(i,3) then rawmin=raw(i,3); end end\r\n", data_count);

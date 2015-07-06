@@ -9,8 +9,8 @@
 
 const char* stat_name[] = {
 	"crit",
-	"mastery",
 	"haste",
+	"mastery",
 	"multistrike",
 	"versatility",
 };
@@ -227,7 +227,7 @@ void descent(int init_interval, int min_interval, int iteration_limit){
 #define MSK_VERS (1 << 4)
 
 void plot(unsigned mask, int interval, double error_tolerance, int iteration_limit){
-	FILE* f = fopen("plot.txt", "wb");
+	FILE* f = fopen("plot.sci", "wb");
 	tt.clear();
 	point_t p(0);
 	int amount = (mask & MSK_CRIT ? stat_array[0].gear_crit : 0) +
@@ -247,8 +247,10 @@ void plot(unsigned mask, int interval, double error_tolerance, int iteration_lim
 	_BitScanForward(&msidx[1], mask);
 	mask &= mask - 1;
 	_BitScanForward(&msidx[2], mask);
-
+	fprintf(f, "raw=[");
 	simresult_t res = sim(p);
+	int data_count = 0;
+	int axis_max = 0;
 	for (p.stat[msidx[0]] = interval; p.stat[msidx[0]] <= amount; p.stat[msidx[0]] += interval){
 		for (p.stat[msidx[1]] = interval; p.stat[msidx[1]] <= amount; p.stat[msidx[1]] += interval){
 			p.stat[msidx[2]] = amount - p.stat[msidx[1]] - p.stat[msidx[0]];
@@ -260,8 +262,26 @@ void plot(unsigned mask, int interval, double error_tolerance, int iteration_lim
 			}
 			fprintf(f, "%d, %d, %.3lf, %.3lf\r\n", p.stat[msidx[0]], p.stat[msidx[1]], res.dps, res.error);
 			fflush(f);
+			data_count++;
 			*report_path << p.stat[msidx[0]] << stat_name[msidx[0]] << ", " << p.stat[msidx[1]] << stat_name[msidx[1]] << ", " << p.stat[msidx[2]] << stat_name[msidx[2]] << ", dps:" << res.dps << ", error:" << res.error * 2 << std::endl;
 		}
+		axis_max = p.stat[msidx[0]];
 	}
+	fprintf(f, "];\r\n");
+	fprintf(f, "for i=1:%d z(raw(i,1)/%d,raw(i,2)/%d)=raw(i,3); end\r\n", data_count, interval, interval);
+	fprintf(f, "rawmin=raw(1,3);\r\n");
+	fprintf(f, "rawmax=raw(1,3);\r\n");
+	fprintf(f, "for i=1:%d if rawmin>raw(i,3) then rawmin=raw(i,3); end end\r\n", data_count);
+	fprintf(f, "for i=1:%d if rawmax<raw(i,3) then rawmax=raw(i,3); end end\r\n", data_count);
+	fprintf(f, "nz=linspace(rawmin,rawmax,30);\r\n");
+	fprintf(f, "%s=linspace(%d,%d,%d);\r\n", stat_name[msidx[0]], interval, axis_max, axis_max / interval);
+	fprintf(f, "%s=%s;\r\n", stat_name[msidx[1]], stat_name[msidx[0]]);
+	fprintf(f, "contourf(%s, %s, z, nz);\r\n", stat_name[msidx[0]], stat_name[msidx[1]]);
+	fprintf(f, "f=gcf();\r\n"
+		"f.color_map=bonecolormap(30);\r\n"
+		"xlabel(\"%s\");\r\n"
+		"ylabel(\"%s\");\r\n", stat_name[msidx[0]], stat_name[msidx[1]]);
+	fprintf(f, "axc=gca();\r\n"
+		"axc.auto_ticks=\"on\";\r\n");
 	fclose(f);
 }

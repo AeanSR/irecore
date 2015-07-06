@@ -781,7 +781,7 @@ void gic::run_simulation(){
 			mask = 7;
 		}
 		plot(mask, interval, error_tolerance, max_iteration_limit);
-		*report_path << QApplication::translate("gicClass", "Contour Plot Finished.\n").toStdString();
+		*report_path << QApplication::translate("gicClass", "Contour Plot Finished. Run \"plot.sci\" with SciLab(http://scilab.org/) to draw a figure.\n").toStdString();
 	}
 
 	if (ui.checkTrinketBenchmark->isChecked())

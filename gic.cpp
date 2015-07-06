@@ -201,7 +201,9 @@ gic::gic(QWidget *parent)
 		<< "SPELL(thorasus_the_stone_heart_of_draenor);"
 		<< "SPELL(vial_of_convulsive_shadows);"
 		<< "SPELL(scabbard_of_kyanos);"
-		<< "SPELL(badge_of_victory);";
+		<< "SPELL(badge_of_victory);"
+		<< "SPELL(bonemaws_big_toe);"
+		<< "SPELL(emberscale_talisman);";
 	ui.listActions->addItems(lists);
 	lists.clear();
 	lists << "FROM_SECONDS()"
@@ -328,7 +330,10 @@ gic::gic(QWidget *parent)
 		QApplication::translate("gicClass", "Worldbreaker's Resolve") <<
 		QApplication::translate("gicClass", "Discordant Chorus") << 
 		QApplication::translate("gicClass", "Empty Drinking Horn") << 
-		QApplication::translate("gicClass", "Unending Hunger");
+		QApplication::translate("gicClass", "Unending Hunger") <<
+		QApplication::translate("gicClass", "Spores of Alacrity") <<
+		QApplication::translate("gicClass", "Bonemaw's Big Toe") <<
+		QApplication::translate("gicClass", "Emberscale Talisman");
 	ui.comboTrinketSpecial1->addItems(lists);
 	ui.comboTrinketSpecial2->addItems(lists);
 	lists.clear();

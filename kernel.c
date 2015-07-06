@@ -70,7 +70,7 @@
 //#define trinket_vial_of_convulsive_shadows 2033
 //#define trinket_forgemasters_insignia 181
 //#define trinket_horn_of_screaming_spirits 2652
-//#define trinket_scabbard_of_kyanos 2200
+#define trinket_scabbard_of_kyanos 2200
 //#define trinket_badge_of_victory 1456
 //#define trinket_insignia_of_victory 867
 //#define trinket_tectus_beating_heart 2304
@@ -81,7 +81,10 @@
 //#define trinket_worldbreakers_resolve 220
 //#define trinket_discordant_chorus 20564
 //#define trinket_empty_drinking_horn 259
-#define trinket_unending_hunger 54
+//#define trinket_unending_hunger 54
+//#define trinket_spores_of_alacrity 2304
+//#define trinket_bonemaws_big_toe 1767
+#define trinket_emberscale_talisman 1767
 #endif /* !defined(__OPENCL_VERSION__) */
 
 /* Debug on Host! */
@@ -619,6 +622,24 @@ typedef struct {
 		k32u stack;
 		RPPM_t proc;
 	} unending_hunger;
+#endif
+#if defined(trinket_spores_of_alacrity)
+	struct {
+		time_t expire;
+		RPPM_t proc;
+	} spores_of_alacrity;
+#endif
+#if defined(trinket_bonemaws_big_toe)
+	struct {
+		time_t cd;
+		time_t expire;
+	} bonemaws_big_toe;
+#endif
+#if defined(trinket_emberscale_talisman)
+	struct {
+		time_t cd;
+		time_t expire;
+	} emberscale_talisman;
 #endif
     time_t gcd;
 }
@@ -1285,6 +1306,20 @@ enum {
 #if defined(trinket_unending_hunger)
 	routnum_unending_hunger_trigger,
 	routnum_unending_hunger_expire,
+#endif
+#if defined(trinket_spores_of_alacrity)
+	routnum_spores_of_alacrity_trigger,
+	routnum_spores_of_alacrity_expire,
+#endif
+#if defined(trinket_bonemaws_big_toe)
+	routnum_bonemaws_big_toe_expire,
+	routnum_bonemaws_big_toe_start,
+	routnum_bonemaws_big_toe_cd,
+#endif
+#if defined(trinket_emberscale_talisman)
+	routnum_emberscale_talisman_expire,
+	routnum_emberscale_talisman_start,
+	routnum_emberscale_talisman_cd,
 #endif
 };
 
@@ -2519,6 +2554,12 @@ DECL_SPELL( vial_of_convulsive_shadows ) {
 #if defined(trinket_scabbard_of_kyanos)
     if ( UP( scabbard_of_kyanos.expire ) ) return;
 #endif
+#if defined(trinket_emberscale_talisman)
+	if ( UP( emberscale_talisman.expire ) ) return;
+#endif
+#if defined(trinket_bonemaws_big_toe)
+	if ( UP( bonemaws_big_toe.expire ) ) return;
+#endif
 #if defined(trinket_badge_of_victory)
     if ( UP( badge_of_victory.expire ) ) return;
 #endif
@@ -2592,6 +2633,12 @@ DECL_SPELL( scabbard_of_kyanos ) {
 #if defined(trinket_vial_of_convulsive_shadows)
     if ( UP( vial_of_convulsive_shadows.expire ) ) return;
 #endif
+#if defined(trinket_emberscale_talisman)
+	if ( UP( emberscale_talisman.expire ) ) return;
+#endif
+#if defined(trinket_bonemaws_big_toe)
+	if ( UP( bonemaws_big_toe.expire ) ) return;
+#endif
 #if defined(trinket_badge_of_victory)
     if ( UP( badge_of_victory.expire ) ) return;
 #endif
@@ -2606,6 +2653,89 @@ DECL_SPELL( scabbard_of_kyanos ) {
     lprintf( ( "cast scabbard_of_kyanos" ) );
 }
 #endif
+
+#if defined(trinket_emberscale_talisman)
+DECL_EVENT(emberscale_talisman_cd) {
+	lprintf( ( "emberscale_talisman ready" ) );
+}
+DECL_EVENT(emberscale_talisman_start) {
+	lprintf( ( "emberscale_talisman start" ) );
+	rti->player.stat.gear_vers += trinket_emberscale_talisman;
+	refresh_vers( rti );
+}
+DECL_EVENT(emberscale_talisman_expire) {
+	lprintf( ( "emberscale_talisman expire" ) );
+	rti->player.stat.gear_vers -= trinket_emberscale_talisman;
+	refresh_vers( rti );
+}
+
+DECL_SPELL(emberscale_talisman) {
+	if (rti->player.emberscale_talisman.cd > rti->timestamp) return;
+#if defined(trinket_vial_of_convulsive_shadows)
+	if ( UP( vial_of_convulsive_shadows.expire ) ) return;
+#endif
+#if defined(trinket_scabbard_of_kyanos)
+	if ( UP( scabbard_of_kyanos.expire ) ) return;
+#endif
+#if defined(trinket_bonemaws_big_toe)
+	if ( UP( bonemaws_big_toe.expire ) ) return;
+#endif
+#if defined(trinket_badge_of_victory)
+	if ( UP( badge_of_victory.expire ) ) return;
+#endif
+#if (TALENT_TIER6 == 3)
+	if ( UP( bladestorm.expire ) ) return;
+#endif
+	eq_enqueue(rti, rti->timestamp, routnum_emberscale_talisman_start);
+	rti->player.emberscale_talisman.expire = TIME_OFFSET(FROM_SECONDS(15));
+	eq_enqueue(rti, rti->player.emberscale_talisman.expire, routnum_emberscale_talisman_expire);
+	rti->player.emberscale_talisman.cd = TIME_OFFSET(FROM_SECONDS(90));
+	eq_enqueue(rti, rti->player.emberscale_talisman.cd, routnum_emberscale_talisman_cd);
+	lprintf(("cast emberscale_talisman"));
+}
+#endif
+
+#if defined(trinket_bonemaws_big_toe)
+DECL_EVENT(bonemaws_big_toe_cd) {
+	lprintf( ( "bonemaws_big_toe ready" ) );
+}
+DECL_EVENT(bonemaws_big_toe_start) {
+	lprintf( ( "bonemaws_big_toe start" ) );
+	rti->player.stat.gear_crit += trinket_bonemaws_big_toe;
+	refresh_crit( rti );
+}
+DECL_EVENT(bonemaws_big_toe_expire) {
+	lprintf( ( "bonemaws_big_toe expire" ) );
+	rti->player.stat.gear_crit -= trinket_bonemaws_big_toe;
+	refresh_crit( rti );
+}
+
+DECL_SPELL(bonemaws_big_toe) {
+	if (rti->player.bonemaws_big_toe.cd > rti->timestamp) return;
+#if defined(trinket_vial_of_convulsive_shadows)
+	if ( UP( vial_of_convulsive_shadows.expire ) ) return;
+#endif
+#if defined(trinket_scabbard_of_kyanos)
+	if (UP(scabbard_of_kyanos.expire)) return;
+#endif
+#if defined(trinket_emberscale_talisman)
+	if ( UP( emberscale_talisman.expire ) ) return;
+#endif
+#if defined(trinket_badge_of_victory)
+	if ( UP( badge_of_victory.expire ) ) return;
+#endif
+#if (TALENT_TIER6 == 3)
+	if ( UP( bladestorm.expire ) ) return;
+#endif
+	eq_enqueue(rti, rti->timestamp, routnum_bonemaws_big_toe_start);
+	rti->player.bonemaws_big_toe.expire = TIME_OFFSET(FROM_SECONDS(20));
+	eq_enqueue(rti, rti->player.bonemaws_big_toe.expire, routnum_bonemaws_big_toe_expire);
+	rti->player.bonemaws_big_toe.cd = TIME_OFFSET(FROM_SECONDS(120));
+	eq_enqueue(rti, rti->player.bonemaws_big_toe.cd, routnum_bonemaws_big_toe_cd);
+	lprintf(("cast bonemaws_big_toe"));
+}
+#endif
+
 
 #if defined(trinket_badge_of_victory)
 DECL_EVENT( badge_of_victory_cd ) {
@@ -2629,6 +2759,12 @@ DECL_SPELL( badge_of_victory ) {
 #endif
 #if defined(trinket_scabbard_of_kyanos)
     if ( UP( scabbard_of_kyanos.expire ) ) return;
+#endif
+#if defined(trinket_emberscale_talisman)
+	if ( UP( emberscale_talisman.expire ) ) return;
+#endif
+#if defined(trinket_bonemaws_big_toe)
+	if ( UP( bonemaws_big_toe.expire ) ) return;
 #endif
 #if (TALENT_TIER6 == 3)
     if ( UP( bladestorm.expire ) ) return;
@@ -2733,6 +2869,21 @@ DECL_EVENT( mote_of_the_mountain_expire ) {
     lprintf( ( "mote_of_the_mountain expire" ) );
     rti->player.stat.gear_vers -= trinket_mote_of_the_mountain;
     refresh_vers( rti );
+}
+#endif
+
+#if defined(trinket_spores_of_alacrity)
+DECL_EVENT(spores_of_alacrity_trigger) {
+	lprintf( ( "spores_of_alacrity start" ) );
+	rti->player.stat.gear_haste += trinket_spores_of_alacrity;
+	refresh_haste( rti );
+	rti->player.spores_of_alacrity.expire = TIME_OFFSET(FROM_SECONDS(10));
+	eq_enqueue(rti, rti->player.spores_of_alacrity.expire, routnum_spores_of_alacrity_expire);
+}
+DECL_EVENT(spores_of_alacrity_expire) {
+	lprintf( ( "spores_of_alacrity expire" ) );
+	rti->player.stat.gear_haste -= trinket_spores_of_alacrity;
+	refresh_haste( rti );
 }
 #endif
 
@@ -3046,6 +3197,20 @@ void routine_entries( rtinfo_t* rti, _event_t e ) {
 		HOOK_EVENT(unending_hunger_trigger);
 		HOOK_EVENT(unending_hunger_expire);
 #endif
+#if defined(trinket_spores_of_alacrity)
+		HOOK_EVENT(spores_of_alacrity_trigger);
+		HOOK_EVENT(spores_of_alacrity_expire);
+#endif
+#if defined(trinket_bonemaws_big_toe)
+		HOOK_EVENT(bonemaws_big_toe_expire);
+		HOOK_EVENT(bonemaws_big_toe_start);
+		HOOK_EVENT(bonemaws_big_toe_cd);
+#endif
+#if defined(trinket_emberscale_talisman)
+		HOOK_EVENT(emberscale_talisman_expire);
+		HOOK_EVENT(emberscale_talisman_start);
+		HOOK_EVENT(emberscale_talisman_cd);
+#endif
     default:
         assert( 0 );
     }
@@ -3125,6 +3290,10 @@ void module_init( rtinfo_t* rti ) {
 	rti->player.unending_hunger.proc.lasttimeattemps = (time_t)-(k32s)FROM_SECONDS(10);
 	rti->player.unending_hunger.proc.lasttimeprocs = (time_t)-(k32s)FROM_SECONDS(180);
 #endif
+#if defined(trinket_spores_of_alacrity)
+	rti->player.spores_of_alacrity.proc.lasttimeattemps = (time_t)-(k32s)FROM_SECONDS(10);
+	rti->player.spores_of_alacrity.proc.lasttimeprocs = (time_t)-(k32s)FROM_SECONDS(180);
+#endif
 }
 
 void special_procs( rtinfo_t* rti ) {
@@ -3197,6 +3366,11 @@ void special_procs( rtinfo_t* rti ) {
 		rti->player.stat.gear_str += trinket_unending_hunger;
 		refresh_str(rti);
 		refresh_ap(rti);
+	}
+#endif
+#if defined(trinket_spores_of_alacrity)
+	if (!UP(spores_of_alacrity.expire)) {
+		proc_RPPM(rti, &rti->player.spores_of_alacrity.proc, 0.92f, routnum_spores_of_alacrity_trigger);
 	}
 #endif
 }

@@ -68,6 +68,9 @@ const char* trinket_list[] = {
 	"discordant_chorus",
 	"empty_drinking_horn",
 	"unending_hunger",
+	"spores_of_alacrity",
+	"bonemaws_big_toe",
+	"emberscale_talisman",
 	NULL
 };
 
@@ -226,6 +229,48 @@ int trinket_scaling(int trinket, int itemlvl){
 		default:  return (int)(71.0 * pow(ilvlScaleCoeff, itemlvl - 725));
 		}
 	}
+	else if (trinket == 16){
+		switch (itemlvl){
+		case 685: return 2304;
+		case 705: return 2778;
+		case 630: return 1383;
+		case 636: return 1461;
+		case 615: return 1200;
+		case 600: return 1043;
+		case 570: return 791;
+		case 550: return 657;
+		case 530: return 543;
+		default:  return (int)(1383.0 * pow(ilvlScaleCoeff, itemlvl - 630));
+		}
+	}
+	else if (trinket == 17){
+		switch (itemlvl){
+		case 685: return 1767;
+		case 705: return 2130;
+		case 630: return 1060;
+		case 636: return 1120;
+		case 615: return 920;
+		case 600: return 800;
+		case 570: return 607;
+		case 550: return 503;
+		case 530: return 417;
+		default:  return (int)(1060.0 * pow(ilvlScaleCoeff, itemlvl - 630));
+		}
+	}
+	else if (trinket == 18){
+		switch (itemlvl){
+		case 685: return 1767;
+		case 705: return 2130;
+		case 630: return 1060;
+		case 636: return 1120;
+		case 615: return 920;
+		case 600: return 800;
+		case 570: return 607;
+		case 550: return 503;
+		case 530: return 417;
+		default:  return (int)(1060.0 * pow(ilvlScaleCoeff, itemlvl - 630));
+		}
+	}
 	else return 0;
 }
 int trinket_from_id(int id){
@@ -245,6 +290,9 @@ int trinket_from_id(int id){
 	case 124237: return 13;
 	case 124238: return 14;
 	case 124236: return 15;
+	case 110014: return 16;
+	case 110012: return 17;
+	case 110013: return 18;
 	default: return 0;
 	}
 }
@@ -1005,11 +1053,18 @@ void auto_apl(){
 		if (TALENT_TIER(7) == 1) apl.append("if(UP(recklessness.expire)||TIME_DISTANT(rti->expected_combat_length)<FROM_SECONDS(25))SPELL(vial_of_convulsive_shadows);\n");
 		else apl.append("SPELL(vial_of_convulsive_shadows);\n");
 
-	if (0 == strcmp(trinket_list[trinket1], "scabbard_of_kyanos") || 0 == strcmp(trinket_list[trinket2], "scabbard_of_kyanos")) apl.append("SPELL(scabbard_of_kyanos);\n");
-	
+	if (0 == strcmp(trinket_list[trinket1], "bonemaws_big_toe") || 0 == strcmp(trinket_list[trinket2], "bonemaws_big_toe"))
+		if (TALENT_TIER(7) == 1) apl.append("if(UP(recklessness.expire)||TIME_DISTANT(rti->expected_combat_length)<FROM_SECONDS(25))SPELL(bonemaws_big_toe);\n");
+		else apl.append("SPELL(bonemaws_big_toe);\n");
+
+	if (0 == strcmp(trinket_list[trinket1], "scabbard_of_kyanos") || 0 == strcmp(trinket_list[trinket2], "scabbard_of_kyanos"))
+		apl.append("SPELL(scabbard_of_kyanos);\n");
+
+	if (0 == strcmp(trinket_list[trinket1], "emberscale_talisman") || 0 == strcmp(trinket_list[trinket2], "emberscale_talisman"))
+		apl.append("SPELL(emberscale_talisman);\n");
+
 	if (0 == strcmp(trinket_list[trinket1], "badge_of_victory") || 0 == strcmp(trinket_list[trinket2], "badge_of_victory"))
-		if (TALENT_TIER(7) == 1) apl.append("if(UP(recklessness.expire)||TIME_DISTANT(rti->expected_combat_length)<FROM_SECONDS(25))SPELL(badge_of_victory);\n");
-		else apl.append("SPELL(badge_of_victory);\n");
+		apl.append("SPELL(badge_of_victory);\n");
 
 	if (TALENT_TIER(6) == 2) apl.append("SPELL(bloodbath);\n");
 

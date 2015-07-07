@@ -477,7 +477,7 @@
     <message>
         <location filename="gic.ui" line="1529"/>
         <location filename="gic.ui" line="1635"/>
-        <location filename="gic.ui" line="2213"/>
+        <location filename="gic.ui" line="2226"/>
         <source>DPS:</source>
         <translation>DPS：</translation>
     </message>
@@ -552,49 +552,54 @@
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;启用默认动作后，默认动作将覆盖下面的编辑器。默认动作列表会自动考虑到所有的天赋、饰品、种族天赋和特效。&lt;/p&gt;&lt;p&gt;IreCore APL是一段C语言代码，作为一个函数直接插入内核源码中。所有合法的C语言代码都可以作为IreCore APL使用，所以你可以有更多的发挥空间，例如定义自己的变量。&lt;/p&gt;&lt;p&gt;常用的词素列在右侧，你可以双击它们直接插入。&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="gic.ui" line="2090"/>
+        <location filename="gic.ui" line="2097"/>
+        <source>Generate Default APL</source>
+        <translation>生成默认APL</translation>
+    </message>
+    <message>
+        <location filename="gic.ui" line="2103"/>
         <source>Override</source>
         <translation>覆盖</translation>
     </message>
     <message>
-        <location filename="gic.ui" line="2102"/>
+        <location filename="gic.ui" line="2115"/>
         <source>Textual configuration will override graphic options.</source>
         <translation>将配置文本写在这里覆盖图形界面选项。</translation>
     </message>
     <message>
-        <location filename="gic.ui" line="2108"/>
+        <location filename="gic.ui" line="2121"/>
         <source>Result</source>
         <translation>结果</translation>
     </message>
     <message>
-        <location filename="gic.ui" line="2136"/>
+        <location filename="gic.ui" line="2149"/>
         <source>DPS Range(Std. Dev):</source>
         <translation>DPS范围（标准差）：</translation>
     </message>
     <message>
-        <location filename="gic.ui" line="2149"/>
-        <location filename="gic.ui" line="2181"/>
-        <location filename="gic.ui" line="2226"/>
+        <location filename="gic.ui" line="2162"/>
+        <location filename="gic.ui" line="2194"/>
+        <location filename="gic.ui" line="2239"/>
         <source>N/A</source>
         <translation>N/A</translation>
     </message>
     <message>
-        <location filename="gic.ui" line="2168"/>
+        <location filename="gic.ui" line="2181"/>
         <source>Error(0.95 Confident):</source>
         <translation>误差（0.95置信水平）：</translation>
     </message>
     <message>
-        <location filename="gic.ui" line="2197"/>
+        <location filename="gic.ui" line="2210"/>
         <source>Stat Weights:</source>
         <translation>属性权重：</translation>
     </message>
     <message>
-        <location filename="gic.ui" line="3002"/>
+        <location filename="gic.ui" line="3015"/>
         <source>Current Version</source>
         <translation>当前版本</translation>
     </message>
     <message>
-        <location filename="gic.ui" line="3015"/>
+        <location filename="gic.ui" line="3028"/>
         <source>Run</source>
         <translation>运行</translation>
     </message>
@@ -1060,28 +1065,28 @@
         <translation>攻击强度</translation>
     </message>
     <message>
-        <location filename="gic.cpp" line="727"/>
+        <location filename="gic.cpp" line="729"/>
         <source>Maxima Descent Start.
 </source>
         <translation>属性爬山开始
 </translation>
     </message>
     <message>
-        <location filename="gic.cpp" line="735"/>
+        <location filename="gic.cpp" line="737"/>
         <source>Maxima Descent Finished.
 </source>
         <translation>属性爬山完成
 </translation>
     </message>
     <message>
-        <location filename="gic.cpp" line="763"/>
+        <location filename="gic.cpp" line="765"/>
         <source>Contour Plot Start.
 </source>
         <translation>等高图开始
 </translation>
     </message>
     <message>
-        <location filename="gic.cpp" line="785"/>
+        <location filename="gic.cpp" line="787"/>
         <source>Contour Plot stats not set properly. Exact 3 stats should be checked.
 Reset to Crit-Haste-Mastery.
 </source>
@@ -1092,7 +1097,7 @@ Reset to Crit-Haste-Mastery.</oldsource>
 </translation>
     </message>
     <message>
-        <location filename="gic.cpp" line="789"/>
+        <location filename="gic.cpp" line="791"/>
         <source>Contour Plot Finished. Run &quot;plot.sci&quot; with SciLab(http://scilab.org/) to draw a figure.
 </source>
         <translation>等高图完成，使用SciLab(http://scilab.org)运行&quot;plot.sci&quot;来绘制图像</translation>
@@ -1126,28 +1131,28 @@ Reset to Crit-Haste-Mastery.</oldsource>
         <translation>Buff后</translation>
     </message>
     <message>
-        <location filename="gic.cpp" line="484"/>
+        <location filename="gic.cpp" line="551"/>
         <source>Set arguments...
 </source>
         <translation>设置参数...
 </translation>
     </message>
     <message>
-        <location filename="gic.cpp" line="608"/>
+        <location filename="gic.cpp" line="610"/>
         <source>Initializing compute cnvironment...
 </source>
         <translation>初始化运算环境...
 </translation>
     </message>
     <message>
-        <location filename="gic.cpp" line="613"/>
+        <location filename="gic.cpp" line="615"/>
         <source>Start simulation...
 </source>
         <translation>启动模拟...
 </translation>
     </message>
     <message>
-        <location filename="gic.cpp" line="616"/>
+        <location filename="gic.cpp" line="618"/>
         <source>Simulation finished.
 </source>
         <translation>模拟完成

@@ -45,7 +45,7 @@
      <item>
       <widget class="QTabWidget" name="tabWidget">
        <property name="currentIndex">
-        <number>0</number>
+        <number>3</number>
        </property>
        <widget class="QWidget" name="tabCompute">
         <attribute name="title">
@@ -2082,6 +2082,19 @@
          </property>
          <property name="wordWrap">
           <bool>true</bool>
+         </property>
+        </widget>
+        <widget class="QPushButton" name="btnGenerateDefaultAPL">
+         <property name="geometry">
+          <rect>
+           <x>610</x>
+           <y>10</y>
+           <width>151</width>
+           <height>23</height>
+          </rect>
+         </property>
+         <property name="text">
+          <string>Generate Default APL</string>
          </property>
         </widget>
        </widget>

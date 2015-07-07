@@ -469,26 +469,13 @@ void gic::on_btnRun_clicked()
 
 ofunctionstream* simlog = NULL;
 
-void gic::run_simulation(){
-	char header[80];
-	time_t rawtime;
-	time(&rawtime);
-	struct tm* ts = localtime(&rawtime);
-	strftime(header, 80, "============================== %H:%M:%S ==============================", ts);
-
-	stat_array.clear();
-
-	if (!simlog) simlog = new ofunctionstream(this);
-	report_path = simlog;
-	*report_path << header << std::endl;
-	*report_path << QApplication::translate("gicClass", "Set arguments...\n").toStdString();
-	// TODO: set arguments;
+void gic::set_arguments(){
 	calculate_scale_factors = ui.checkCalculateScaleFactors->isChecked() ? 1 : 0;
 	iterations = ui.comboIterations->currentData().toInt();
 	rng_engine = ui.comboRNG->currentData().toInt();
 	seed = ui.checkDeterministic->isChecked() ? 4262 : 0;
 	ocl().opencl_device_id = ui.comboDevices->currentIndex();
-	
+
 	max_length = ui.comboCombatLength->currentData().toInt();
 	vary_combat_length = ui.comboVaryCombatLength->currentData().toFloat();
 	initial_health_percentage = ui.comboInitialHealthPercentage->currentData().toFloat();
@@ -520,7 +507,7 @@ void gic::run_simulation(){
 	trinket2 = ui.comboTrinketSpecial2->currentIndex();
 	trinket1_ilvl = ui.txtTrinketValue1->text().toInt();
 	trinket2_ilvl = ui.txtTrinketValue2->text().toInt();
-	
+
 	mh_high = ui.txtMHHigh->text().toInt();
 	oh_high = ui.txtOHHigh->text().toInt();
 	mh_low = ui.txtMHLow->text().toInt();
@@ -539,15 +526,33 @@ void gic::run_simulation(){
 	t18_4pc = ui.checkT184P->isChecked();
 	archmages_incandescence = (ui.comboIncandescence->currentIndex() == 1);
 	archmages_greater_incandescence = (ui.comboIncandescence->currentIndex() == 2);
-	legendary_ring = (ui.comboIncandescence->currentIndex() == 3) ? ui.txtLegendaryRing->text().toInt() : 0;
-	legendary_ring = 2500.0 * pow(ilvlScaleCoeff, legendary_ring - 735);
+	if (ui.comboIncandescence->currentIndex() == 3){
+		legendary_ring = ui.txtLegendaryRing->text().toInt();
+		legendary_ring = 2500.0 * pow(ilvlScaleCoeff, legendary_ring - 735);
+	}
+	else legendary_ring = 0;
 	thunderlord_mh = (ui.comboMHEnchant->currentIndex() == 1);
 	bleeding_hollow_mh = (ui.comboMHEnchant->currentIndex() == 2);
 	shattered_hand_mh = (ui.comboMHEnchant->currentIndex() == 3);
 	thunderlord_oh = (ui.comboOHEnchant->currentIndex() == 1);
 	bleeding_hollow_oh = (ui.comboOHEnchant->currentIndex() == 2);
 	shattered_hand_oh = (ui.comboOHEnchant->currentIndex() == 3);
+}
 
+void gic::run_simulation(){
+	char header[80];
+	time_t rawtime;
+	time(&rawtime);
+	struct tm* ts = localtime(&rawtime);
+	strftime(header, 80, "============================== %H:%M:%S ==============================", ts);
+
+	stat_array.clear();
+
+	if (!simlog) simlog = new ofunctionstream(this);
+	report_path = simlog;
+	*report_path << header << std::endl;
+	*report_path << QApplication::translate("gicClass", "Set arguments...\n").toStdString();
+	set_arguments();
 	apl = ui.txtAPL->toPlainText().toStdString();
 	default_actions = ui.checkDefaultActions->isChecked();
 	
@@ -827,7 +832,12 @@ void gic::on_btnImport_clicked()
 	ui.btnImport->setDisabled(false);
 }
 
-
+void gic::on_btnGenerateDefaultAPL_clicked()
+{
+	set_arguments();
+	auto_apl();
+	ui.txtAPL->setPlainText(QString(apl.c_str()));
+}
 
 void gic::mh_dps_calculate()
 {

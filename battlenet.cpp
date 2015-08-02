@@ -193,7 +193,7 @@ void gic::import_player(std::string& realm, std::string& name, std::string& regi
 		if (itemid == 118305) archmages_greater_incandescence = 1;
 		if (itemid == 118300) archmages_incandescence = 1;
 		if (itemid == 124634){ 
-			legendary_ring = 2500.0 * pow(ilvlScaleCoeff, itemlvl - 735);
+			legendary_ring = itemlvl;
 		}
 		if (i == 14 || i == 15){ /* Trinket setup */
 			QComboBox* combo = (i == 14) ? ui.comboTrinketSpecial1 : ui.comboTrinketSpecial2;
@@ -308,7 +308,11 @@ void gic::import_player(std::string& realm, std::string& name, std::string& regi
 	ui.comboRace->setCurrentIndex(race);
 	select_gear_slot();
 	gear_summary_calculate();
-	if (legendary_ring){ ui.comboIncandescence->setCurrentIndex(3); ui.txtLegendaryRing->setText(qsprint(legendary_ring)); }
+	if (legendary_ring){
+		ui.comboIncandescence->setCurrentIndex(3);
+		ui.txtLegendaryRing->setText(qsprint(legendary_ring));
+		legendary_ring = 2500.0 * pow(ilvlScaleCoeff, legendary_ring - 735);
+	}
 	else if (archmages_greater_incandescence) ui.comboIncandescence->setCurrentIndex(2);
 	else if (archmages_incandescence) ui.comboIncandescence->setCurrentIndex(1);
 	else ui.comboIncandescence->setCurrentIndex(0);

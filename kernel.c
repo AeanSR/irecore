@@ -819,7 +819,7 @@ _event_t* eq_enqueue( rtinfo_t* rti, time_t trigger, k32u routine ) {
 
 /* Enqueue a power suffice event into EQ. */
 void eq_enqueue_ps( rtinfo_t* rti, time_t trigger ) {
-    if ( trigger > rti->timestamp )
+    if ( trigger >= rti->timestamp )
         if ( !rti->eq.power_suffice || rti->eq.power_suffice > trigger )
             rti->eq.power_suffice = trigger;
 }
@@ -870,7 +870,7 @@ int eq_execute( rtinfo_t* rti ) {
 
     /* When time elapse, trigger a full scanning at APL. */
     if ( rti->timestamp < p[1].time
-            && ( !rti->eq.power_suffice || rti->timestamp < rti->eq.power_suffice )
+            && ( !rti->eq.power_suffice || rti->timestamp <= rti->eq.power_suffice )
        ) {
         scan_apl( rti ); /* This may change p[1]. */
 
@@ -1128,8 +1128,8 @@ float ap_dmg( rtinfo_t* rti, float ap_multiplier ) {
 /* Event list. */
 #define DECL_EVENT( name ) void event_##name ( rtinfo_t* rti )
 #define HOOK_EVENT( name ) case routnum_##name: event_##name( rti ); break;
-#define DECL_SPELL( name ) void spell_##name ( rtinfo_t* rti )
-#define SPELL( name ) spell_##name ( rti )
+#define DECL_SPELL( name ) int spell_##name ( rtinfo_t* rti )
+#define SPELL( name ) safemacro(if(spell_##name ( rti )) return;)
 enum {
     routnum_gcd_expire,
     routnum_bloodthirst_execute,
@@ -1582,13 +1582,14 @@ DECL_EVENT( bloodthirst_cd ) {
 #endif
 
 DECL_SPELL( bloodthirst ) {
-    if ( rti->player.gcd > rti->timestamp ) return;
+    if ( rti->player.gcd > rti->timestamp ) return 0;
 #if (TALENT_TIER3 != 3)
-    if ( rti->player.bloodthirst.cd > rti->timestamp ) return;
+    if ( rti->player.bloodthirst.cd > rti->timestamp ) return 0;
 #endif
     gcd_start( rti, FROM_SECONDS( 1.5f / ( 1.0f + rti->player.stat.haste ) ) );
     eq_enqueue( rti, rti->timestamp, routnum_bloodthirst_execute );
     lprintf( ( "cast bloodthirst" ) );
+	return 1;
 }
 
 // === ragingblow =============================================================
@@ -1650,13 +1651,14 @@ DECL_EVENT( ragingblow_expire ) {
 }
 
 DECL_SPELL( ragingblow ) {
-    if ( rti->player.gcd > rti->timestamp ) return;
-    if ( !UP( ragingblow.expire ) ) return;
-    if ( !power_check( rti, 10.0f ) ) return;
+    if ( rti->player.gcd > rti->timestamp ) return 0;
+    if ( !UP( ragingblow.expire ) ) return 0;
+    if ( !power_check( rti, 10.0f ) ) return 0;
     gcd_start( rti, FROM_SECONDS( 1.5f / ( 1.0f + rti->player.stat.haste ) ) );
     power_consume( rti, 10.0f );
     eq_enqueue( rti, rti->timestamp, routnum_ragingblow_execute );
     lprintf( ( "cast ragingblow" ) );
+	return 1;
 }
 
 // === execute ================================================================
@@ -1703,10 +1705,10 @@ DECL_EVENT( suddendeath_expire ) {
 #endif
 
 DECL_SPELL( execute ) {
-    if ( rti->player.gcd > rti->timestamp ) return;
+    if ( rti->player.gcd > rti->timestamp ) return 0;
 #if (TALENT_TIER3 == 2)
     if ( !UP( suddendeath.expire ) ) {
-        if ( enemy_health_percent( rti ) >= 20.0f || !power_check( rti, 30.0f ) ) return;
+        if ( enemy_health_percent( rti ) >= 20.0f || !power_check( rti, 30.0f ) ) return 0;
         power_consume( rti, 30.0f );
     } else {
         rti->player.suddendeath.expire = 0;
@@ -1716,12 +1718,13 @@ DECL_SPELL( execute ) {
 #endif
     }
 #else
-    if ( enemy_health_percent( rti ) >= 20.0f || !power_check( rti, 30.0f ) ) return;
+    if ( enemy_health_percent( rti ) >= 20.0f || !power_check( rti, 30.0f ) ) return 0;
     power_consume( rti, 30.0f );
 #endif
     gcd_start( rti, FROM_SECONDS( 1.5f / ( 1.0f + rti->player.stat.haste ) ) );
     eq_enqueue( rti, rti->timestamp, routnum_execute_execute );
     lprintf( ( "cast execute" ) );
+	return 1;
 }
 
 // === wildstrike =============================================================
@@ -1784,14 +1787,15 @@ DECL_SPELL( wildstrike ) {
 #else
 #define WILDSTRIKE_RAGE_COST 45.0f
 #endif
-    if ( rti->player.gcd > rti->timestamp ) return;
+    if ( rti->player.gcd > rti->timestamp ) return 0;
     if ( !UP( bloodsurge.expire ) ) {
-        if ( !power_check( rti, WILDSTRIKE_RAGE_COST ) ) return;
+        if ( !power_check( rti, WILDSTRIKE_RAGE_COST ) ) return 0;
         power_consume( rti, WILDSTRIKE_RAGE_COST );
     }
     gcd_start( rti, FROM_SECONDS( 0.75 ) );
     eq_enqueue( rti, rti->timestamp, routnum_wildstrike_execute );
     lprintf( ( "cast wildstrike" ) );
+	return 1;
 }
 
 // === bloodlust ==============================================================
@@ -1833,9 +1837,9 @@ DECL_EVENT( potion_start ) {
 }
 
 DECL_SPELL( potion ) {
-    if ( rti->player.potion.cd > rti->timestamp ) return;
+    if ( rti->player.potion.cd > rti->timestamp ) return 0;
 #if (TALENT_TIER6 == 3)
-    if ( UP( bladestorm.expire ) ) return;
+    if ( UP( bladestorm.expire ) ) return 0;
 #endif
     eq_enqueue( rti, rti->timestamp, routnum_potion_start );
     if ( rti->timestamp == FROM_SECONDS( 0 ) ) {
@@ -1844,6 +1848,7 @@ DECL_SPELL( potion ) {
     } else {
         rti->player.potion.cd = rti->expected_combat_length + 1;
     }
+	return 1;
 }
 #endif
 
@@ -1853,14 +1858,15 @@ DECL_EVENT( berserkerrage_cd ) {
 }
 
 DECL_SPELL( berserkerrage ) {
-    if ( rti->player.berserkerrage.cd > rti->timestamp ) return;
+    if ( rti->player.berserkerrage.cd > rti->timestamp ) return 0;
 #if (TALENT_TIER6 == 3)
-    if ( UP( bladestorm.expire ) ) return;
+    if ( UP( bladestorm.expire ) ) return 0;
 #endif
     rti->player.berserkerrage.cd = TIME_OFFSET( FROM_SECONDS( 30 ) );
     eq_enqueue( rti, rti->player.berserkerrage.cd, routnum_berserkerrage_cd );
     eq_enqueue( rti, rti->timestamp, routnum_enrage_trigger );
     lprintf( ( "cast berserkerrage" ) );
+	return 1;
 }
 
 // === recklessness ===========================================================
@@ -1919,9 +1925,9 @@ DECL_EVENT( rampage_refresh ) {
 #endif
 
 DECL_SPELL( recklessness ) {
-    if ( rti->player.recklessness.cd > rti->timestamp ) return;
+    if ( rti->player.recklessness.cd > rti->timestamp ) return 0;
 #if (TALENT_TIER6 == 3)
-    if ( UP( bladestorm.expire ) ) return;
+    if ( UP( bladestorm.expire ) ) return 0;
 #endif
     rti->player.recklessness.cd = TIME_OFFSET( FROM_SECONDS( 180 ) );
 #if (TALENT_TIER7 == 1)
@@ -1933,6 +1939,7 @@ DECL_SPELL( recklessness ) {
     eq_enqueue( rti, rti->player.recklessness.expire, routnum_recklessness_expire );
     eq_enqueue( rti, rti->timestamp, routnum_recklessness_execute );
     lprintf( ( "cast recklessness" ) );
+	return 1;
 }
 
 // === stormbolt ==============================================================
@@ -1979,8 +1986,8 @@ DECL_EVENT( stormbolt_execute ) {
 }
 
 DECL_SPELL( stormbolt ) {
-    if ( rti->player.gcd > rti->timestamp ) return;
-    if ( rti->player.stormbolt.cd > rti->timestamp ) return;
+    if ( rti->player.gcd > rti->timestamp ) return 0;
+    if ( rti->player.stormbolt.cd > rti->timestamp ) return 0;
     rti->player.stormbolt.cd = TIME_OFFSET( FROM_SECONDS( 30 ) );
     gcd_start( rti, FROM_SECONDS( 1.5f / ( 1.0f + rti->player.stat.haste ) ) );
 #if (TALENT_TIER7 == 1)
@@ -1990,6 +1997,7 @@ DECL_SPELL( stormbolt ) {
 #endif
     eq_enqueue( rti, rti->timestamp, routnum_stormbolt_execute );
     lprintf( ( "cast stormbolt" ) );
+	return 1;
 }
 #endif
 
@@ -2027,8 +2035,8 @@ DECL_EVENT( shockwave_execute ) {
 }
 
 DECL_SPELL( shockwave ) {
-    if ( rti->player.gcd > rti->timestamp ) return;
-    if ( rti->player.shockwave.cd > rti->timestamp ) return;
+    if ( rti->player.gcd > rti->timestamp ) return 0;
+    if ( rti->player.shockwave.cd > rti->timestamp ) return 0;
     rti->player.shockwave.cd = TIME_OFFSET( FROM_SECONDS( 40 ) );
     gcd_start( rti, FROM_SECONDS( 1.5f / ( 1.0f + rti->player.stat.haste ) ) );
 #if (TALENT_TIER7 == 1)
@@ -2038,6 +2046,7 @@ DECL_SPELL( shockwave ) {
 #endif
     eq_enqueue( rti, rti->timestamp, routnum_shockwave_execute );
     lprintf( ( "cast shockwave" ) );
+	return 1;
 }
 #endif
 
@@ -2075,8 +2084,8 @@ DECL_EVENT( dragonroar_execute ) {
 }
 
 DECL_SPELL( dragonroar ) {
-    if ( rti->player.gcd > rti->timestamp ) return;
-    if ( rti->player.dragonroar.cd > rti->timestamp ) return;
+    if ( rti->player.gcd > rti->timestamp ) return 0;
+    if ( rti->player.dragonroar.cd > rti->timestamp ) return 0;
     rti->player.dragonroar.cd = TIME_OFFSET( FROM_SECONDS( 60 ) );
     gcd_start( rti, FROM_SECONDS( 1.5f / ( 1.0f + rti->player.stat.haste ) ) );
 #if (TALENT_TIER7 == 1)
@@ -2086,6 +2095,7 @@ DECL_SPELL( dragonroar ) {
 #endif
     eq_enqueue( rti, rti->timestamp, routnum_dragonroar_execute );
     lprintf( ( "cast dragonroar" ) );
+	return 1;
 }
 #endif
 
@@ -2113,14 +2123,15 @@ DECL_EVENT( ravager_tick ) {
 }
 
 DECL_SPELL( ravager ) {
-    if ( rti->player.gcd > rti->timestamp ) return;
-    if ( rti->player.ravager.cd > rti->timestamp ) return;
+    if ( rti->player.gcd > rti->timestamp ) return 0;
+    if ( rti->player.ravager.cd > rti->timestamp ) return 0;
     rti->player.ravager.cd = TIME_OFFSET( FROM_SECONDS( 60 ) );
     rti->player.ravager.expire = TIME_OFFSET( FROM_SECONDS( 10 ) );
     gcd_start( rti, FROM_SECONDS( 1.5f / ( 1.0f + rti->player.stat.haste ) ) );
     eq_enqueue( rti, rti->player.ravager.cd, routnum_ravager_cd );
     eq_enqueue( rti, TIME_OFFSET( FROM_SECONDS( 1 ) ), routnum_ravager_tick );
     lprintf( ( "cast ravager" ) );
+	return 1;
 }
 #endif
 
@@ -2156,13 +2167,14 @@ DECL_EVENT( siegebreaker_execute ) {
 }
 
 DECL_SPELL( siegebreaker ) {
-    if ( rti->player.gcd > rti->timestamp ) return;
-    if ( rti->player.siegebreaker.cd > rti->timestamp ) return;
+    if ( rti->player.gcd > rti->timestamp ) return 0;
+    if ( rti->player.siegebreaker.cd > rti->timestamp ) return 0;
     rti->player.siegebreaker.cd = TIME_OFFSET( FROM_SECONDS( 45 ) );
     gcd_start( rti, FROM_SECONDS( 1.5f / ( 1.0f + rti->player.stat.haste ) ) );
     eq_enqueue( rti, rti->player.siegebreaker.cd, routnum_siegebreaker_cd );
     eq_enqueue( rti, rti->timestamp, routnum_siegebreaker_execute );
     lprintf( ( "cast siegebreaker" ) );
+	return 1;
 }
 #endif
 
@@ -2212,8 +2224,8 @@ DECL_EVENT( bladestorm_tick ) {
 }
 
 DECL_SPELL( bladestorm ) {
-    if ( rti->player.gcd > rti->timestamp ) return;
-    if ( rti->player.bladestorm.cd > rti->timestamp ) return;
+    if ( rti->player.gcd > rti->timestamp ) return 0;
+    if ( rti->player.bladestorm.cd > rti->timestamp ) return 0;
     rti->player.bladestorm.cd = TIME_OFFSET( FROM_SECONDS( 60 ) );
     rti->player.bladestorm.expire = TIME_OFFSET( FROM_SECONDS( 6 ) );
     gcd_start( rti, FROM_SECONDS( 6 ) ); /* stuck gcd during bladestorm to avoid additional checks. */
@@ -2224,6 +2236,7 @@ DECL_SPELL( bladestorm ) {
 #endif
     eq_enqueue( rti, rti->timestamp, routnum_bladestorm_tick );
     lprintf( ( "cast bladestorm" ) );
+	return 1;
 }
 #endif
 
@@ -2257,9 +2270,9 @@ DECL_EVENT( avatar_expire ) {
 }
 
 DECL_SPELL( avatar ) {
-    if ( rti->player.avatar.cd > rti->timestamp ) return;
+    if ( rti->player.avatar.cd > rti->timestamp ) return 0;
 #if (TALENT_TIER6 == 3)
-    if ( UP( bladestorm.expire ) ) return;
+    if ( UP( bladestorm.expire ) ) return 0;
 #endif
     rti->player.avatar.cd = TIME_OFFSET( FROM_SECONDS( 90 ) );
 #if (TALENT_TIER7 == 1)
@@ -2269,6 +2282,7 @@ DECL_SPELL( avatar ) {
 #endif
     eq_enqueue( rti, rti->timestamp, routnum_avatar_start );
     lprintf( ( "cast avatar" ) );
+	return 1;
 }
 #endif
 
@@ -2314,9 +2328,9 @@ DECL_EVENT( bloodbath_tick ) {
 }
 
 DECL_SPELL( bloodbath ) {
-    if ( rti->player.bloodbath.cd > rti->timestamp ) return;
+    if ( rti->player.bloodbath.cd > rti->timestamp ) return 0;
 #if (TALENT_TIER6 == 3)
-    if ( UP( bladestorm.expire ) ) return;
+    if ( UP( bladestorm.expire ) ) return 0;
 #endif
     rti->player.bloodbath.cd = TIME_OFFSET( FROM_SECONDS( 60 ) );
 #if (TALENT_TIER7 == 1)
@@ -2326,6 +2340,7 @@ DECL_SPELL( bloodbath ) {
 #endif
     eq_enqueue( rti, rti->timestamp, routnum_bloodbath_start );
     lprintf( ( "cast bloodbath" ) );
+	return 1;
 }
 #endif
 
@@ -2363,7 +2378,7 @@ DECL_EVENT(thorasus_the_stone_heart_of_draenor_cd){
 	lprintf(("thorasus the stone heart of draenor cd"));
 }
 DECL_SPELL(thorasus_the_stone_heart_of_draenor) {
-	if (rti->player.thorasus_the_stone_heart_of_draenor.cd > rti->timestamp) return;
+	if (rti->player.thorasus_the_stone_heart_of_draenor.cd > rti->timestamp) return 0;
 #if (TALENT_TIER6 == 3)
 	if (UP(bladestorm.expire)) return;
 #endif
@@ -2371,6 +2386,7 @@ DECL_SPELL(thorasus_the_stone_heart_of_draenor) {
 	eq_enqueue(rti, rti->player.thorasus_the_stone_heart_of_draenor.cd, routnum_thorasus_the_stone_heart_of_draenor_cd);
 	eq_enqueue(rti, rti->timestamp, routnum_thorasus_the_stone_heart_of_draenor_start);
 	lprintf(("cast thorasus the stone heart of draenor"));
+	return 1;
 }
 #endif
 
@@ -2461,14 +2477,16 @@ DECL_EVENT( arcanetorrent_cd ) {
 }
 
 DECL_SPELL( arcanetorrent ) {
-    if ( rti->player.arcanetorrent.cd > rti->timestamp ) return;
+    if ( rti->player.arcanetorrent.cd > rti->timestamp ) return 0;
 #if (TALENT_TIER6 == 3)
-    if ( UP( bladestorm.expire ) ) return;
+    if ( UP( bladestorm.expire ) ) return 0;
 #endif
     rti->player.arcanetorrent.cd = TIME_OFFSET( FROM_SECONDS( 120 ) );
     eq_enqueue( rti, rti->player.arcanetorrent.cd, routnum_arcanetorrent_cd );
+	eq_enqueue_ps( rti, rti->timestamp );
     power_gain( rti, 15.0f );
     lprintf( ( "cast arcanetorrent" ) );
+	return 1;
 }
 #endif
 
@@ -2486,9 +2504,9 @@ DECL_EVENT( berserking_expire ) {
 }
 
 DECL_SPELL( berserking ) {
-    if ( rti->player.berserking.cd > rti->timestamp ) return;
+    if ( rti->player.berserking.cd > rti->timestamp ) return 0;
 #if (TALENT_TIER6 == 3)
-    if ( UP( bladestorm.expire ) ) return;
+    if ( UP( bladestorm.expire ) ) return 0;
 #endif
     eq_enqueue( rti, rti->timestamp, routnum_berserking_start );
     rti->player.berserking.expire = TIME_OFFSET( FROM_SECONDS( 10 ) );
@@ -2496,6 +2514,7 @@ DECL_SPELL( berserking ) {
     rti->player.berserking.cd = TIME_OFFSET( FROM_SECONDS( 180 ) );
     eq_enqueue( rti, rti->player.berserking.cd, routnum_berserking_cd );
     lprintf( ( "cast berserking" ) );
+	return 1;
 }
 #endif
 
@@ -2513,9 +2532,9 @@ DECL_EVENT( bloodfury_expire ) {
 }
 
 DECL_SPELL( bloodfury ) {
-    if ( rti->player.bloodfury.cd > rti->timestamp ) return;
+    if ( rti->player.bloodfury.cd > rti->timestamp ) return 0;
 #if (TALENT_TIER6 == 3)
-    if ( UP( bladestorm.expire ) ) return;
+    if ( UP( bladestorm.expire ) ) return 0;
 #endif
     eq_enqueue( rti, rti->timestamp, routnum_bloodfury_start );
     rti->player.bloodfury.expire = TIME_OFFSET( FROM_SECONDS( 15 ) );
@@ -2523,6 +2542,7 @@ DECL_SPELL( bloodfury ) {
     rti->player.bloodfury.cd = TIME_OFFSET( FROM_SECONDS( 120 ) );
     eq_enqueue( rti, rti->player.bloodfury.cd, routnum_bloodfury_cd );
     lprintf( ( "cast bloodfury" ) );
+	return 1;
 }
 #endif
 #if (RACE == RACE_UNDEAD)
@@ -2550,21 +2570,21 @@ DECL_EVENT( vial_of_convulsive_shadows_expire ) {
 }
 
 DECL_SPELL( vial_of_convulsive_shadows ) {
-    if ( rti->player.vial_of_convulsive_shadows.cd > rti->timestamp ) return;
+    if ( rti->player.vial_of_convulsive_shadows.cd > rti->timestamp ) return 0;
 #if defined(trinket_scabbard_of_kyanos)
-    if ( UP( scabbard_of_kyanos.expire ) ) return;
+    if ( UP( scabbard_of_kyanos.expire ) ) return 0;
 #endif
 #if defined(trinket_emberscale_talisman)
-	if ( UP( emberscale_talisman.expire ) ) return;
+	if ( UP( emberscale_talisman.expire ) ) return 0;
 #endif
 #if defined(trinket_bonemaws_big_toe)
-	if ( UP( bonemaws_big_toe.expire ) ) return;
+	if ( UP( bonemaws_big_toe.expire ) ) return 0;
 #endif
 #if defined(trinket_badge_of_victory)
-    if ( UP( badge_of_victory.expire ) ) return;
+    if ( UP( badge_of_victory.expire ) ) return 0;
 #endif
 #if (TALENT_TIER6 == 3)
-    if ( UP( bladestorm.expire ) ) return;
+    if ( UP( bladestorm.expire ) ) return 0;
 #endif
     eq_enqueue( rti, rti->timestamp, routnum_vial_of_convulsive_shadows_start );
     rti->player.vial_of_convulsive_shadows.expire = TIME_OFFSET( FROM_SECONDS( 20 ) );
@@ -2572,6 +2592,7 @@ DECL_SPELL( vial_of_convulsive_shadows ) {
     rti->player.vial_of_convulsive_shadows.cd = TIME_OFFSET( FROM_SECONDS( 120 ) );
     eq_enqueue( rti, rti->player.vial_of_convulsive_shadows.cd, routnum_vial_of_convulsive_shadows_cd );
     lprintf( ( "cast vial_of_convulsive_shadows" ) );
+	return 1;
 }
 #endif
 
@@ -2629,21 +2650,21 @@ DECL_EVENT( scabbard_of_kyanos_expire ) {
 }
 
 DECL_SPELL( scabbard_of_kyanos ) {
-    if ( rti->player.scabbard_of_kyanos.cd > rti->timestamp ) return;
+    if ( rti->player.scabbard_of_kyanos.cd > rti->timestamp ) return 0;
 #if defined(trinket_vial_of_convulsive_shadows)
-    if ( UP( vial_of_convulsive_shadows.expire ) ) return;
+    if ( UP( vial_of_convulsive_shadows.expire ) ) return 0;
 #endif
 #if defined(trinket_emberscale_talisman)
-	if ( UP( emberscale_talisman.expire ) ) return;
+	if ( UP( emberscale_talisman.expire ) ) return 0;
 #endif
 #if defined(trinket_bonemaws_big_toe)
-	if ( UP( bonemaws_big_toe.expire ) ) return;
+	if ( UP( bonemaws_big_toe.expire ) ) return 0;
 #endif
 #if defined(trinket_badge_of_victory)
-    if ( UP( badge_of_victory.expire ) ) return;
+    if ( UP( badge_of_victory.expire ) ) return 0;
 #endif
 #if (TALENT_TIER6 == 3)
-    if ( UP( bladestorm.expire ) ) return;
+    if ( UP( bladestorm.expire ) ) return 0;
 #endif
     eq_enqueue( rti, rti->timestamp, routnum_scabbard_of_kyanos_start );
     rti->player.scabbard_of_kyanos.expire = TIME_OFFSET( FROM_SECONDS( 15 ) );
@@ -2651,6 +2672,7 @@ DECL_SPELL( scabbard_of_kyanos ) {
     rti->player.scabbard_of_kyanos.cd = TIME_OFFSET( FROM_SECONDS( 90 ) );
     eq_enqueue( rti, rti->player.scabbard_of_kyanos.cd, routnum_scabbard_of_kyanos_cd );
     lprintf( ( "cast scabbard_of_kyanos" ) );
+	return 1;
 }
 #endif
 
@@ -2670,21 +2692,21 @@ DECL_EVENT(emberscale_talisman_expire) {
 }
 
 DECL_SPELL(emberscale_talisman) {
-	if (rti->player.emberscale_talisman.cd > rti->timestamp) return;
+	if (rti->player.emberscale_talisman.cd > rti->timestamp) return 0;
 #if defined(trinket_vial_of_convulsive_shadows)
-	if ( UP( vial_of_convulsive_shadows.expire ) ) return;
+	if ( UP( vial_of_convulsive_shadows.expire ) ) return 0;
 #endif
 #if defined(trinket_scabbard_of_kyanos)
-	if ( UP( scabbard_of_kyanos.expire ) ) return;
+	if ( UP( scabbard_of_kyanos.expire ) ) return 0;
 #endif
 #if defined(trinket_bonemaws_big_toe)
-	if ( UP( bonemaws_big_toe.expire ) ) return;
+	if ( UP( bonemaws_big_toe.expire ) ) return 0;
 #endif
 #if defined(trinket_badge_of_victory)
-	if ( UP( badge_of_victory.expire ) ) return;
+	if ( UP( badge_of_victory.expire ) ) return 0;
 #endif
 #if (TALENT_TIER6 == 3)
-	if ( UP( bladestorm.expire ) ) return;
+	if ( UP( bladestorm.expire ) ) return 0;
 #endif
 	eq_enqueue(rti, rti->timestamp, routnum_emberscale_talisman_start);
 	rti->player.emberscale_talisman.expire = TIME_OFFSET(FROM_SECONDS(15));
@@ -2692,6 +2714,7 @@ DECL_SPELL(emberscale_talisman) {
 	rti->player.emberscale_talisman.cd = TIME_OFFSET(FROM_SECONDS(90));
 	eq_enqueue(rti, rti->player.emberscale_talisman.cd, routnum_emberscale_talisman_cd);
 	lprintf(("cast emberscale_talisman"));
+	return 1;
 }
 #endif
 
@@ -2711,21 +2734,21 @@ DECL_EVENT(bonemaws_big_toe_expire) {
 }
 
 DECL_SPELL(bonemaws_big_toe) {
-	if (rti->player.bonemaws_big_toe.cd > rti->timestamp) return;
+	if (rti->player.bonemaws_big_toe.cd > rti->timestamp) return 0;
 #if defined(trinket_vial_of_convulsive_shadows)
-	if ( UP( vial_of_convulsive_shadows.expire ) ) return;
+	if ( UP( vial_of_convulsive_shadows.expire ) ) return 0;
 #endif
 #if defined(trinket_scabbard_of_kyanos)
-	if (UP(scabbard_of_kyanos.expire)) return;
+	if (UP(scabbard_of_kyanos.expire)) return 0;
 #endif
 #if defined(trinket_emberscale_talisman)
-	if ( UP( emberscale_talisman.expire ) ) return;
+	if ( UP( emberscale_talisman.expire ) ) return 0;
 #endif
 #if defined(trinket_badge_of_victory)
-	if ( UP( badge_of_victory.expire ) ) return;
+	if ( UP( badge_of_victory.expire ) ) return 0;
 #endif
 #if (TALENT_TIER6 == 3)
-	if ( UP( bladestorm.expire ) ) return;
+	if ( UP( bladestorm.expire ) ) return 0;
 #endif
 	eq_enqueue(rti, rti->timestamp, routnum_bonemaws_big_toe_start);
 	rti->player.bonemaws_big_toe.expire = TIME_OFFSET(FROM_SECONDS(20));
@@ -2733,6 +2756,7 @@ DECL_SPELL(bonemaws_big_toe) {
 	rti->player.bonemaws_big_toe.cd = TIME_OFFSET(FROM_SECONDS(120));
 	eq_enqueue(rti, rti->player.bonemaws_big_toe.cd, routnum_bonemaws_big_toe_cd);
 	lprintf(("cast bonemaws_big_toe"));
+	return 1;
 }
 #endif
 
@@ -2753,21 +2777,21 @@ DECL_EVENT( badge_of_victory_expire ) {
 }
 
 DECL_SPELL( badge_of_victory ) {
-    if ( rti->player.badge_of_victory.cd > rti->timestamp ) return;
+    if ( rti->player.badge_of_victory.cd > rti->timestamp ) return 0;
 #if defined(trinket_vial_of_convulsive_shadows)
-    if ( UP( vial_of_convulsive_shadows.expire ) ) return;
+    if ( UP( vial_of_convulsive_shadows.expire ) ) return 0;
 #endif
 #if defined(trinket_scabbard_of_kyanos)
-    if ( UP( scabbard_of_kyanos.expire ) ) return;
+    if ( UP( scabbard_of_kyanos.expire ) ) return 0;
 #endif
 #if defined(trinket_emberscale_talisman)
-	if ( UP( emberscale_talisman.expire ) ) return;
+	if ( UP( emberscale_talisman.expire ) ) return 0;
 #endif
 #if defined(trinket_bonemaws_big_toe)
-	if ( UP( bonemaws_big_toe.expire ) ) return;
+	if ( UP( bonemaws_big_toe.expire ) ) return 0;
 #endif
 #if (TALENT_TIER6 == 3)
-    if ( UP( bladestorm.expire ) ) return;
+    if ( UP( bladestorm.expire ) ) return 0;
 #endif
     eq_enqueue( rti, rti->timestamp, routnum_badge_of_victory_start );
     rti->player.badge_of_victory.expire = TIME_OFFSET( FROM_SECONDS( 20 ) );
@@ -2775,6 +2799,7 @@ DECL_SPELL( badge_of_victory ) {
     rti->player.badge_of_victory.cd = TIME_OFFSET( FROM_SECONDS( 60 ) );
     eq_enqueue( rti, rti->player.badge_of_victory.cd, routnum_badge_of_victory_cd );
     lprintf( ( "cast badge_of_victory" ) );
+	return 1;
 }
 #endif
 

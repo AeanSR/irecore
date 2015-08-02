@@ -45,7 +45,7 @@
      <item>
       <widget class="QTabWidget" name="tabWidget">
        <property name="currentIndex">
-        <number>3</number>
+        <number>2</number>
        </property>
        <widget class="QWidget" name="tabCompute">
         <attribute name="title">
@@ -866,7 +866,7 @@
            <rect>
             <x>20</x>
             <y>20</y>
-            <width>69</width>
+            <width>51</width>
             <height>22</height>
            </rect>
           </property>
@@ -874,7 +874,7 @@
          <widget class="QPushButton" name="btnImport">
           <property name="geometry">
            <rect>
-            <x>400</x>
+            <x>320</x>
             <y>20</y>
             <width>75</width>
             <height>23</height>
@@ -887,9 +887,9 @@
          <widget class="QLineEdit" name="txtRealm">
           <property name="geometry">
            <rect>
-            <x>110</x>
+            <x>80</x>
             <y>20</y>
-            <width>131</width>
+            <width>111</width>
             <height>20</height>
            </rect>
           </property>
@@ -900,14 +900,27 @@
          <widget class="QLineEdit" name="txtCharacter">
           <property name="geometry">
            <rect>
-            <x>250</x>
+            <x>200</x>
             <y>20</y>
-            <width>131</width>
+            <width>111</width>
             <height>20</height>
            </rect>
           </property>
           <property name="placeholderText">
            <string>Name</string>
+          </property>
+         </widget>
+         <widget class="QPushButton" name="btnResetBuild">
+          <property name="geometry">
+           <rect>
+            <x>400</x>
+            <y>20</y>
+            <width>75</width>
+            <height>23</height>
+           </rect>
+          </property>
+          <property name="text">
+           <string>Reset</string>
           </property>
          </widget>
         </widget>

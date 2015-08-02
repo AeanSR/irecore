@@ -30,6 +30,7 @@ public:
 private slots:
     void on_btnRun_clicked();
 	void on_btnImport_clicked();
+	void on_btnResetBuild_clicked();
 	void on_btnGenerateDefaultAPL_clicked();
 	void on_listActions_itemDoubleClicked();
 	void on_listConditions_itemDoubleClicked();

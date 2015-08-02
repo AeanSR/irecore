@@ -1015,3 +1015,48 @@ void gic::gear_summary_calculate()
 	ui.tableGearSummary->setItem(6, 2, new QTableWidgetItem(qsprint(fmult)));
 	ui.tableGearSummary->setItem(7, 2, new QTableWidgetItem(qsprint(fvers)));
 }
+
+void gic::on_btnResetBuild_clicked(){
+	ui.txtCharacter->clear();
+	ui.txtRealm->clear();
+	ui.txtItemCrit->clear();
+	ui.txtItemHaste->clear();
+	ui.txtItemMastery->clear();
+	ui.txtItemMult->clear();
+	ui.txtItemStr->clear();
+	ui.txtItemVers->clear();
+	ui.txtLegendaryRing->clear();
+	ui.txtMHHigh->clear();
+	ui.txtMHLow->clear();
+	ui.txtMHSpeed->clear();
+	ui.txtOHHigh->clear();
+	ui.txtOHLow->clear();
+	ui.txtOHSpeed->clear();
+	ui.txtTrinketValue1->clear();
+	ui.txtTrinketValue2->clear();
+	ui.comboIncandescence->setCurrentIndex(0);
+	ui.comboItemType->setCurrentIndex(0);
+	ui.comboMHEnchant->setCurrentIndex(0);
+	ui.comboOHEnchant->setCurrentIndex(0);
+	ui.comboRace->setCurrentIndex(0);
+	ui.comboRegion->setCurrentIndex(0);
+	ui.comboTalent1->setCurrentIndex(0);
+	ui.comboTalent2->setCurrentIndex(0);
+	ui.comboTalent3->setCurrentIndex(0);
+	ui.comboTalent4->setCurrentIndex(0);
+	ui.comboTalent5->setCurrentIndex(0);
+	ui.comboTalent6->setCurrentIndex(0);
+	ui.comboTalent7->setCurrentIndex(0);
+	ui.comboTrinketSpecial1->setCurrentIndex(0);
+	ui.comboTrinketSpecial2->setCurrentIndex(0);
+	ui.checkGlyphOfUnendingRage->setChecked(false);
+	ui.checkT172P->setChecked(false);
+	ui.checkT174P->setChecked(false);
+	ui.checkT182P->setChecked(false);
+	ui.checkT184P->setChecked(false);
+	for (int i = 0; i < 16; i++){
+		gear_list[i] = item_t();
+	}
+	set_arguments();
+	ui.radioHelm->setChecked(true);
+}

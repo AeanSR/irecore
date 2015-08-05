@@ -45,7 +45,7 @@
      <item>
       <widget class="QTabWidget" name="tabWidget">
        <property name="currentIndex">
-        <number>2</number>
+        <number>0</number>
        </property>
        <widget class="QWidget" name="tabCompute">
         <attribute name="title">
@@ -57,7 +57,7 @@
            <x>520</x>
            <y>20</y>
            <width>241</width>
-           <height>501</height>
+           <height>521</height>
           </rect>
          </property>
          <property name="title">
@@ -297,7 +297,7 @@
                   </size>
                  </property>
                  <property name="text">
-                  <string>5.0</string>
+                  <string>20.0</string>
                  </property>
                  <property name="placeholderText">
                   <string/>
@@ -435,7 +435,7 @@
            <x>10</x>
            <y>20</y>
            <width>501</width>
-           <height>501</height>
+           <height>291</height>
           </rect>
          </property>
          <property name="title">
@@ -446,20 +446,30 @@
            <rect>
             <x>10</x>
             <y>20</y>
-            <width>471</width>
-            <height>461</height>
+            <width>481</width>
+            <height>261</height>
            </rect>
           </property>
           <layout class="QVBoxLayout" name="verticalLayout_13">
            <item>
             <widget class="QLabel" name="label">
              <property name="text">
-              <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Select your compute device here.&lt;/p&gt;&lt;p&gt;CPU is recommended since it outperforms most GPUs, and works more stably.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+              <string>Select your compute device here.
+CPU is recommended since it outperforms most GPUs, and works more stably.</string>
+             </property>
+             <property name="textFormat">
+              <enum>Qt::PlainText</enum>
              </property>
             </widget>
            </item>
            <item>
             <widget class="QComboBox" name="comboDevices">
+             <property name="maximumSize">
+              <size>
+               <width>16777215</width>
+               <height>16777215</height>
+              </size>
+             </property>
              <property name="duplicatesEnabled">
               <bool>true</bool>
              </property>
@@ -481,7 +491,11 @@
            <item>
             <widget class="QLabel" name="label_2">
              <property name="text">
-              <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Select a RNG engine. Engine with longer state size is better but slower.&lt;/p&gt;&lt;p&gt;LCG32 is recommended since it meets most demands.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+              <string>Select a RNG engine. Engine with longer state size is better but slower.
+LCG32 is recommended since it meets most demands.</string>
+             </property>
+             <property name="textFormat">
+              <enum>Qt::PlainText</enum>
              </property>
             </widget>
            </item>
@@ -508,7 +522,10 @@
            <item>
             <widget class="QLabel" name="label_3">
              <property name="text">
-              <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;When deterministic RNG is set, your simulation could be reproduced by other people.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+              <string>When deterministic RNG is set, your simulation could be reproduced by other people.</string>
+             </property>
+             <property name="textFormat">
+              <enum>Qt::PlainText</enum>
              </property>
              <property name="wordWrap">
               <bool>true</bool>
@@ -539,6 +556,12 @@
             <layout class="QHBoxLayout" name="horizontalLayout_11">
              <item>
               <widget class="QLabel" name="label_4">
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
                <property name="text">
                 <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Set simulation iterations.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
                </property>
@@ -554,6 +577,119 @@
                </property>
                <property name="duplicatesEnabled">
                 <bool>true</bool>
+               </property>
+              </widget>
+             </item>
+            </layout>
+           </item>
+          </layout>
+         </widget>
+        </widget>
+        <widget class="QGroupBox" name="groupBox_10">
+         <property name="geometry">
+          <rect>
+           <x>10</x>
+           <y>320</y>
+           <width>501</width>
+           <height>221</height>
+          </rect>
+         </property>
+         <property name="title">
+          <string>Costly Features</string>
+         </property>
+         <widget class="QWidget" name="layoutWidget">
+          <property name="geometry">
+           <rect>
+            <x>10</x>
+            <y>20</y>
+            <width>481</width>
+            <height>184</height>
+           </rect>
+          </property>
+          <layout class="QVBoxLayout" name="verticalLayout_15">
+           <item>
+            <widget class="QLabel" name="label_39">
+             <property name="text">
+              <string>These features could boost the simulation or fix some issues, but may affect result accuracy or cause other issues. Please be sure what you are doing before change these options. Hold cursor on options to see the hint.</string>
+             </property>
+             <property name="textFormat">
+              <enum>Qt::PlainText</enum>
+             </property>
+             <property name="wordWrap">
+              <bool>true</bool>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <layout class="QGridLayout" name="gridLayout_2">
+             <item row="0" column="0">
+              <widget class="QCheckBox" name="checkStrictGCD">
+               <property name="toolTip">
+                <string>Strict GCD: When general cooldown is up, all actions(i.e. spells off GCD) are locked.
+Enable this option could make approx. 30% performance improvement, but may cause minor impacts on behavior.</string>
+               </property>
+               <property name="text">
+                <string>Strict GCD</string>
+               </property>
+               <property name="checked">
+                <bool>true</bool>
+               </property>
+              </widget>
+             </item>
+             <item row="0" column="1">
+              <widget class="QCheckBox" name="checkWBRNeverExpire">
+               <property name="toolTip">
+                <string>WBR Never Expire: Worldbreaker's Resolve (trinket from Archimonde) are assumed never expire.
+IreCore only simulates Tank-n-Spank combats. It's impossible to stop melee attacks to let the trinket expire in IreCore, unless you are simulating some custom weapons with 6.0+ weapon speed.</string>
+               </property>
+               <property name="text">
+                <string>WBR Never Expire</string>
+               </property>
+               <property name="checked">
+                <bool>true</bool>
+               </property>
+              </widget>
+             </item>
+             <item row="1" column="0">
+              <widget class="QCheckBox" name="checkSyncMelee">
+               <property name="toolTip">
+                <string>Sync Melee Attacks: Start MH swing and OH swing at the same time. If this option is disabled, the first OH swing will be delayed 0.5 second.
+Check this option may significantly boost the simulation when the speed of both weapons are same. But it may be inconsistent with real combats.</string>
+               </property>
+               <property name="text">
+                <string>Sync Melee Attacks</string>
+               </property>
+               <property name="checked">
+                <bool>true</bool>
+               </property>
+              </widget>
+             </item>
+             <item row="1" column="1">
+              <widget class="QCheckBox" name="checkAvatarLikeBloodbath">
+               <property name="toolTip">
+                <string>Avatar-like Bloodbath: Bloodbath will be treated as +30% special damage instantly.
+Check this option may boost the simulation, but it is really inconsistent with real combats. Not recommended.</string>
+               </property>
+               <property name="text">
+                <string>Avatar-like Bloodbath</string>
+               </property>
+               <property name="checked">
+                <bool>false</bool>
+               </property>
+              </widget>
+             </item>
+             <item row="2" column="0" colspan="2">
+              <widget class="QCheckBox" name="checkSupportNonC99">
+               <property name="toolTip">
+                <string>Support Broken C99 Implements: Try to cooperate with those broken compilers (most are MSVC based) which even does not implement C99 grammar.
+When you meet compilation errors (Error -11) and got debug messages like &quot;expected an expression&quot; or similar, this option may fix that issue for you. 
+DO NOT ENABLE THIS OPTION if you did not meet Error -11.</string>
+               </property>
+               <property name="text">
+                <string>Support Broken C99 Implements</string>
+               </property>
+               <property name="checked">
+                <bool>false</bool>
                </property>
               </widget>
              </item>

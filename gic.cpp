@@ -475,6 +475,11 @@ void gic::set_arguments(){
 	rng_engine = ui.comboRNG->currentData().toInt();
 	seed = ui.checkDeterministic->isChecked() ? 4262 : 0;
 	ocl().opencl_device_id = ui.comboDevices->currentIndex();
+	strict_gcd = ui.checkStrictGCD->isChecked();
+	sync_melee = ui.checkSyncMelee->isChecked();
+	wbr_never_expire = ui.checkWBRNeverExpire->isChecked();
+	avatar_like_bloodbath = ui.checkAvatarLikeBloodbath->isChecked();
+	support_non_c99 = ui.checkSupportNonC99->isChecked();
 
 	max_length = ui.comboCombatLength->currentData().toInt();
 	vary_combat_length = ui.comboVaryCombatLength->currentData().toFloat();

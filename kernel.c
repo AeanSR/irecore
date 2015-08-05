@@ -21,6 +21,11 @@
 
 #if !defined(__OPENCL_VERSION__)
 /* Front-end gives these defines. */
+#define STRICT_GCD 1
+#define WBR_NEVER_EXPIRE 1
+#define AVATAR_LIKE_BLOODBATH 1
+#define SYNC_MELEE 1
+#define SUPPROT_NON_C99 1
 #define RNG_MWC64X
 #define vary_combat_length 20.0f
 #define max_length 450.0f
@@ -102,7 +107,7 @@
 #define hostonly(code) code
 #define deviceonly(code)
 #endif /* defined(__OPENCL_VERSION__) */
-#if defined(_MSC_VER)
+#if defined(_MSC_VER) || SUPPROT_NON_C99
 #define msvconly(code) code
 #else
 #define msvconly(code)
@@ -872,7 +877,8 @@ int eq_execute( rtinfo_t* rti ) {
     if ( rti->timestamp < p[1].time
             && ( !rti->eq.power_suffice || rti->timestamp <= rti->eq.power_suffice )
        ) {
-        scan_apl( rti ); /* This may change p[1]. */
+		if (!STRICT_GCD || !UP(gcd)) /* Strict GCD: Do not scal APL if GCD is up. */
+			scan_apl( rti ); /* This may change p[1]. */
 
         /* Check again. */
         assert( rti->eq.count );
@@ -1361,7 +1367,7 @@ k32s deal_damage( rtinfo_t* rti, float dmg, k32u dmgtype, float extra_crit_rate,
         float cdb = (1.0f + extra_crit_bonus) * (( RACE == RACE_DWARF || RACE == RACE_TAUREN ) ? 2.04f : 2.0f);
         kbool ret;
         float fdmg;
-#if (TALENT_TIER6 == 2)
+#if (TALENT_TIER6 == 2) && !AVATAR_LIKE_BLOODBATH
         float bbcounter = rti->damage_collected;
 #endif
 
@@ -1385,6 +1391,11 @@ k32s deal_damage( rtinfo_t* rti, float dmg, k32u dmgtype, float extra_crit_rate,
 #if defined(legendary_ring)
 		if (UP(thorasus_the_stone_heart_of_draenor.expire))
 			dmg *= 1.0f + legendary_ring * 0.0001;
+#endif
+#if (TALENT_TIER6 == 2) && AVATAR_LIKE_BLOODBATH
+		if (dmgtype == DMGTYPE_ABILITY && UP(bloodbath.expire)) {
+			dmg *= 1.3f;
+		}
 #endif
 
         fdmg = dmg;
@@ -1438,7 +1449,7 @@ k32s deal_damage( rtinfo_t* rti, float dmg, k32u dmgtype, float extra_crit_rate,
             rti->damage_collected += fdmg;
         }
 
-#if (TALENT_TIER6 == 2)
+#if (TALENT_TIER6 == 2) && !AVATAR_LIKE_BLOODBATH
         if ( dmgtype == DMGTYPE_ABILITY && UP( bloodbath.expire ) ) {
             rti->player.bloodbath.pool += ( rti->damage_collected - bbcounter ) * 0.3f;
             rti->player.bloodbath.ticks = 6.0f;
@@ -2922,8 +2933,10 @@ DECL_EVENT(worldbreakers_resolve_expire) {
 }
 DECL_EVENT(worldbreakers_resolve_trigger) {
 	rti->player.worldbreakers_resolve.stack++;
-	rti->player.worldbreakers_resolve.expire = TIME_OFFSET(FROM_SECONDS(6));
-	eq_enqueue(rti, rti->player.worldbreakers_resolve.expire, routnum_worldbreakers_resolve_expire);
+	if (!WBR_NEVER_EXPIRE){
+		rti->player.worldbreakers_resolve.expire = TIME_OFFSET(FROM_SECONDS(6));
+		eq_enqueue(rti, rti->player.worldbreakers_resolve.expire, routnum_worldbreakers_resolve_expire);
+	}
 	if (rti->player.worldbreakers_resolve.stack > 10) {
 		rti->player.worldbreakers_resolve.stack = 10;
 	}
@@ -3247,7 +3260,7 @@ void module_init( rtinfo_t* rti ) {
 #endif
     rti->player.power = 0.0f;
     eq_enqueue( rti, rti->timestamp, routnum_auto_attack_mh );
-    eq_enqueue( rti, rti->timestamp, routnum_auto_attack_oh );
+    eq_enqueue( rti, TIME_OFFSET( FROM_SECONDS( SYNC_MELEE ? 0 : 0.5 ) ), routnum_auto_attack_oh );
 
     refresh_str( rti );
     refresh_ap( rti );

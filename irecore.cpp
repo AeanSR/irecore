@@ -25,6 +25,11 @@ int mh_type;
 int oh_type;
 int talent;
 int rng_engine;
+int strict_gcd;
+int sync_melee;
+int wbr_never_expire;
+int avatar_like_bloodbath;
+int support_non_c99;
 int default_actions;
 const int base10[] = { 1000000, 100000, 10000, 1000, 100, 10, 1 };
 #define TALENT_TIER(tier) ((talent / base10[tier - 1]) % 10)
@@ -354,6 +359,11 @@ void set_default_parameters(){
 	seed = 0;
 	srand((unsigned int)time(NULL));
 	rng_engine = 32;
+	strict_gcd = 1;
+	sync_melee = 1;
+	wbr_never_expire = 1;
+	avatar_like_bloodbath = 0;
+	support_non_c99 = 0;
 	apl = "";
 	default_actions=0;
 	iterations = 50000;
@@ -809,6 +819,21 @@ void parse_parameters(std::vector<kvpair_t>& arglist){
 			else if (0 == i->value.compare("lcg32")) rng_engine = 32;
 			else *report_path << "No such rng engine \"" << i->value << "\"." << std::endl;
 		}
+		else if (0 == i->key.compare("strict_gcd")){
+			strict_gcd = !!atoi(i->value.c_str());
+		}
+		else if (0 == i->key.compare("wbr_never_expire")){
+			wbr_never_expire = !!atoi(i->value.c_str());
+		}
+		else if (0 == i->key.compare("sync_melee")){
+			sync_melee = !!atoi(i->value.c_str());
+		}
+		else if (0 == i->key.compare("avatar_like_bloodbath")){
+			avatar_like_bloodbath = !!atoi(i->value.c_str());
+		}
+		else if (0 == i->key.compare("support_non_c99")){
+			support_non_c99 = !!atoi(i->value.c_str());
+		}
 		else if (0 == i->key.compare("output")){
 			report_path = new std::ofstream(i->value.c_str(), std::ofstream::out);
 		}
@@ -833,6 +858,27 @@ void parse_parameters(std::vector<kvpair_t>& arglist){
 void generate_predef(){
 	char buffer[256];
 	predef = "";
+
+	predef.append("#define STRICT_GCD ");
+	sprintf(buffer, "%d", strict_gcd);
+	predef.append(buffer); predef.append("\r\n");
+
+	predef.append("#define SYNC_MELEE ");
+	sprintf(buffer, "%d", sync_melee);
+	predef.append(buffer); predef.append("\r\n");
+
+	predef.append("#define WBR_NEVER_EXPIRE ");
+	sprintf(buffer, "%d", wbr_never_expire);
+	predef.append(buffer); predef.append("\r\n");
+
+	predef.append("#define AVATAR_LIKE_BLOODBATH ");
+	sprintf(buffer, "%d", avatar_like_bloodbath);
+	predef.append(buffer); predef.append("\r\n");
+
+	predef.append("#define SUPPORT_NON_C99 ");
+	sprintf(buffer, "%d", support_non_c99);
+	predef.append(buffer); predef.append("\r\n");
+
 	predef.append("#define vary_combat_length ");
 	sprintf(buffer, "%ff", vary_combat_length);
 	predef.append(buffer); predef.append("\r\n");

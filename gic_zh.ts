@@ -20,26 +20,27 @@
     </message>
     <message>
         <location filename="gic.ui" line="457"/>
-        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Select your compute device here.&lt;/p&gt;&lt;p&gt;CPU is recommended since it outperforms most GPUs, and works more stably.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;选择你的运算设备。&lt;/p&gt;&lt;p&gt;推荐使用CPU，因为它通常比GPU更快更稳定。&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+        <source>Select your compute device here.
+CPU is recommended since it outperforms most GPUs, and works more stably.</source>
+        <oldsource>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Select your compute device here.&lt;/p&gt;&lt;p&gt;CPU is recommended since it outperforms most GPUs, and works more stably.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</oldsource>
+        <translation>选择你的运算设备。
+推荐使用CPU，因为它通常比GPU更快更稳定。</translation>
     </message>
     <message>
-        <location filename="gic.ui" line="484"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Select a RNG engine. Engine with longer state size is better but slower.&lt;/p&gt;&lt;p&gt;LCG32 is recommended since it meets most demands.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;选择一个随机数引擎。状态字越长，引擎质量越高但速度越慢。&lt;/p&gt;&lt;p&gt;推荐使用LCG32，它的质量足以应对大多数需求。&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+        <translation type="vanished">&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;选择一个随机数引擎。状态字越长，引擎质量越高但速度越慢。&lt;/p&gt;&lt;p&gt;推荐使用LCG32，它的质量足以应对大多数需求。&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="gic.ui" line="511"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;When deterministic RNG is set, your simulation could be reproduced by other people.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;设置固定RNG种子后，你的模拟可以被其他人再现。&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+        <translation type="vanished">&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;设置固定RNG种子后，你的模拟可以被其他人再现。&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="gic.ui" line="521"/>
+        <location filename="gic.ui" line="538"/>
         <source>Use Deterministic RNG</source>
         <translation>使用固定RNG种子</translation>
     </message>
     <message>
-        <location filename="gic.ui" line="543"/>
+        <location filename="gic.ui" line="566"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Set simulation iterations.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;设置模拟迭代数：&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
@@ -49,38 +50,38 @@
         <translation>计算属性权值</translation>
     </message>
     <message>
-        <location filename="gic.ui" line="568"/>
+        <location filename="gic.ui" line="704"/>
         <source>Environment</source>
         <translation>环境</translation>
     </message>
     <message>
-        <location filename="gic.ui" line="585"/>
+        <location filename="gic.ui" line="721"/>
         <source>Raid Buffs:</source>
         <translation>团队增益：</translation>
     </message>
     <message>
-        <location filename="gic.ui" line="592"/>
+        <location filename="gic.ui" line="728"/>
         <source>Str. Agi. Int.</source>
         <translation>属性</translation>
     </message>
     <message>
-        <location filename="gic.ui" line="602"/>
+        <location filename="gic.ui" line="738"/>
         <source>Attack Power</source>
         <translation>攻击强度</translation>
     </message>
     <message>
-        <location filename="gic.ui" line="612"/>
+        <location filename="gic.ui" line="748"/>
         <source>Spell Power</source>
         <translation>法术强度</translation>
     </message>
     <message>
-        <location filename="gic.ui" line="622"/>
+        <location filename="gic.ui" line="758"/>
         <source>Stamina</source>
         <translation>耐力</translation>
     </message>
     <message>
         <location filename="gic.ui" line="362"/>
-        <location filename="gic.ui" line="632"/>
+        <location filename="gic.ui" line="768"/>
         <location filename="gic.cpp" line="397"/>
         <source>Crit</source>
         <translation>爆击</translation>
@@ -162,14 +163,14 @@
     </message>
     <message>
         <location filename="gic.ui" line="372"/>
-        <location filename="gic.ui" line="642"/>
+        <location filename="gic.ui" line="778"/>
         <location filename="gic.cpp" line="398"/>
         <source>Haste</source>
         <translation>急速</translation>
     </message>
     <message>
         <location filename="gic.ui" line="382"/>
-        <location filename="gic.ui" line="652"/>
+        <location filename="gic.ui" line="788"/>
         <location filename="gic.cpp" line="399"/>
         <source>Mastery</source>
         <translation>精通</translation>
@@ -185,270 +186,358 @@
         <translation>计算选项</translation>
     </message>
     <message>
-        <location filename="gic.ui" line="662"/>
+        <location filename="gic.ui" line="494"/>
+        <source>Select a RNG engine. Engine with longer state size is better but slower.
+LCG32 is recommended since it meets most demands.</source>
+        <translation>选择一个随机数引擎。状态字越长，引擎质量越高但速度越慢。
+推荐使用LCG32，它的质量足以应对大多数需求。</translation>
+    </message>
+    <message>
+        <location filename="gic.ui" line="525"/>
+        <source>When deterministic RNG is set, your simulation could be reproduced by other people.</source>
+        <translation>设置固定RNG种子后，你的模拟可以被其他人再现。</translation>
+    </message>
+    <message>
+        <location filename="gic.ui" line="598"/>
+        <source>Costly Features</source>
+        <translation>权衡特性</translation>
+    </message>
+    <message>
+        <location filename="gic.ui" line="613"/>
+        <source>These features could boost the simulation or fix some issues, but may affect result accuracy or cause other issues. Please be sure what you are doing before change these options. Hold cursor on options to see the hint.</source>
+        <translation>启用这些特性可能会加速模拟或修正一些问题，但也可能会影响结果的精确度或引发另一些问题。修改这些选项之前，请首先确认你在做什么。将鼠标悬停在选项上查看帮助。</translation>
+    </message>
+    <message>
+        <location filename="gic.ui" line="628"/>
+        <source>Strict GCD: When general cooldown is up, all actions(i.e. spells off GCD) are locked.
+Enable this option could make approx. 30% performance improvement, but may cause minor impacts on behavior.</source>
+        <translation>严格GCD：在公共冷却过程中，所有动作（特别是不占用GCD的技能）都将被锁定。
+启用这个选项可以获得约30%的性能提升，但也可能对行为造成轻微影响。</translation>
+    </message>
+    <message>
+        <location filename="gic.ui" line="632"/>
+        <source>Strict GCD</source>
+        <translation>严格GCD</translation>
+    </message>
+    <message>
+        <location filename="gic.ui" line="642"/>
+        <source>WBR Never Expire: Worldbreaker&apos;s Resolve (trinket from Archimonde) are assumed never expire.
+IreCore only simulates Tank-n-Spank combats. It&apos;s impossible to stop melee attacks to let the trinket expire in IreCore, unless you are simulating some custom weapons with 6.0+ weapon speed.</source>
+        <oldsource>WBR Never Expire: Worldbreaker&apos;s Resolve (trinket from Archimonde) are assumed never expire.
+IreCore only simulates Tank&amp;amp;Spank combats. It&apos;s impossible to stop melee attacks to let the trinket expire in IreCore, unless you are simulating some custom weapons with 6.0+ weapon speed.</oldsource>
+        <translation>职业饰品永续：灭世者的决意（阿克蒙德掉落饰品）触发效果将被假设为永远不会间断。
+IreCore只模拟木桩战斗，所以不可能将肉搏攻击停止让这一饰品特效间断，除非你正在模拟超过6.0速度的自定义武器。</translation>
+    </message>
+    <message>
+        <location filename="gic.ui" line="646"/>
+        <source>WBR Never Expire</source>
+        <translation>职业饰品永续</translation>
+    </message>
+    <message>
+        <location filename="gic.ui" line="656"/>
+        <source>Sync Melee Attacks: Start MH swing and OH swing at the same time. If this option is disabled, the first OH swing will be delayed 0.5 second.
+Check this option may significantly boost the simulation when the speed of both weapons are same. But it may be inconsistent with real combats.</source>
+        <translation>同步肉搏攻击：令主手肉搏和副手肉搏同时开始。如果这一选项被关闭，第一次副手肉搏将被延迟0.5秒。
+如果你的两把武器速度相同，选择这个选项可能会大幅加快模拟。但这可能会与实际情况不一致。</translation>
+    </message>
+    <message>
+        <location filename="gic.ui" line="660"/>
+        <source>Sync Melee Attacks</source>
+        <translation>同步肉搏攻击</translation>
+    </message>
+    <message>
+        <location filename="gic.ui" line="670"/>
+        <source>Avatar-like Bloodbath: Bloodbath will be treated as +30% special damage instantly.
+Check this option may boost the simulation, but it is really inconsistent with real combats. Not recommended.</source>
+        <translation>天神式浴血：浴血奋战将被视为立即增加30%特殊伤害，不再造成持续伤害。
+这个选项可能会加速模拟，但这真的和实际情况差得远，不建议选择。</translation>
+    </message>
+    <message>
+        <location filename="gic.ui" line="674"/>
+        <source>Avatar-like Bloodbath</source>
+        <translation>天神式浴血</translation>
+    </message>
+    <message>
+        <location filename="gic.ui" line="684"/>
+        <source>Support Broken C99 Implements: Try to cooperate with those broken compilers (most are MSVC based) which even does not implement C99 grammar.
+When you meet compilation errors (Error -11) and got debug messages like &quot;expected an expression&quot; or similar, this option may fix that issue for you. 
+DO NOT ENABLE THIS OPTION if you did not meet Error -11.</source>
+        <oldsource>Support Broken C99 Implements: Try to cooperate with those broken compilers (most are MSVC based) which even does not implement C99 grammar.
+When you meet compilation errors (Error -11) and got debug messages like &quot;expected an expression&quot; or similar, this option may fix that issue for you. DO NOT ENABLE THIS OPTION if you did not meet Error -11.</oldsource>
+        <translation>支持崩坏的C99实现：尝试与某些崩坏的编译器合作（其中多数是基于微软VC的），它们根本不能支持C99语法，却被安排成为OpenCL编译器。
+如果你遭遇编译错误（Error -11）并且得到类似“expected an expression”这样的调试信息，这个选项可能会帮你修复这个问题。
+如果你没有遇到Error -11，不要开启这个选项！</translation>
+    </message>
+    <message>
+        <location filename="gic.ui" line="689"/>
+        <source>Support Broken C99 Implements</source>
+        <translation>支持崩坏的C99实现</translation>
+    </message>
+    <message>
+        <location filename="gic.ui" line="798"/>
         <source>Multistrike</source>
         <translation>溅射</translation>
     </message>
     <message>
-        <location filename="gic.ui" line="672"/>
+        <location filename="gic.ui" line="808"/>
         <source>Versatility</source>
         <translation>全能</translation>
     </message>
     <message>
-        <location filename="gic.ui" line="682"/>
+        <location filename="gic.ui" line="818"/>
         <source>Bloodlust</source>
         <translation>嗜血</translation>
     </message>
     <message>
-        <location filename="gic.ui" line="698"/>
+        <location filename="gic.ui" line="834"/>
         <source>Consumables:</source>
         <translation>消耗品：</translation>
     </message>
     <message>
-        <location filename="gic.ui" line="705"/>
+        <location filename="gic.ui" line="841"/>
         <source>Food (+125 Crit Rating)</source>
         <translation>食物（+125爆击等级）</translation>
     </message>
     <message>
-        <location filename="gic.ui" line="715"/>
+        <location filename="gic.ui" line="851"/>
         <source>Flask (+250 Strength)</source>
         <translation>合剂（+250力量）</translation>
     </message>
     <message>
-        <location filename="gic.ui" line="725"/>
+        <location filename="gic.ui" line="861"/>
         <source>Potion (Pre-combat, Combat)</source>
         <translation>药水（包括偷药和战斗中）</translation>
     </message>
     <message>
-        <location filename="gic.ui" line="766"/>
+        <location filename="gic.ui" line="902"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Combat Length(sec.):&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;战斗时长（秒）：&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="gic.ui" line="787"/>
+        <location filename="gic.ui" line="923"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Vary Combat Length(%):&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;时长浮动（%）：&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="gic.ui" line="808"/>
+        <location filename="gic.ui" line="944"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Initial Health Pct.:&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;初始血量百分比：&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="gic.ui" line="829"/>
+        <location filename="gic.ui" line="965"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Death Health Pct.:&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;死亡血量百分比：&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="gic.ui" line="850"/>
+        <location filename="gic.ui" line="986"/>
         <source>Build</source>
         <translation>构建</translation>
     </message>
     <message>
-        <location filename="gic.ui" line="862"/>
+        <location filename="gic.ui" line="998"/>
         <source>Battle.Net Armory Import</source>
         <translation>战网英雄榜导入</translation>
     </message>
     <message>
-        <location filename="gic.ui" line="884"/>
+        <location filename="gic.ui" line="1020"/>
         <source>Import</source>
         <translation>导入</translation>
     </message>
     <message>
-        <location filename="gic.ui" line="897"/>
+        <location filename="gic.ui" line="1033"/>
         <source>Realm</source>
         <translation>服务器</translation>
     </message>
     <message>
-        <location filename="gic.ui" line="910"/>
+        <location filename="gic.ui" line="1046"/>
         <source>Name</source>
         <translation>角色名</translation>
     </message>
     <message>
-        <location filename="gic.ui" line="923"/>
+        <location filename="gic.ui" line="1059"/>
         <source>Reset</source>
         <translation>重置</translation>
     </message>
     <message>
-        <location filename="gic.ui" line="937"/>
+        <location filename="gic.ui" line="1073"/>
         <source>Gear Stat Editor</source>
         <translation>装备属性编辑器</translation>
     </message>
     <message>
-        <location filename="gic.ui" line="954"/>
+        <location filename="gic.ui" line="1090"/>
         <source>Helm</source>
         <translation>头盔</translation>
     </message>
     <message>
-        <location filename="gic.ui" line="964"/>
+        <location filename="gic.ui" line="1100"/>
         <source>Hand</source>
         <translation>手</translation>
     </message>
     <message>
-        <location filename="gic.ui" line="971"/>
+        <location filename="gic.ui" line="1107"/>
         <source>Neck</source>
         <translation>颈部</translation>
     </message>
     <message>
-        <location filename="gic.ui" line="978"/>
+        <location filename="gic.ui" line="1114"/>
         <source>Waist</source>
         <translation>腰带</translation>
     </message>
     <message>
-        <location filename="gic.ui" line="985"/>
+        <location filename="gic.ui" line="1121"/>
         <source>Shoulder</source>
         <translation>肩膀</translation>
     </message>
     <message>
-        <location filename="gic.ui" line="992"/>
+        <location filename="gic.ui" line="1128"/>
         <source>Leg</source>
         <translation>腿</translation>
     </message>
     <message>
-        <location filename="gic.ui" line="1005"/>
+        <location filename="gic.ui" line="1141"/>
         <source>Back</source>
         <translation>披风</translation>
     </message>
     <message>
-        <location filename="gic.ui" line="1018"/>
+        <location filename="gic.ui" line="1154"/>
         <source>Feet</source>
         <translation>鞋</translation>
     </message>
     <message>
-        <location filename="gic.ui" line="1025"/>
+        <location filename="gic.ui" line="1161"/>
         <source>Chest</source>
         <translation>胸甲</translation>
     </message>
     <message>
-        <location filename="gic.ui" line="1032"/>
+        <location filename="gic.ui" line="1168"/>
         <source>Finger 1</source>
         <translation>戒指 1</translation>
     </message>
     <message>
-        <location filename="gic.ui" line="1039"/>
+        <location filename="gic.ui" line="1175"/>
         <source>Wrist</source>
         <translation>手腕</translation>
     </message>
     <message>
-        <location filename="gic.ui" line="1046"/>
+        <location filename="gic.ui" line="1182"/>
         <source>Finger 2</source>
         <translation>戒指 2</translation>
     </message>
     <message>
-        <location filename="gic.ui" line="1053"/>
+        <location filename="gic.ui" line="1189"/>
         <source>Main Weapon</source>
         <translation>主手</translation>
     </message>
     <message>
-        <location filename="gic.ui" line="1060"/>
+        <location filename="gic.ui" line="1196"/>
         <source>Trinket 1</source>
         <translation>饰品 1</translation>
     </message>
     <message>
-        <location filename="gic.ui" line="1067"/>
+        <location filename="gic.ui" line="1203"/>
         <source>Off Weapon</source>
         <translation>副手</translation>
     </message>
     <message>
-        <location filename="gic.ui" line="1074"/>
+        <location filename="gic.ui" line="1210"/>
         <source>Trinket 2</source>
         <translation>饰品 2</translation>
     </message>
     <message>
-        <location filename="gic.ui" line="1098"/>
+        <location filename="gic.ui" line="1234"/>
         <source>Str:</source>
         <translation>力量：</translation>
     </message>
     <message>
-        <location filename="gic.ui" line="1108"/>
+        <location filename="gic.ui" line="1244"/>
         <source>Crit:</source>
         <translation>暴击：</translation>
     </message>
     <message>
-        <location filename="gic.ui" line="1118"/>
+        <location filename="gic.ui" line="1254"/>
         <source>Haste:</source>
         <translation>急速：</translation>
     </message>
     <message>
-        <location filename="gic.ui" line="1128"/>
+        <location filename="gic.ui" line="1264"/>
         <source>Mastery:</source>
         <translation>精通：</translation>
     </message>
     <message>
-        <location filename="gic.ui" line="1138"/>
+        <location filename="gic.ui" line="1274"/>
         <source>Mult:</source>
         <translation>溅射：</translation>
     </message>
     <message>
-        <location filename="gic.ui" line="1148"/>
+        <location filename="gic.ui" line="1284"/>
         <source>Vers:</source>
         <translation>全能：</translation>
     </message>
     <message>
-        <location filename="gic.ui" line="1190"/>
+        <location filename="gic.ui" line="1326"/>
         <location filename="gic.cpp" line="395"/>
         <source>Strength</source>
         <translation>力量</translation>
     </message>
     <message>
-        <location filename="gic.ui" line="1209"/>
+        <location filename="gic.ui" line="1345"/>
         <source>Crit Rating</source>
         <translation>爆击等级</translation>
     </message>
     <message>
-        <location filename="gic.ui" line="1228"/>
+        <location filename="gic.ui" line="1364"/>
         <source>Haste Rating</source>
         <translation>急速等级</translation>
     </message>
     <message>
-        <location filename="gic.ui" line="1247"/>
+        <location filename="gic.ui" line="1383"/>
         <source>Mastery Rating</source>
         <translation>精通等级</translation>
     </message>
     <message>
-        <location filename="gic.ui" line="1266"/>
+        <location filename="gic.ui" line="1402"/>
         <source>Multistrike Rating</source>
         <translation>溅射等级</translation>
     </message>
     <message>
-        <location filename="gic.ui" line="1285"/>
+        <location filename="gic.ui" line="1421"/>
         <source>Versatility Rating</source>
         <translation>全能等级</translation>
     </message>
     <message>
-        <location filename="gic.ui" line="1304"/>
+        <location filename="gic.ui" line="1440"/>
         <source>Special Bonuses</source>
         <translation>特殊效果</translation>
     </message>
     <message>
-        <location filename="gic.ui" line="1319"/>
+        <location filename="gic.ui" line="1455"/>
         <source>Glyph of Unending Rage</source>
         <translation>不灭怒火雕文</translation>
     </message>
     <message>
-        <location filename="gic.ui" line="1326"/>
+        <location filename="gic.ui" line="1462"/>
         <source>T17 2pc set bonus</source>
         <translation>T17 2件特效</translation>
     </message>
     <message>
-        <location filename="gic.ui" line="1333"/>
+        <location filename="gic.ui" line="1469"/>
         <source>T17 4pc set bonus</source>
         <translation>T17 4件特效</translation>
     </message>
     <message>
-        <location filename="gic.ui" line="1340"/>
+        <location filename="gic.ui" line="1476"/>
         <source>T18 2pc set bonus</source>
         <translation>T18 2件特效</translation>
     </message>
     <message>
-        <location filename="gic.ui" line="1347"/>
+        <location filename="gic.ui" line="1483"/>
         <source>T18 4pc set bonus</source>
         <translation>T18 4件特效</translation>
     </message>
     <message>
-        <location filename="gic.ui" line="1378"/>
-        <location filename="gic.ui" line="1411"/>
-        <location filename="gic.ui" line="1444"/>
+        <location filename="gic.ui" line="1514"/>
+        <location filename="gic.ui" line="1547"/>
+        <location filename="gic.ui" line="1580"/>
         <source>iLvl</source>
         <translation>物品等级</translation>
     </message>
@@ -457,154 +546,154 @@
         <translation type="vanished">触发量</translation>
     </message>
     <message>
-        <location filename="gic.ui" line="1463"/>
+        <location filename="gic.ui" line="1599"/>
         <source>Main-Hand Weapon</source>
         <translation>主手武器</translation>
     </message>
     <message>
-        <location filename="gic.ui" line="1491"/>
-        <location filename="gic.ui" line="1597"/>
+        <location filename="gic.ui" line="1627"/>
+        <location filename="gic.ui" line="1733"/>
         <source>Lower Dmg.</source>
         <translation>伤害下限</translation>
     </message>
     <message>
-        <location filename="gic.ui" line="1510"/>
-        <location filename="gic.ui" line="1616"/>
+        <location filename="gic.ui" line="1646"/>
+        <location filename="gic.ui" line="1752"/>
         <source>Higher Dmg.</source>
         <translation>伤害上限</translation>
     </message>
     <message>
-        <location filename="gic.ui" line="1529"/>
-        <location filename="gic.ui" line="1635"/>
+        <location filename="gic.ui" line="1665"/>
+        <location filename="gic.ui" line="1771"/>
         <source>Speed</source>
         <translation>速度</translation>
     </message>
     <message>
-        <location filename="gic.ui" line="1542"/>
-        <location filename="gic.ui" line="1648"/>
-        <location filename="gic.ui" line="2239"/>
+        <location filename="gic.ui" line="1678"/>
+        <location filename="gic.ui" line="1784"/>
+        <location filename="gic.ui" line="2375"/>
         <source>DPS:</source>
         <translation>DPS：</translation>
     </message>
     <message>
-        <location filename="gic.ui" line="1569"/>
+        <location filename="gic.ui" line="1705"/>
         <source>Off-Hand Weapon</source>
         <translation>副手武器</translation>
     </message>
     <message>
-        <location filename="gic.ui" line="1675"/>
+        <location filename="gic.ui" line="1811"/>
         <source>Talents &amp;&amp; Traits</source>
         <translation>天赋/种族天赋</translation>
     </message>
     <message>
-        <location filename="gic.ui" line="1698"/>
+        <location filename="gic.ui" line="1834"/>
         <source>Race:</source>
         <translation>种族：</translation>
     </message>
     <message>
-        <location filename="gic.ui" line="1731"/>
+        <location filename="gic.ui" line="1867"/>
         <source>Tier 1:</source>
         <translation>第一层：</translation>
     </message>
     <message>
-        <location filename="gic.ui" line="1764"/>
+        <location filename="gic.ui" line="1900"/>
         <source>Tier 2:</source>
         <translation>第二层：</translation>
     </message>
     <message>
-        <location filename="gic.ui" line="1797"/>
+        <location filename="gic.ui" line="1933"/>
         <source>Tier 3:</source>
         <translation>第三层：</translation>
     </message>
     <message>
-        <location filename="gic.ui" line="1830"/>
+        <location filename="gic.ui" line="1966"/>
         <source>Tier 4:</source>
         <translation>第四层：</translation>
     </message>
     <message>
-        <location filename="gic.ui" line="1863"/>
+        <location filename="gic.ui" line="1999"/>
         <source>Tier 5:</source>
         <translation>第五层：</translation>
     </message>
     <message>
-        <location filename="gic.ui" line="1896"/>
+        <location filename="gic.ui" line="2032"/>
         <source>Tier 6:</source>
         <translation>第六层：</translation>
     </message>
     <message>
-        <location filename="gic.ui" line="1929"/>
+        <location filename="gic.ui" line="2065"/>
         <source>Tier 7:</source>
         <translation>第七层：</translation>
     </message>
     <message>
-        <location filename="gic.ui" line="1964"/>
+        <location filename="gic.ui" line="2100"/>
         <source>Gear Summary</source>
         <translation>装备总览</translation>
     </message>
     <message>
-        <location filename="gic.ui" line="2021"/>
+        <location filename="gic.ui" line="2157"/>
         <source>Policy</source>
         <translation>策略</translation>
     </message>
     <message>
-        <location filename="gic.ui" line="2033"/>
+        <location filename="gic.ui" line="2169"/>
         <source>Use Default Action Priority Lists (Recommended)</source>
         <translation>使用默认的动作优先级列表（推荐）</translation>
     </message>
     <message>
-        <location filename="gic.ui" line="2094"/>
+        <location filename="gic.ui" line="2230"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;When Default Actions is set, default action lists will override the editor below. Default action lists take care of all talent, trinket, racial-traits and bonuses stuff.&lt;/p&gt;&lt;p&gt;IreCore APLs is a piece of C code, inserted into kernel source directly as a function. All valid C code is valid for IreCore APL, so you can have more liberal policies, e.g. define your custom variables.&lt;/p&gt;&lt;p&gt;Frequently used lexicals are listed on the right side, double click to insert.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;启用默认动作后，默认动作将覆盖下面的编辑器。默认动作列表会自动考虑到所有的天赋、饰品、种族天赋和特效。&lt;/p&gt;&lt;p&gt;IreCore APL是一段C语言代码，作为一个函数直接插入内核源码中。所有合法的C语言代码都可以作为IreCore APL使用，所以你可以有更多的发挥空间，例如定义自己的变量。&lt;/p&gt;&lt;p&gt;常用的词素列在右侧，你可以双击它们直接插入。&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="gic.ui" line="2110"/>
+        <location filename="gic.ui" line="2246"/>
         <source>Generate Default APL</source>
         <translation>生成默认APL</translation>
     </message>
     <message>
-        <location filename="gic.ui" line="2116"/>
+        <location filename="gic.ui" line="2252"/>
         <source>Override</source>
         <translation>覆盖</translation>
     </message>
     <message>
-        <location filename="gic.ui" line="2128"/>
+        <location filename="gic.ui" line="2264"/>
         <source>Textual configuration will override graphic options.</source>
         <translation>将配置文本写在这里覆盖图形界面选项。</translation>
     </message>
     <message>
-        <location filename="gic.ui" line="2134"/>
+        <location filename="gic.ui" line="2270"/>
         <source>Result</source>
         <translation>结果</translation>
     </message>
     <message>
-        <location filename="gic.ui" line="2162"/>
+        <location filename="gic.ui" line="2298"/>
         <source>DPS Range(Std. Dev):</source>
         <translation>DPS范围（标准差）：</translation>
     </message>
     <message>
-        <location filename="gic.ui" line="2175"/>
-        <location filename="gic.ui" line="2207"/>
-        <location filename="gic.ui" line="2252"/>
+        <location filename="gic.ui" line="2311"/>
+        <location filename="gic.ui" line="2343"/>
+        <location filename="gic.ui" line="2388"/>
         <source>N/A</source>
         <translation>N/A</translation>
     </message>
     <message>
-        <location filename="gic.ui" line="2194"/>
+        <location filename="gic.ui" line="2330"/>
         <source>Error(0.95 Confident):</source>
         <translation>误差（0.95置信水平）：</translation>
     </message>
     <message>
-        <location filename="gic.ui" line="2223"/>
+        <location filename="gic.ui" line="2359"/>
         <source>Stat Weights:</source>
         <translation>属性权重：</translation>
     </message>
     <message>
-        <location filename="gic.ui" line="3028"/>
+        <location filename="gic.ui" line="3164"/>
         <source>Current Version</source>
         <translation>当前版本</translation>
     </message>
     <message>
-        <location filename="gic.ui" line="3041"/>
+        <location filename="gic.ui" line="3177"/>
         <source>Run</source>
         <translation>运行</translation>
     </message>
@@ -1070,28 +1159,28 @@
         <translation>攻击强度</translation>
     </message>
     <message>
-        <location filename="gic.cpp" line="732"/>
+        <location filename="gic.cpp" line="737"/>
         <source>Maxima Descent Start.
 </source>
         <translation>属性爬山开始
 </translation>
     </message>
     <message>
-        <location filename="gic.cpp" line="740"/>
+        <location filename="gic.cpp" line="745"/>
         <source>Maxima Descent Finished.
 </source>
         <translation>属性爬山完成
 </translation>
     </message>
     <message>
-        <location filename="gic.cpp" line="768"/>
+        <location filename="gic.cpp" line="773"/>
         <source>Contour Plot Start.
 </source>
         <translation>等高图开始
 </translation>
     </message>
     <message>
-        <location filename="gic.cpp" line="790"/>
+        <location filename="gic.cpp" line="795"/>
         <source>Contour Plot stats not set properly. Exact 3 stats should be checked.
 Reset to Crit-Haste-Mastery.
 </source>
@@ -1102,7 +1191,7 @@ Reset to Crit-Haste-Mastery.</oldsource>
 </translation>
     </message>
     <message>
-        <location filename="gic.cpp" line="794"/>
+        <location filename="gic.cpp" line="799"/>
         <source>Contour Plot Finished. Run &quot;plot.sci&quot; with SciLab(http://scilab.org/) to draw a figure.
 </source>
         <translation>等高图完成，使用SciLab(http://scilab.org)运行&quot;plot.sci&quot;来绘制图像</translation>
@@ -1136,28 +1225,28 @@ Reset to Crit-Haste-Mastery.</oldsource>
         <translation>Buff后</translation>
     </message>
     <message>
-        <location filename="gic.cpp" line="554"/>
+        <location filename="gic.cpp" line="559"/>
         <source>Set arguments...
 </source>
         <translation>设置参数...
 </translation>
     </message>
     <message>
-        <location filename="gic.cpp" line="613"/>
+        <location filename="gic.cpp" line="618"/>
         <source>Initializing compute cnvironment...
 </source>
         <translation>初始化运算环境...
 </translation>
     </message>
     <message>
-        <location filename="gic.cpp" line="618"/>
+        <location filename="gic.cpp" line="623"/>
         <source>Start simulation...
 </source>
         <translation>启动模拟...
 </translation>
     </message>
     <message>
-        <location filename="gic.cpp" line="621"/>
+        <location filename="gic.cpp" line="626"/>
         <source>Simulation finished.
 </source>
         <translation>模拟完成

@@ -56,12 +56,13 @@ extern int strict_gcd;
 extern int sync_melee;
 extern int wbr_never_expire;
 extern int avatar_like_bloodbath;
-extern int support_non_c99;
 extern float vary_combat_length;
 extern float max_length;
 extern float initial_health_percentage;
 extern float death_pct;
 extern float power_max; // rage_max
+extern int glyph_of_ragingwind;
+extern int num_enemies;
 extern int plate_specialization;
 extern int single_minded;
 extern int race;

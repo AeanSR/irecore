@@ -14,6 +14,8 @@ float max_length;
 float initial_health_percentage;
 float death_pct;
 float power_max; // rage_max
+int glyph_of_ragingwind;
+int num_enemies;
 int plate_specialization;
 int single_minded;
 int race;
@@ -29,7 +31,6 @@ int strict_gcd;
 int sync_melee;
 int wbr_never_expire;
 int avatar_like_bloodbath;
-int support_non_c99;
 int default_actions;
 const int base10[] = { 1000000, 100000, 10000, 1000, 100, 10, 1 };
 #define TALENT_TIER(tier) ((talent / base10[tier - 1]) % 10)
@@ -363,7 +364,6 @@ void set_default_parameters(){
 	sync_melee = 1;
 	wbr_never_expire = 1;
 	avatar_like_bloodbath = 0;
-	support_non_c99 = 0;
 	apl = "";
 	default_actions=0;
 	iterations = 50000;
@@ -372,6 +372,8 @@ void set_default_parameters(){
 	initial_health_percentage = 100.0f;
 	death_pct = 0.0f;
 	power_max = 100.0f;
+	glyph_of_ragingwind = 0;
+	num_enemies = 1;
 	plate_specialization = 0;
 	single_minded = 0;
 	race = 0;
@@ -665,6 +667,13 @@ void parse_parameters(std::vector<kvpair_t>& arglist){
 			power_max = atof(i->value.c_str());
 			if (power_max < 0.0f) power_max = 0.0f;
 		}
+		else if (0 == i->key.compare("num_enemies")){
+			num_enemies = atof(i->value.c_str());
+			if (num_enemies < 1) num_enemies = 1;
+		}
+		else if (0 == i->key.compare("glyph_of_ragingwind")){
+			glyph_of_ragingwind = atof(i->value.c_str());
+		}
 		else if (0 == i->key.compare("plate_specialization")){
 			plate_specialization = atoi(i->value.c_str());
 			plate_specialization = !!plate_specialization;
@@ -832,7 +841,7 @@ void parse_parameters(std::vector<kvpair_t>& arglist){
 			avatar_like_bloodbath = !!atoi(i->value.c_str());
 		}
 		else if (0 == i->key.compare("support_non_c99")){
-			support_non_c99 = !!atoi(i->value.c_str());
+			*report_path << "The option \"support_non_c99\" has been deprecated since irecore-620-49. IreCore should works well on all main-stream platforms now." << std::endl;
 		}
 		else if (0 == i->key.compare("output")){
 			report_path = new std::ofstream(i->value.c_str(), std::ofstream::out);
@@ -875,10 +884,6 @@ void generate_predef(){
 	sprintf(buffer, "%d", avatar_like_bloodbath);
 	predef.append(buffer); predef.append("\r\n");
 
-	predef.append("#define SUPPORT_NON_C99 ");
-	sprintf(buffer, "%d", support_non_c99);
-	predef.append(buffer); predef.append("\r\n");
-
 	predef.append("#define vary_combat_length ");
 	sprintf(buffer, "%ff", vary_combat_length);
 	predef.append(buffer); predef.append("\r\n");
@@ -897,6 +902,14 @@ void generate_predef(){
 
 	predef.append("#define power_max ");
 	sprintf(buffer, "%ff", power_max);
+	predef.append(buffer); predef.append("\r\n");
+
+	predef.append("#define num_enemies ");
+	sprintf(buffer, "%d", num_enemies);
+	predef.append(buffer); predef.append("\r\n");
+
+	predef.append("#define GLYPH_OF_RAGINGWIND ");
+	sprintf(buffer, "%d", glyph_of_ragingwind);
 	predef.append(buffer); predef.append("\r\n");
 
 	predef.append("#define PLATE_SPECIALIZATION ");
@@ -1175,6 +1188,14 @@ void parameters_consistency(){
 	if (oh_speed <= .0){
 		*report_path << "OH Speed less than or equal to zero, reset to 1.5s." << std::endl;
 		oh_speed = 1.5;
+	}
+	if (num_enemies < 1){
+		*report_path << "Num Enemies less than 1, reset to 1." << std::endl;
+		num_enemies = 1;
+	}
+	if (num_enemies > 20){
+		*report_path << "Num Enemies greater than 20, reset to 20." << std::endl;
+		num_enemies = 20;
 	}
 	if (stat_not_pushed) {
 		if (current_stat.name.empty()) current_stat.name = "<unnamed stat set>";

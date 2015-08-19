@@ -318,6 +318,13 @@ typedef struct {
     time_t expire;
 } ragingblow_t;
 typedef struct {
+	k32u stack;
+	time_t expire;
+} meatcleaver_t;
+typedef struct {
+	time_t expire;
+} ragingwind_t;
+typedef struct {
     time_t expire;
 } enrage_t;
 typedef struct {
@@ -476,6 +483,10 @@ typedef struct {
     bloodsurge_t    bloodsurge;
     berserkerrage_t	berserkerrage;
     recklessness_t	recklessness;
+	meatcleaver_t   meatcleaver;
+#if (GLYPH_OF_RAGINGWIND)
+	ragingwind_t    ragingwind;
+#endif
 #if (TALENT_TIER3 == 2)
     suddendeath_t	suddendeath;
 #endif
@@ -1172,6 +1183,9 @@ enum {
     routnum_ragingblow_execute,
     routnum_ragingblow_trigger,
     routnum_ragingblow_expire,
+	routnum_whirlwind_execute,
+	routnum_meatcleaver_trigger,
+	routnum_meatcleaver_expire,
     routnum_enrage_trigger,
     routnum_enrage_expire,
     routnum_execute_execute,
@@ -1184,7 +1198,10 @@ enum {
     routnum_recklessness_cd,
     routnum_recklessness_execute,
     routnum_recklessness_expire,
-
+#if (GLYPH_OF_RAGINGWIND)
+	routnum_ragingwind_trigger,
+	routnum_ragingwind_expire,
+#endif
 #if (TALENT_TIER3 == 2)
     routnum_suddendeath_trigger,
     routnum_suddendeath_expire,
@@ -1696,9 +1713,106 @@ DECL_SPELL( ragingblow ) {
 	}
     
 	eq_enqueue(rti, rti->timestamp, routnum_ragingblow_execute, rti->player.target);
-    lprintf( ( "cast ragingblow" ) );
+	if (UP(meatcleaver.expire)){
+		for (int i = 0; i != num_enemies; i++){
+			if (rti->player.meatcleaver.stack == 0) break;
+			if (i == rti->player.target) continue;
+			rti->player.meatcleaver.stack--;
+			eq_enqueue(rti, rti->timestamp, routnum_ragingblow_execute, i);
+		}
+		rti->player.meatcleaver.stack = 0;
+		rti->player.meatcleaver.expire = 0;
+		lprintf(("meatcleaver expire"));
+	}
+
+#if (GLYPH_OF_RAGINGWIND)
+	eq_enqueue(rti, rti->timestamp, routnum_ragingwind_trigger, 0);
+#endif
+	lprintf( ( "cast ragingblow" ) );
 	return 1;
 }
+
+// === meatcleaver ============================================================
+DECL_EVENT(meatcleaver_trigger) {
+	rti->player.meatcleaver.stack+=2;
+	rti->player.meatcleaver.expire = TIME_OFFSET(FROM_SECONDS(10));
+	if (rti->player.meatcleaver.stack > 4) {
+		rti->player.meatcleaver.stack = 4;
+	}
+	eq_enqueue(rti, rti->player.meatcleaver.expire, routnum_meatcleaver_expire, target_id);
+	lprintf(("meatcleaver stack %d", rti->player.meatcleaver.stack));
+}
+
+DECL_EVENT(meatcleaver_expire) {
+	if (rti->player.meatcleaver.expire == rti->timestamp) {
+		rti->player.meatcleaver.stack = 0;
+		lprintf(("meatcleaver expire"));
+	}
+}
+
+// === whirlwind ==============================================================
+DECL_EVENT(whirlwind_execute) {
+	float d = weapon_dmg(rti, 0.56f, 1, 0);
+#if (GLYPH_OF_RAGINGWIND)
+	if (rti->player.ragingwind.expire == rti->timestamp) d *= 1.1f;
+#endif
+	if (deal_damage(rti, target_id, d, DMGTYPE_ABILITY, 0, 0, 0)) {
+		/* Crit */
+		lprintf(("whirlwind crit"));
+
+	}
+	else {
+		/* Hit */
+		lprintf(("whirlwind hit"));
+	}
+	d = weapon_dmg(rti, 0.56f, 1, 1);
+#if (GLYPH_OF_RAGINGWIND)
+	if (rti->player.ragingwind.expire == rti->timestamp) d *= 1.1f;
+#endif
+	if (deal_damage(rti, target_id, d, DMGTYPE_ABILITY, 0, 0, 0)) {
+		/* Crit */
+		lprintf(("whirlwind_oh crit"));
+
+	}
+	else {
+		/* Hit */
+		lprintf(("whirlwind_oh hit"));
+	}
+}
+
+DECL_SPELL(whirlwind) {
+	if (rti->player.gcd > rti->timestamp) return 0;
+	if (!power_check(rti, 30.0f)) return 0;
+	gcd_start(rti, FROM_SECONDS(1.5f / (1.0f + rti->player.stat.haste)));
+	power_consume(rti, 30.0f);
+#if (GLYPH_OF_RAGINGWIND)
+	if (UP(ragingwind.expire)){
+		rti->player.ragingwind.expire = rti->timestamp;
+		lprintf(("ragingwind expire"));
+	}
+#endif
+	for (int i = 0; i != num_enemies; i++){
+		eq_enqueue(rti, rti->timestamp, routnum_whirlwind_execute, i);
+	}
+	eq_enqueue(rti, rti->timestamp, routnum_meatcleaver_trigger, 0);
+	lprintf(("cast whirlwind"));
+	return 1;
+}
+
+// === ragingwind =============================================================
+#if (GLYPH_OF_RAGINGWIND)
+DECL_EVENT(ragingwind_trigger) {
+	rti->player.ragingwind.expire = TIME_OFFSET(FROM_SECONDS(6));
+	eq_enqueue(rti, rti->player.ragingwind.expire, routnum_ragingwind_expire, target_id);
+	lprintf(("ragingwind trig"));
+}
+
+DECL_EVENT(ragingwind_expire) {
+	if (rti->player.ragingwind.expire == rti->timestamp) {
+		lprintf(("ragingwind expire"));
+	}
+}
+#endif
 
 // === execute ================================================================
 DECL_EVENT( execute_execute ) {
@@ -3110,6 +3224,9 @@ void routine_entries( rtinfo_t* rti, _event_t e ) {
         HOOK_EVENT( ragingblow_execute );
         HOOK_EVENT( ragingblow_trigger );
         HOOK_EVENT( ragingblow_expire );
+		HOOK_EVENT(whirlwind_execute);
+		HOOK_EVENT(meatcleaver_trigger);
+		HOOK_EVENT(meatcleaver_expire);
         HOOK_EVENT( enrage_trigger );
         HOOK_EVENT( enrage_expire );
         HOOK_EVENT( execute_execute );
@@ -3122,7 +3239,10 @@ void routine_entries( rtinfo_t* rti, _event_t e ) {
         HOOK_EVENT( recklessness_execute );
         HOOK_EVENT( recklessness_expire );
         HOOK_EVENT( berserkerrage_cd );
-
+#if (GLYPH_OF_RAGINGWIND)
+		HOOK_EVENT(ragingwind_expire);
+		HOOK_EVENT(ragingwind_trigger);
+#endif
 #if (TALENT_TIER3 == 2)
         HOOK_EVENT( suddendeath_trigger );
         HOOK_EVENT( suddendeath_expire );

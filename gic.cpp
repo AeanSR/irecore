@@ -189,6 +189,7 @@ gic::gic(QWidget *parent)
 	lists << "SPELL(bloodthirst);"
 		<< "SPELL(ragingblow);"
 		<< "SPELL(wildstrike);"
+		<< "SPELL(whirlwind);"
 		<< "SPELL(potion);"
 		<< "SPELL(berserkerrage);"
 		<< "SPELL(recklessness);"
@@ -212,6 +213,7 @@ gic::gic(QWidget *parent)
 	ui.listActions->addItems(lists);
 	lists.clear();
 	lists << "FROM_SECONDS()"
+		<< "rti->player.target"
 		<< "enemy_health_percent(rti)"
 		<< "rti->player.power"
 		<< "power_max"
@@ -220,6 +222,8 @@ gic::gic(QWidget *parent)
 		<< "REMAIN(bloodthirst.cd)"
 		<< "rti->player.ragingblow.stack"
 		<< "REMAIN(ragingblow.expire)"
+		<< "rti->player.meatcleaver.stack"
+		<< "REMAIN(meatcleaver.expire)"
 		<< "REMAIN(enrage.expire)"
 		<< "rti->player.bloodsurge.stack"
 		<< "REMAIN(bloodsurge.expire)"

@@ -28,6 +28,11 @@
     <height>620</height>
    </size>
   </property>
+  <property name="font">
+   <font>
+    <pointsize>9</pointsize>
+   </font>
+  </property>
   <property name="windowTitle">
    <string>IreCore</string>
   </property>
@@ -45,7 +50,7 @@
      <item>
       <widget class="QTabWidget" name="tabWidget">
        <property name="currentIndex">
-        <number>0</number>
+        <number>5</number>
        </property>
        <widget class="QWidget" name="tabCompute">
         <attribute name="title">
@@ -622,34 +627,6 @@ LCG32 is recommended since it meets most demands.</string>
            </item>
            <item>
             <layout class="QGridLayout" name="gridLayout_2">
-             <item row="0" column="0">
-              <widget class="QCheckBox" name="checkStrictGCD">
-               <property name="toolTip">
-                <string>Strict GCD: When general cooldown is up, all actions(i.e. spells off GCD) are locked.
-Enable this option could make approx. 30% performance improvement, but may cause minor impacts on behavior.</string>
-               </property>
-               <property name="text">
-                <string>Strict GCD</string>
-               </property>
-               <property name="checked">
-                <bool>true</bool>
-               </property>
-              </widget>
-             </item>
-             <item row="0" column="1">
-              <widget class="QCheckBox" name="checkWBRNeverExpire">
-               <property name="toolTip">
-                <string>WBR Never Expire: Worldbreaker's Resolve (trinket from Archimonde) are assumed never expire.
-IreCore only simulates Tank-n-Spank combats. It's impossible to stop melee attacks to let the trinket expire in IreCore, unless you are simulating some custom weapons with 6.0+ weapon speed.</string>
-               </property>
-               <property name="text">
-                <string>WBR Never Expire</string>
-               </property>
-               <property name="checked">
-                <bool>true</bool>
-               </property>
-              </widget>
-             </item>
              <item row="1" column="0">
               <widget class="QCheckBox" name="checkSyncMelee">
                <property name="toolTip">
@@ -678,18 +655,31 @@ Check this option may boost the simulation, but it is really inconsistent with r
                </property>
               </widget>
              </item>
-             <item row="2" column="0" colspan="2">
-              <widget class="QCheckBox" name="checkSupportNonC99">
+             <item row="0" column="0">
+              <widget class="QCheckBox" name="checkStrictGCD">
                <property name="toolTip">
-                <string>Support Broken C99 Implements: Try to cooperate with those broken compilers (most are MSVC based) which even does not implement C99 grammar.
-When you meet compilation errors (Error -11) and got debug messages like &quot;expected an expression&quot; or similar, this option may fix that issue for you. 
-DO NOT ENABLE THIS OPTION if you did not meet Error -11.</string>
+                <string>Strict GCD: When general cooldown is up, all actions(i.e. spells off GCD) are locked.
+Enable this option could make approx. 30% performance improvement, but may cause minor impacts on behavior.</string>
                </property>
                <property name="text">
-                <string>Support Broken C99 Implements</string>
+                <string>Strict GCD</string>
                </property>
                <property name="checked">
-                <bool>false</bool>
+                <bool>true</bool>
+               </property>
+              </widget>
+             </item>
+             <item row="0" column="1">
+              <widget class="QCheckBox" name="checkWBRNeverExpire">
+               <property name="toolTip">
+                <string>WBR Never Expire: Worldbreaker's Resolve (trinket from Archimonde) are assumed never expire.
+IreCore only simulates Tank-n-Spank combats. It's impossible to stop melee attacks to let the trinket expire in IreCore, unless you are simulating some custom weapons with 6.0+ weapon speed.</string>
+               </property>
+               <property name="text">
+                <string>WBR Never Expire</string>
+               </property>
+               <property name="checked">
+                <bool>true</bool>
                </property>
               </widget>
              </item>
@@ -707,9 +697,9 @@ DO NOT ENABLE THIS OPTION if you did not meet Error -11.</string>
          <property name="geometry">
           <rect>
            <x>20</x>
-           <y>140</y>
-           <width>371</width>
-           <height>236</height>
+           <y>170</y>
+           <width>388</width>
+           <height>269</height>
           </rect>
          </property>
          <layout class="QHBoxLayout" name="horizontalLayout_10">
@@ -890,7 +880,7 @@ DO NOT ENABLE THIS OPTION if you did not meet Error -11.</string>
            <x>20</x>
            <y>20</y>
            <width>311</width>
-           <height>108</height>
+           <height>141</height>
           </rect>
          </property>
          <layout class="QVBoxLayout" name="verticalLayout_7">
@@ -968,6 +958,27 @@ DO NOT ENABLE THIS OPTION if you did not meet Error -11.</string>
             </item>
             <item>
              <widget class="QComboBox" name="comboDeathPct">
+              <property name="maximumSize">
+               <size>
+                <width>103</width>
+                <height>16777215</height>
+               </size>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </item>
+          <item>
+           <layout class="QHBoxLayout" name="horizontalLayout_30">
+            <item>
+             <widget class="QLabel" name="label_40">
+              <property name="text">
+               <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Num Enemies:&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QComboBox" name="comboNumEnemies">
               <property name="maximumSize">
                <size>
                 <width>103</width>
@@ -1078,7 +1089,7 @@ DO NOT ENABLE THIS OPTION if you did not meet Error -11.</string>
             <x>10</x>
             <y>20</y>
             <width>476</width>
-            <height>180</height>
+            <height>181</height>
            </rect>
           </property>
           <layout class="QHBoxLayout" name="horizontalLayout_9">
@@ -1445,7 +1456,7 @@ DO NOT ENABLE THIS OPTION if you did not meet Error -11.</string>
             <x>12</x>
             <y>26</y>
             <width>251</width>
-            <height>221</height>
+            <height>211</height>
            </rect>
           </property>
           <layout class="QVBoxLayout" name="verticalLayout_8">
@@ -1453,6 +1464,13 @@ DO NOT ENABLE THIS OPTION if you did not meet Error -11.</string>
             <widget class="QCheckBox" name="checkGlyphOfUnendingRage">
              <property name="text">
               <string>Glyph of Unending Rage</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QCheckBox" name="checkGlyphOfRagingWind">
+             <property name="text">
+              <string>Glyph of Raging Wind</string>
              </property>
             </widget>
            </item>
@@ -2288,7 +2306,7 @@ DO NOT ENABLE THIS OPTION if you did not meet Error -11.</string>
            <x>520</x>
            <y>160</y>
            <width>231</width>
-           <height>16</height>
+           <height>17</height>
           </rect>
          </property>
          <layout class="QHBoxLayout" name="horizontalLayout_7">
@@ -2320,7 +2338,7 @@ DO NOT ENABLE THIS OPTION if you did not meet Error -11.</string>
            <x>520</x>
            <y>180</y>
            <width>231</width>
-           <height>16</height>
+           <height>17</height>
           </rect>
          </property>
          <layout class="QHBoxLayout" name="horizontalLayout_8">
@@ -2365,7 +2383,7 @@ DO NOT ENABLE THIS OPTION if you did not meet Error -11.</string>
            <x>520</x>
            <y>140</y>
            <width>231</width>
-           <height>16</height>
+           <height>17</height>
           </rect>
          </property>
          <layout class="QHBoxLayout" name="horizontalLayout_6">

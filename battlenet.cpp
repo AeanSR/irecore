@@ -120,7 +120,7 @@ void gic::import_player(std::string& realm, std::string& name, std::string& regi
 	}
 	rapidjson::Value& jtalentlist = j["talents"];
 	talent = -1;
-	int glyph = 0;
+	int glyph_ur = 0;
 	for (int i = 0; i < jtalentlist.Size(); i++){
 		if (std::string("Z").compare(jtalentlist[i]["calcSpec"].GetString())) continue;
 		std::string calcTalent = jtalentlist[i]["calcTalent"].GetString();
@@ -134,7 +134,8 @@ void gic::import_player(std::string& realm, std::string& name, std::string& regi
 			default: break;
 			}
 		}
-		glyph = !!strchr(jtalentlist[i]["calcGlyph"].GetString(), 'c');
+		glyph_ur = !!strchr(jtalentlist[i]["calcGlyph"].GetString(), 'c');
+		glyph_of_ragingwind = !!strchr(jtalentlist[i]["calcGlyph"].GetString(), 'Q');
 	}
 	if (talent < 0){
 		QMessageBox::information(this, QApplication::translate("gicClass", "Import Fail"), QApplication::translate("gicClass", "This character do not have fury spec."), QMessageBox::Ok);
@@ -344,5 +345,6 @@ void gic::import_player(std::string& realm, std::string& name, std::string& regi
 	talent /= 10;
 	ui.comboTalent1->setCurrentIndex(talent % 10);
 	talent /= 10;
-	ui.checkGlyphOfUnendingRage->setChecked(glyph);
+	ui.checkGlyphOfUnendingRage->setChecked(glyph_ur);
+	ui.checkGlyphOfRagingWind->setChecked(glyph_of_ragingwind);
 }

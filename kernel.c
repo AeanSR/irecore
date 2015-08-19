@@ -2429,7 +2429,7 @@ DECL_EVENT(thorasus_the_stone_heart_of_draenor_cd){
 DECL_SPELL(thorasus_the_stone_heart_of_draenor) {
 	if (rti->player.thorasus_the_stone_heart_of_draenor.cd > rti->timestamp) return 0;
 #if (TALENT_TIER6 == 3)
-	if (UP(bladestorm.expire)) return;
+	if (UP(bladestorm.expire)) return 0;
 #endif
 	rti->player.thorasus_the_stone_heart_of_draenor.cd = TIME_OFFSET(FROM_SECONDS(120));
 	eq_enqueue(rti, rti->player.thorasus_the_stone_heart_of_draenor.cd, routnum_thorasus_the_stone_heart_of_draenor_cd, 0);

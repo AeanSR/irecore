@@ -37,7 +37,7 @@
     <_ProjectFileVersion>12.0.30501.0</_ProjectFileVersion>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
-    <QTDIR>E:\Qt\5.4\msvc2013_opengl</QTDIR>
+    <QTDIR>E:\Qt\5.5\msvc2013</QTDIR>
     <OutDir>$(SolutionDir)</OutDir>
     <TargetName>irecore</TargetName>
     <IncludePath>$(CUDA_PATH)\include\;$(AMDAPPSDKROOT)\include\;$(VC_IncludePath);$(WindowsSDK_IncludePath);$(IncludePath);$(WindowsSdk_71A_IncludePath);$(QTDIR)\include</IncludePath>
@@ -45,7 +45,7 @@
     <IntDir>intermediate\</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <QTDIR>E:\Qt\5.4\msvc2013_opengl</QTDIR>
+    <QTDIR>E:\Qt\5.5\msvc2013</QTDIR>
     <OutDir>$(SolutionDir)</OutDir>
     <TargetName>irecore</TargetName>
     <IncludePath>$(CUDA_PATH)\include\;$(AMDAPPSDKROOT)\include\;$(VC_IncludePath);$(WindowsSDK_IncludePath);$(IncludePath);$(WindowsSdk_71A_IncludePath);$(QTDIR)\include</IncludePath>

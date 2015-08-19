@@ -1,5 +1,5 @@
 :: Update the qt_dir as necessary
-set qt_dir=E:\Qt\5.4\msvc2013_opengl
+set qt_dir=E:\Qt\5.5\msvc2013
 
 rd /S /Q release
 mkdir release
@@ -18,6 +18,7 @@ copy %qt_dir%\bin\Qt5GUI.dll release\Qt5GUI.dll
 copy %qt_dir%\bin\Qt5Widgets.dll release\Qt5Widgets.dll
 copy %qt_dir%\bin\Qt5Network.dll release\Qt5Network.dll
 copy %qt_dir%\plugins\platforms\qwindows.dll release\platforms\qwindows.dll
-copy %qt_dir%\bin\icuin53.dll release\icuin53.dll
-copy %qt_dir%\bin\icuuc53.dll release\icuuc53.dll
-copy icudt53_min.dll release\icudt53.dll
+:: ICU is no longer needed since irecore-620-50?
+:: copy %qt_dir%\bin\icuin53.dll release\icuin53.dll
+:: copy %qt_dir%\bin\icuuc53.dll release\icuuc53.dll
+:: copy icudt53_min.dll release\icudt53.dll

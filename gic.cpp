@@ -179,6 +179,11 @@ gic::gic(QWidget *parent)
 	ui.comboDeathPct->addItem("10", 10.0f);
 	ui.comboDeathPct->addItem("21", 21.0f);
 
+	// Num Enemies.
+	for (int i = 1; i <= 20; i++){
+		ui.comboNumEnemies->addItem(QString::number(i), i);
+	}
+
 	// Policy Action List.
 	QStringList lists;
 	lists << "SPELL(bloodthirst);"
@@ -484,6 +489,7 @@ void gic::set_arguments(){
 	vary_combat_length = ui.comboVaryCombatLength->currentData().toFloat();
 	initial_health_percentage = ui.comboInitialHealthPercentage->currentData().toFloat();
 	death_pct = ui.comboDeathPct->currentData().toFloat();
+	num_enemies = ui.comboNumEnemies->currentData().toInt();
 	raidbuff.ap = ui.checkRaidBuffAP->isChecked();
 	raidbuff.bloodlust = ui.checkRaidBuffBloodlust->isChecked();
 	raidbuff.crit = ui.checkRaidBuffCrit->isChecked();
@@ -523,6 +529,7 @@ void gic::set_arguments(){
 
 	power_max = 100;
 	if (ui.checkGlyphOfUnendingRage->isChecked()) power_max += 20;
+	glyph_of_ragingwind = ui.checkGlyphOfRagingWind->isChecked();
 	if (race == 3) power_max *= 1.05;
 	t17_2pc = ui.checkT172P->isChecked();
 	t17_4pc = ui.checkT174P->isChecked();

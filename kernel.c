@@ -684,9 +684,9 @@ typedef struct {
 
 /* Runtime info struct, each thread preserves its own. */
 typedef struct {
-    seed_t seed;
     time_t timestamp;
-    event_queue_t eq;
+	seed_t seed;
+	event_queue_t eq;
     float damage_collected;
     player_t player;
 	enemy_t enemy[num_enemies];

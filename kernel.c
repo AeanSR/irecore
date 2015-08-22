@@ -1711,7 +1711,7 @@ DECL_SPELL( ragingblow ) {
 		rti->player.ragingblow.expire = 0;
 		lprintf(("ragingblow expire"));
 	}
-    
+
 	eq_enqueue(rti, rti->timestamp, routnum_ragingblow_execute, rti->player.target);
 	if (UP(meatcleaver.expire)){
 		for (int i = 0; i != num_enemies; i++){
@@ -3576,6 +3576,138 @@ void special_procs( rtinfo_t* rti, k32u target_id ) {
 	}
 #endif
 }
+
+/* Helper Macros for better APL writing. */
+#if (TALENT_TIER3==0)
+#define T30(texpr,fexpr) (texpr)
+#else
+#define T30(texpr,fexpr) (fexpr)
+#endif
+#if (TALENT_TIER3==1)
+#define T31(texpr,fexpr) (texpr)
+#else
+#define T31(texpr,fexpr) (fexpr)
+#endif
+#if (TALENT_TIER3==2)
+#define T32(texpr,fexpr) (texpr)
+#else
+#define T32(texpr,fexpr) (fexpr)
+#endif
+#if (TALENT_TIER3==3)
+#define T33(texpr,fexpr) (texpr)
+#else
+#define T33(texpr,fexpr) (fexpr)
+#endif
+#if (TALENT_TIER4==0)
+#define T40(texpr,fexpr) (texpr)
+#else
+#define T40(texpr,fexpr) (fexpr)
+#endif
+#if (TALENT_TIER4==1)
+#define T41(texpr,fexpr) (texpr)
+#else
+#define T41(texpr,fexpr) (fexpr)
+#endif
+#if (TALENT_TIER4==2)
+#define T42(texpr,fexpr) (texpr)
+#else
+#define T42(texpr,fexpr) (fexpr)
+#endif
+#if (TALENT_TIER4==3)
+#define T43(texpr,fexpr) (texpr)
+#else
+#define T43(texpr,fexpr) (fexpr)
+#endif
+#if (TALENT_TIER6==0)
+#define T60(texpr,fexpr) (texpr)
+#else
+#define T60(texpr,fexpr) (fexpr)
+#endif
+#if (TALENT_TIER6==1)
+#define T61(texpr,fexpr) (texpr)
+#else
+#define T61(texpr,fexpr) (fexpr)
+#endif
+#if (TALENT_TIER6==2)
+#define T62(texpr,fexpr) (texpr)
+#else
+#define T62(texpr,fexpr) (fexpr)
+#endif
+#if (TALENT_TIER6==3)
+#define T63(texpr,fexpr) (texpr)
+#else
+#define T63(texpr,fexpr) (fexpr)
+#endif
+#if (TALENT_TIER7==0)
+#define T70(texpr,fexpr) (texpr)
+#else
+#define T70(texpr,fexpr) (fexpr)
+#endif
+#if (TALENT_TIER7==1)
+#define T71(texpr,fexpr) (texpr)
+#else
+#define T71(texpr,fexpr) (fexpr)
+#endif
+#if (TALENT_TIER7==2)
+#define T72(texpr,fexpr) (texpr)
+#else
+#define T72(texpr,fexpr) (fexpr)
+#endif
+#if (TALENT_TIER7==3)
+#define T73(texpr,fexpr) (texpr)
+#else
+#define T73(texpr,fexpr) (fexpr)
+#endif
+#if (BUFF_POTION)
+#define POTION(texpr,fexpr) (texpr)
+#else
+#define POTION(texpr,fexpr) (fexpr)
+#endif
+#if (RACE == RACE_BLOODELF)
+#define BELF(texpr,fexpr) (texpr)
+#else
+#define BELF(texpr,fexpr) (fexpr)
+#endif
+#if (RACE == RACE_ORC)
+#define ORC(texpr,fexpr) (texpr)
+#else
+#define ORC(texpr,fexpr) (fexpr)
+#endif
+#if (RACE == RACE_TROLL)
+#define TROLL(texpr,fexpr) (texpr)
+#else
+#define TROLL(texpr,fexpr) (fexpr)
+#endif
+#if (legendary_ring)
+#define LEGENDARY(texpr,fexpr) (texpr)
+#else
+#define LEGENDARY(texpr,fexpr) (fexpr)
+#endif
+#if (trinket_vial_of_convulsive_shadows)
+#define TRINKET_VIAL(texpr,fexpr) (texpr)
+#else
+#define TRINKET_VIAL(texpr,fexpr) (fexpr)
+#endif
+#if (trinket_scabbard_of_kyanos)
+#define TRINKET_KYANOS(texpr,fexpr) (texpr)
+#else
+#define TRINKET_KYANOS(texpr,fexpr) (fexpr)
+#endif
+#if (trinket_badge_of_victory)
+#define TRINKET_PVP(texpr,fexpr) (texpr)
+#else
+#define TRINKET_PVP(texpr,fexpr) (fexpr)
+#endif
+#if (trinket_bonemaws_big_toe)
+#define TRINKET_TOE(texpr,fexpr) (texpr)
+#else
+#define TRINKET_TOE(texpr,fexpr) (fexpr)
+#endif
+#if (trinket_emberscale_talisman)
+#define TRINKET_EMBER(texpr,fexpr) (texpr)
+#else
+#define TRINKET_EMBER(texpr,fexpr) (fexpr)
+#endif
 
 /* Debug build. */
 #if !defined(__OPENCL_VERSION__)

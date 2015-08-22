@@ -10,6 +10,7 @@ copy %windir%\SYSWOW64\msvcp120.dll release\msvcp120.dll
 copy ic_tg_t17m.txt release\profile\ic_tg_t17m.txt
 copy ic_tg_t18m.txt release\profile\ic_tg_t18m.txt
 copy irecore.exe release\irecore.exe
+copy apltr.exe release\apltr.exe
 copy kernel.c release\kernel.c
 copy gic_zh.qm release\gic_zh.qm
 copy LICENSE release\LICENSE

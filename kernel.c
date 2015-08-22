@@ -3579,134 +3579,134 @@ void special_procs( rtinfo_t* rti, k32u target_id ) {
 
 /* Helper Macros for better APL writing. */
 #if (TALENT_TIER3==0)
-#define T30(texpr,fexpr) (texpr)
+#define T30(texpr,fexpr) texpr
 #else
-#define T30(texpr,fexpr) (fexpr)
+#define T30(texpr,fexpr) fexpr
 #endif
 #if (TALENT_TIER3==1)
-#define T31(texpr,fexpr) (texpr)
+#define T31(texpr,fexpr) texpr
 #else
-#define T31(texpr,fexpr) (fexpr)
+#define T31(texpr,fexpr) fexpr
 #endif
 #if (TALENT_TIER3==2)
-#define T32(texpr,fexpr) (texpr)
+#define T32(texpr,fexpr) texpr
 #else
-#define T32(texpr,fexpr) (fexpr)
+#define T32(texpr,fexpr) fexpr
 #endif
 #if (TALENT_TIER3==3)
-#define T33(texpr,fexpr) (texpr)
+#define T33(texpr,fexpr) texpr
 #else
-#define T33(texpr,fexpr) (fexpr)
+#define T33(texpr,fexpr) fexpr
 #endif
 #if (TALENT_TIER4==0)
-#define T40(texpr,fexpr) (texpr)
+#define T40(texpr,fexpr) texpr
 #else
-#define T40(texpr,fexpr) (fexpr)
+#define T40(texpr,fexpr) fexpr
 #endif
 #if (TALENT_TIER4==1)
-#define T41(texpr,fexpr) (texpr)
+#define T41(texpr,fexpr) texpr
 #else
-#define T41(texpr,fexpr) (fexpr)
+#define T41(texpr,fexpr) fexpr
 #endif
 #if (TALENT_TIER4==2)
-#define T42(texpr,fexpr) (texpr)
+#define T42(texpr,fexpr) texpr
 #else
-#define T42(texpr,fexpr) (fexpr)
+#define T42(texpr,fexpr) fexpr
 #endif
 #if (TALENT_TIER4==3)
-#define T43(texpr,fexpr) (texpr)
+#define T43(texpr,fexpr) texpr
 #else
-#define T43(texpr,fexpr) (fexpr)
+#define T43(texpr,fexpr) fexpr
 #endif
 #if (TALENT_TIER6==0)
-#define T60(texpr,fexpr) (texpr)
+#define T60(texpr,fexpr) texpr
 #else
-#define T60(texpr,fexpr) (fexpr)
+#define T60(texpr,fexpr) fexpr
 #endif
 #if (TALENT_TIER6==1)
-#define T61(texpr,fexpr) (texpr)
+#define T61(texpr,fexpr) texpr
 #else
-#define T61(texpr,fexpr) (fexpr)
+#define T61(texpr,fexpr) fexpr
 #endif
 #if (TALENT_TIER6==2)
-#define T62(texpr,fexpr) (texpr)
+#define T62(texpr,fexpr) texpr
 #else
-#define T62(texpr,fexpr) (fexpr)
+#define T62(texpr,fexpr) fexpr
 #endif
 #if (TALENT_TIER6==3)
-#define T63(texpr,fexpr) (texpr)
+#define T63(texpr,fexpr) texpr
 #else
-#define T63(texpr,fexpr) (fexpr)
+#define T63(texpr,fexpr) fexpr
 #endif
 #if (TALENT_TIER7==0)
-#define T70(texpr,fexpr) (texpr)
+#define T70(texpr,fexpr) texpr
 #else
-#define T70(texpr,fexpr) (fexpr)
+#define T70(texpr,fexpr) fexpr
 #endif
 #if (TALENT_TIER7==1)
-#define T71(texpr,fexpr) (texpr)
+#define T71(texpr,fexpr) texpr
 #else
-#define T71(texpr,fexpr) (fexpr)
+#define T71(texpr,fexpr) fexpr
 #endif
 #if (TALENT_TIER7==2)
-#define T72(texpr,fexpr) (texpr)
+#define T72(texpr,fexpr) texpr
 #else
-#define T72(texpr,fexpr) (fexpr)
+#define T72(texpr,fexpr) fexpr
 #endif
 #if (TALENT_TIER7==3)
-#define T73(texpr,fexpr) (texpr)
+#define T73(texpr,fexpr) texpr
 #else
-#define T73(texpr,fexpr) (fexpr)
+#define T73(texpr,fexpr) fexpr
 #endif
 #if (BUFF_POTION)
-#define POTION(texpr,fexpr) (texpr)
+#define POTION(texpr,fexpr) texpr
 #else
-#define POTION(texpr,fexpr) (fexpr)
+#define POTION(texpr,fexpr) fexpr
 #endif
 #if (RACE == RACE_BLOODELF)
-#define BELF(texpr,fexpr) (texpr)
+#define BELF(texpr,fexpr) texpr
 #else
-#define BELF(texpr,fexpr) (fexpr)
+#define BELF(texpr,fexpr) fexpr
 #endif
 #if (RACE == RACE_ORC)
-#define ORC(texpr,fexpr) (texpr)
+#define ORC(texpr,fexpr) texpr
 #else
-#define ORC(texpr,fexpr) (fexpr)
+#define ORC(texpr,fexpr) fexpr
 #endif
 #if (RACE == RACE_TROLL)
-#define TROLL(texpr,fexpr) (texpr)
+#define TROLL(texpr,fexpr) texpr
 #else
-#define TROLL(texpr,fexpr) (fexpr)
+#define TROLL(texpr,fexpr) fexpr
 #endif
 #if (legendary_ring)
-#define LEGENDARY(texpr,fexpr) (texpr)
+#define LEGENDARY(texpr,fexpr) texpr
 #else
-#define LEGENDARY(texpr,fexpr) (fexpr)
+#define LEGENDARY(texpr,fexpr) fexpr
 #endif
 #if (trinket_vial_of_convulsive_shadows)
-#define TRINKET_VIAL(texpr,fexpr) (texpr)
+#define TRINKET_VIAL(texpr,fexpr) texpr
 #else
-#define TRINKET_VIAL(texpr,fexpr) (fexpr)
+#define TRINKET_VIAL(texpr,fexpr) fexpr
 #endif
 #if (trinket_scabbard_of_kyanos)
-#define TRINKET_KYANOS(texpr,fexpr) (texpr)
+#define TRINKET_KYANOS(texpr,fexpr) texpr
 #else
-#define TRINKET_KYANOS(texpr,fexpr) (fexpr)
+#define TRINKET_KYANOS(texpr,fexpr) fexpr
 #endif
 #if (trinket_badge_of_victory)
-#define TRINKET_PVP(texpr,fexpr) (texpr)
+#define TRINKET_PVP(texpr,fexpr) texpr
 #else
-#define TRINKET_PVP(texpr,fexpr) (fexpr)
+#define TRINKET_PVP(texpr,fexpr) fexpr
 #endif
 #if (trinket_bonemaws_big_toe)
-#define TRINKET_TOE(texpr,fexpr) (texpr)
+#define TRINKET_TOE(texpr,fexpr) texpr
 #else
-#define TRINKET_TOE(texpr,fexpr) (fexpr)
+#define TRINKET_TOE(texpr,fexpr) fexpr
 #endif
 #if (trinket_emberscale_talisman)
-#define TRINKET_EMBER(texpr,fexpr) (texpr)
+#define TRINKET_EMBER(texpr,fexpr) texpr
 #else
-#define TRINKET_EMBER(texpr,fexpr) (fexpr)
+#define TRINKET_EMBER(texpr,fexpr) fexpr
 #endif
 
 /* Debug build. */

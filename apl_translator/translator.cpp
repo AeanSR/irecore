@@ -303,10 +303,10 @@ item_t var_list[] =
     { "raid_event.adds.in", "0", 0 },
     { "raid_event.adds.exists", "0", 0 },
 	{ "raid_event.adds.count", "0", 0 },
-	{ "raid_event.adds.cooldown", "0", 0 },
+	{ "raid_event.adds.cooldown", "65535", 0 },
 	{ "raid_event.movement.in", "0", 0 },
 	{ "raid_event.movement.exists", "0", 0 },
-	{ "raid_event.movement.cooldown", "0", 0 },
+	{ "raid_event.movement.cooldown", "65535", 0 },
     { "set_bonus.tier18_4pc", "t18_4pc", 0 },
     { "set_bonus.tier18_2pc", "t18_2pc", 0 },
     { "set_bonus.tier17_4pc", "t17_4pc", 0 },
@@ -542,11 +542,13 @@ struct rule_t
     cond_node_t * cond;
     int action;
     apl_t * run_list;
+	int ret_on_call;
     void dump(std::string& str);
 	rule_t(){
 		cond = 0;
 		action = 0;
 		run_list = 0;
+		ret_on_call = 0;
 	}
 };
 
@@ -571,8 +573,10 @@ void rule_t::dump(std::string& str)
         cond->dump(str);
         str.append("){\r\n");
         run_list->dump(str);
-		if (prepend) str.append("actions+=");
-		str.append("return;\r\n");
+		if (ret_on_call){
+			if (prepend) str.append("actions+=");
+			str.append("return;\r\n");
+		}
 		if (prepend) str.append("actions+=");
 		str.append("}");
     }
@@ -581,8 +585,10 @@ void rule_t::dump(std::string& str)
 		if (prepend) str.append("actions+=");
         str.append("{\r\n");
         run_list->dump(str);
-		if (prepend) str.append("actions+=");
-		str.append("return;\r\n");
+		if (ret_on_call){
+			if (prepend) str.append("actions+=");
+			str.append("return;\r\n");
+		}
 		if (prepend) str.append("actions+=");
 		str.append("}");
     }
@@ -1131,6 +1137,7 @@ rule_t* rule_item()
     {
         auto node = new rule_t;
         node->action = -1;
+		node->ret_on_call = (action == "call_action_list" ? 0 : 1);
         std::string key;
         int vpos;
         int processed_if = 0;

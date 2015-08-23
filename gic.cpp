@@ -190,6 +190,7 @@ gic::gic(QWidget *parent)
 		<< "SPELL(ragingblow);"
 		<< "SPELL(wildstrike);"
 		<< "SPELL(whirlwind);"
+		<< "SPELL(execute);"
 		<< "SPELL(potion);"
 		<< "SPELL(berserkerrage);"
 		<< "SPELL(recklessness);"

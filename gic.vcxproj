@@ -147,6 +147,7 @@
     <ClInclude Include="GeneratedFiles\ui_gic.h" />
     <ClInclude Include="irecore.h" />
     <ClInclude Include="resource.h" />
+    <ClInclude Include="VersionNo.h" />
   </ItemGroup>
   <ItemGroup>
     <CustomBuild Include="gic.qrc">

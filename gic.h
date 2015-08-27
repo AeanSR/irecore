@@ -1,8 +1,8 @@
 /*
-	Copyright (C) 2015 Aean(a.k.a. fhsvengetta)
-	All rights reserved.
+    Copyright (C) 2015 Aean(a.k.a. fhsvengetta)
+    All rights reserved.
 
-	IreCore is distributed under the terms of The MIT License.
+    IreCore is distributed under the terms of The MIT License.
     You should have received a copy of the MIT License along with this program.
     If not, see <http://opensource.org/licenses/mit-license.php>.
 */
@@ -25,49 +25,49 @@
 
 class gic : public QMainWindow
 {
-	Q_OBJECT
+    Q_OBJECT
 
 public:
-	gic(QWidget *parent = 0);
-	~gic();
-	void reset_result_page();
-	void run_simulation();
-	void set_arguments();
-	void import_player(std::string& realm, std::string& name, std::string& region);
-	//int retrive_item_subclass(int id, std::string& region);
+    gic( QWidget* parent = 0 );
+    ~gic();
+    void reset_result_page();
+    void run_simulation();
+    void set_arguments();
+    void import_player( std::string& realm, std::string& name, std::string& region );
+    //int retrive_item_subclass(int id, std::string& region);
 private slots:
     void on_btnRun_clicked();
-	void on_btnImport_clicked();
-	void on_btnResetBuild_clicked();
-	void on_btnGenerateDefaultAPL_clicked();
-	void on_listActions_itemDoubleClicked();
-	void on_listConditions_itemDoubleClicked();
-	void on_comboIncandescence_currentIndexChanged(int);
-	void TxtBoxNotify(QString);
-	void mh_dps_calculate();
-	void oh_dps_calculate();
-	void gear_summary_calculate();
-	void select_gear_slot();
+    void on_btnImport_clicked();
+    void on_btnResetBuild_clicked();
+    void on_btnGenerateDefaultAPL_clicked();
+    void on_listActions_itemDoubleClicked();
+    void on_listConditions_itemDoubleClicked();
+    void on_comboIncandescence_currentIndexChanged( int );
+    void TxtBoxNotify( QString );
+    void mh_dps_calculate();
+    void oh_dps_calculate();
+    void gear_summary_calculate();
+    void select_gear_slot();
 private:
-	Ui::gicClass ui;
-	
+    Ui::gicClass ui;
+
 };
 
-class getjson{
+class getjson {
 
 private:
-	QUrl url;
-	QNetworkAccessManager qnam;
-	QNetworkReply *reply;
-	gic* pg;
+    QUrl url;
+    QNetworkAccessManager qnam;
+    QNetworkReply* reply;
+    gic* pg;
 public:
-	void set_url(QString& surl){
-		url.setUrl(surl, QUrl::ParsingMode::TolerantMode);
-	}
-	void set_parent(gic* _pg){
-		pg = _pg;
-	}
-	rapidjson::Document get();
+    void set_url( QString& surl ) {
+        url.setUrl( surl, QUrl::ParsingMode::TolerantMode );
+    }
+    void set_parent( gic* _pg ) {
+        pg = _pg;
+    }
+    rapidjson::Document get();
 };
 
 

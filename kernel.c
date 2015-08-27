@@ -5,7 +5,7 @@
     All kernel source goes here exposed to the air, for your convenience to edit.
     But it is NOT recommended if you are not definitely sure how to edit.
 
-	Copyright (C) 2014, 2015 Aean <v#aean.net>
+    Copyright (C) 2014, 2015 Aean <v#aean.net>
     All rights reserved.
 
     IreCore is distributed under the terms of The MIT License.
@@ -3717,114 +3717,114 @@ void special_procs( rtinfo_t* rti, k32u target_id ) {
 void scan_apl( rtinfo_t* rti ) {
 
 // Translated by apltr.
-if((0.000000f>5.000000f)){
-T41(SPELL(stormbolt),0);
-return;
-}
-if((!UP(enrage.expire)||(0.000000f&&(rti->player.ragingblow.stack<2.000000f))))SPELL(berserkerrage);
-if((((num_enemies>1.000000f)||!0)&&(((T63(1,0)&&(T63(TO_SECONDS(REMAIN(bladestorm.cd)),0)==0.000000f))||UP(recklessness.expire))||(TO_SECONDS(TIME_DISTANT(rti->expected_combat_length))<25.000000f))))LEGENDARY(SPELL(thorasus_the_stone_heart_of_draenor),0);
-if((((enemy_health_percent(rti)<20.000000f)&&UP(recklessness.expire))||(TO_SECONDS(TIME_DISTANT(rti->expected_combat_length))<=30.000000f)))POTION(SPELL(potion),0);
-if(((((65535<60.000000f)&&(0>2.000000f))&&(num_enemies==1.000000f))||(65535<5.000000f))){
-T62(SPELL(bloodbath),0);
-if(((enemy_health_percent(rti)<20.000000f)&&0))SPELL(recklessness);
-if(((rti->player.power>(power_max-20.000000f))&&(enemy_health_percent(rti)>20.000000f)))SPELL(wildstrike);
-if((((!T33(1,0)&&(rti->player.power<(power_max-40.000000f)))||!UP(enrage.expire))||(rti->player.ragingblow.stack<2.000000f)))SPELL(bloodthirst);
-if((T62(UP(bloodbath.expire),0)||(!T62(1,0)&&((!0||(0>60.000000f))||(TO_SECONDS(TIME_DISTANT(rti->expected_combat_length))<40.000000f)))))T72(SPELL(ravager),0);
-T73(SPELL(siegebreaker),0);
-if(T32(UP(suddendeath.expire),0))SPELL(execute);
-T41(SPELL(stormbolt),0);
-if(UP(bloodsurge.expire))SPELL(wildstrike);
-if((UP(enrage.expire)||(TO_SECONDS(TIME_DISTANT(rti->expected_combat_length))<12.000000f)))SPELL(execute);
-if((T62(UP(bloodbath.expire),0)||!T62(1,0)))T43(SPELL(dragonroar),0);
-SPELL(ragingblow);
-if(((TO_SECONDS(REMAIN(bloodthirst.cd))<0.500000f)&&(rti->player.power<50.000000f)))return;
-if((UP(enrage.expire)&&(enemy_health_percent(rti)>20.000000f)))SPELL(wildstrike);
-if(!0)T63(SPELL(bladestorm),0);
-if(!T33(1,0))T42(SPELL(shockwave),0);
-SPELL(bloodthirst);
-return;
-}
-if((((((T62(UP(bloodbath.expire),0)||(T62(TO_SECONDS(REMAIN(bloodbath.cd)),0)>25.000000f))||!T62(1,0))||(TO_SECONDS(TIME_DISTANT(rti->expected_combat_length))<15.000000f))&&((T63(1,0)&&(!0||(num_enemies==1.000000f)))||!T63(1,0)))&&t18_4pc))SPELL(recklessness);
-if(((T71(1,0)&&((T63(1,0)&&(!0||(num_enemies==1.000000f)))||!T63(1,0)))&&!t18_4pc)){
-if((((TO_SECONDS(TIME_DISTANT(rti->expected_combat_length))>140.000000f)||(enemy_health_percent(rti)<20.000000f))&&((T62(UP(bloodbath.expire),0)||!T62(1,0))||(TO_SECONDS(TIME_DISTANT(rti->expected_combat_length))<15.000000f))))SPELL(recklessness);
-}
-if(((!T71(1,0)&&((T63(1,0)&&(!0||(num_enemies==1.000000f)))||!T63(1,0)))&&!t18_4pc)){
-if((((TO_SECONDS(TIME_DISTANT(rti->expected_combat_length))>190.000000f)||(enemy_health_percent(rti)<20.000000f))&&((T62(UP(bloodbath.expire),0)||!T62(1,0))||(TO_SECONDS(TIME_DISTANT(rti->expected_combat_length))<15.000000f))))SPELL(recklessness);
-}
-if(((UP(recklessness.expire)||(TO_SECONDS(REMAIN(recklessness.cd))>60.000000f))||(TO_SECONDS(TIME_DISTANT(rti->expected_combat_length))<30.000000f)))T61(SPELL(avatar),0);
-if(((T62(UP(bloodbath.expire),0)||!T62(1,0))||UP(recklessness.expire)))ORC(SPELL(bloodfury),0);
-if(((T62(UP(bloodbath.expire),0)||!T62(1,0))||UP(recklessness.expire)))TROLL(SPELL(berserking),0);
-if((rti->player.power<(power_max-40.000000f)))BELF(SPELL(arcanetorrent),0);
-if((num_enemies==2.000000f)){
-T62(SPELL(bloodbath),0);
-if((T62(UP(bloodbath.expire),0)||!T62(1,0)))T72(SPELL(ravager),0);
-if((T62(UP(bloodbath.expire),0)||!T62(1,0)))T43(SPELL(dragonroar),0);
-{
-if(((TO_SECONDS(REMAIN(enrage.expire))>6.000000f)&&((((T71(1,0)&&(0>45.000000f))||(!T71(1,0)&&(0>60.000000f)))||!0)||(num_enemies>num_enemies))))SPELL(recklessness);
-if(((TO_SECONDS(REMAIN(enrage.expire))>6.000000f)&&((((T71(1,0)&&(0>45.000000f))||(!T71(1,0)&&(0>60.000000f)))||!0)||(num_enemies>num_enemies))))T63(SPELL(bladestorm),0);
-}
-if(((!UP(enrage.expire)||(rti->player.power<40.000000f))||!UP(ragingblow.expire)))SPELL(bloodthirst);
-T73(SPELL(siegebreaker),0);
-SPELL(execute);
-if((UP(meatcleaver.expire)||(enemy_health_percent(rti)<20.000000f)))SPELL(ragingblow);
-if((!UP(meatcleaver.expire)&&(enemy_health_percent(rti)>20.000000f)))SPELL(whirlwind);
-if(UP(bloodsurge.expire))SPELL(wildstrike);
-SPELL(bloodthirst);
-SPELL(whirlwind);
-}
-if((num_enemies==3.000000f)){
-T62(SPELL(bloodbath),0);
-if((T62(UP(bloodbath.expire),0)||!T62(1,0)))T72(SPELL(ravager),0);
-{
-if(((TO_SECONDS(REMAIN(enrage.expire))>6.000000f)&&((((T71(1,0)&&(0>45.000000f))||(!T71(1,0)&&(0>60.000000f)))||!0)||(num_enemies>num_enemies))))SPELL(recklessness);
-if(((TO_SECONDS(REMAIN(enrage.expire))>6.000000f)&&((((T71(1,0)&&(0>45.000000f))||(!T71(1,0)&&(0>60.000000f)))||!0)||(num_enemies>num_enemies))))T63(SPELL(bladestorm),0);
-}
-if(((!UP(enrage.expire)||(rti->player.power<50.000000f))||!UP(ragingblow.expire)))SPELL(bloodthirst);
-if((rti->player.meatcleaver.stack>=2.000000f))SPELL(ragingblow);
-T73(SPELL(siegebreaker),0);
-SPELL(execute);
-if((T62(UP(bloodbath.expire),0)||!T62(1,0)))T43(SPELL(dragonroar),0);
-if((enemy_health_percent(rti)>20.000000f))SPELL(whirlwind);
-SPELL(bloodthirst);
-if(UP(bloodsurge.expire))SPELL(wildstrike);
-SPELL(ragingblow);
-}
-if((num_enemies>3.000000f)){
-T62(SPELL(bloodbath),0);
-if((T62(UP(bloodbath.expire),0)||!T62(1,0)))T72(SPELL(ravager),0);
-if(((rti->player.meatcleaver.stack>=3.000000f)&&UP(enrage.expire)))SPELL(ragingblow);
-if(((!UP(enrage.expire)||(rti->player.power<50.000000f))||!UP(ragingblow.expire)))SPELL(bloodthirst);
-if((rti->player.meatcleaver.stack>=3.000000f))SPELL(ragingblow);
-{
-if(((TO_SECONDS(REMAIN(enrage.expire))>6.000000f)&&((((T71(1,0)&&(0>45.000000f))||(!T71(1,0)&&(0>60.000000f)))||!0)||(num_enemies>num_enemies))))SPELL(recklessness);
-if(((TO_SECONDS(REMAIN(enrage.expire))>6.000000f)&&((((T71(1,0)&&(0>45.000000f))||(!T71(1,0)&&(0>60.000000f)))||!0)||(num_enemies>num_enemies))))T63(SPELL(bladestorm),0);
-}
-SPELL(whirlwind);
-T73(SPELL(siegebreaker),0);
-if(T32(UP(suddendeath.expire),0))SPELL(execute);
-if((T62(UP(bloodbath.expire),0)||!T62(1,0)))T43(SPELL(dragonroar),0);
-SPELL(bloodthirst);
-if(UP(bloodsurge.expire))SPELL(wildstrike);
-}
-{
-T62(SPELL(bloodbath),0);
-if(((enemy_health_percent(rti)<20.000000f)&&0))SPELL(recklessness);
-if(((rti->player.power>(power_max-20.000000f))&&(enemy_health_percent(rti)>20.000000f)))SPELL(wildstrike);
-if((((!T33(1,0)&&(rti->player.power<(power_max-40.000000f)))||!UP(enrage.expire))||(rti->player.ragingblow.stack<2.000000f)))SPELL(bloodthirst);
-if((T62(UP(bloodbath.expire),0)||(!T62(1,0)&&((!0||(0>60.000000f))||(TO_SECONDS(TIME_DISTANT(rti->expected_combat_length))<40.000000f)))))T72(SPELL(ravager),0);
-T73(SPELL(siegebreaker),0);
-if(T32(UP(suddendeath.expire),0))SPELL(execute);
-T41(SPELL(stormbolt),0);
-if(UP(bloodsurge.expire))SPELL(wildstrike);
-if((UP(enrage.expire)||(TO_SECONDS(TIME_DISTANT(rti->expected_combat_length))<12.000000f)))SPELL(execute);
-if((T62(UP(bloodbath.expire),0)||!T62(1,0)))T43(SPELL(dragonroar),0);
-SPELL(ragingblow);
-if(((TO_SECONDS(REMAIN(bloodthirst.cd))<0.500000f)&&(rti->player.power<50.000000f)))return;
-if((UP(enrage.expire)&&(enemy_health_percent(rti)>20.000000f)))SPELL(wildstrike);
-if(!0)T63(SPELL(bladestorm),0);
-if(!T33(1,0))T42(SPELL(shockwave),0);
-SPELL(bloodthirst);
-}
+    if( ( 0.000000f > 5.000000f ) ) {
+        T41( SPELL( stormbolt ), 0 );
+        return;
+    }
+    if( ( !UP( enrage.expire ) || ( 0.000000f && ( rti->player.ragingblow.stack < 2.000000f ) ) ) )SPELL( berserkerrage );
+    if( ( ( ( num_enemies > 1.000000f ) || !0 ) && ( ( ( T63( 1, 0 ) && ( T63( TO_SECONDS( REMAIN( bladestorm.cd ) ), 0 ) == 0.000000f ) ) || UP( recklessness.expire ) ) || ( TO_SECONDS( TIME_DISTANT( rti->expected_combat_length ) ) < 25.000000f ) ) ) )LEGENDARY( SPELL( thorasus_the_stone_heart_of_draenor ), 0 );
+    if( ( ( ( enemy_health_percent( rti ) < 20.000000f ) && UP( recklessness.expire ) ) || ( TO_SECONDS( TIME_DISTANT( rti->expected_combat_length ) ) <= 30.000000f ) ) )POTION( SPELL( potion ), 0 );
+    if( ( ( ( ( 65535 < 60.000000f ) && ( 0 > 2.000000f ) ) && ( num_enemies == 1.000000f ) ) || ( 65535 < 5.000000f ) ) ) {
+        T62( SPELL( bloodbath ), 0 );
+        if( ( ( enemy_health_percent( rti ) < 20.000000f ) && 0 ) )SPELL( recklessness );
+        if( ( ( rti->player.power > ( power_max - 20.000000f ) ) && ( enemy_health_percent( rti ) > 20.000000f ) ) )SPELL( wildstrike );
+        if( ( ( ( !T33( 1, 0 ) && ( rti->player.power < ( power_max - 40.000000f ) ) ) || !UP( enrage.expire ) ) || ( rti->player.ragingblow.stack < 2.000000f ) ) )SPELL( bloodthirst );
+        if( ( T62( UP( bloodbath.expire ), 0 ) || ( !T62( 1, 0 ) && ( ( !0 || ( 0 > 60.000000f ) ) || ( TO_SECONDS( TIME_DISTANT( rti->expected_combat_length ) ) < 40.000000f ) ) ) ) )T72( SPELL( ravager ), 0 );
+        T73( SPELL( siegebreaker ), 0 );
+        if( T32( UP( suddendeath.expire ), 0 ) )SPELL( execute );
+        T41( SPELL( stormbolt ), 0 );
+        if( UP( bloodsurge.expire ) )SPELL( wildstrike );
+        if( ( UP( enrage.expire ) || ( TO_SECONDS( TIME_DISTANT( rti->expected_combat_length ) ) < 12.000000f ) ) )SPELL( execute );
+        if( ( T62( UP( bloodbath.expire ), 0 ) || !T62( 1, 0 ) ) )T43( SPELL( dragonroar ), 0 );
+        SPELL( ragingblow );
+        if( ( ( TO_SECONDS( REMAIN( bloodthirst.cd ) ) < 0.500000f ) && ( rti->player.power < 50.000000f ) ) )return;
+        if( ( UP( enrage.expire ) && ( enemy_health_percent( rti ) > 20.000000f ) ) )SPELL( wildstrike );
+        if( !0 )T63( SPELL( bladestorm ), 0 );
+        if( !T33( 1, 0 ) )T42( SPELL( shockwave ), 0 );
+        SPELL( bloodthirst );
+        return;
+    }
+    if( ( ( ( ( ( T62( UP( bloodbath.expire ), 0 ) || ( T62( TO_SECONDS( REMAIN( bloodbath.cd ) ), 0 ) > 25.000000f ) ) || !T62( 1, 0 ) ) || ( TO_SECONDS( TIME_DISTANT( rti->expected_combat_length ) ) < 15.000000f ) ) && ( ( T63( 1, 0 ) && ( !0 || ( num_enemies == 1.000000f ) ) ) || !T63( 1, 0 ) ) ) && t18_4pc ) )SPELL( recklessness );
+    if( ( ( T71( 1, 0 ) && ( ( T63( 1, 0 ) && ( !0 || ( num_enemies == 1.000000f ) ) ) || !T63( 1, 0 ) ) ) && !t18_4pc ) ) {
+        if( ( ( ( TO_SECONDS( TIME_DISTANT( rti->expected_combat_length ) ) > 140.000000f ) || ( enemy_health_percent( rti ) < 20.000000f ) ) && ( ( T62( UP( bloodbath.expire ), 0 ) || !T62( 1, 0 ) ) || ( TO_SECONDS( TIME_DISTANT( rti->expected_combat_length ) ) < 15.000000f ) ) ) )SPELL( recklessness );
+    }
+    if( ( ( !T71( 1, 0 ) && ( ( T63( 1, 0 ) && ( !0 || ( num_enemies == 1.000000f ) ) ) || !T63( 1, 0 ) ) ) && !t18_4pc ) ) {
+        if( ( ( ( TO_SECONDS( TIME_DISTANT( rti->expected_combat_length ) ) > 190.000000f ) || ( enemy_health_percent( rti ) < 20.000000f ) ) && ( ( T62( UP( bloodbath.expire ), 0 ) || !T62( 1, 0 ) ) || ( TO_SECONDS( TIME_DISTANT( rti->expected_combat_length ) ) < 15.000000f ) ) ) )SPELL( recklessness );
+    }
+    if( ( ( UP( recklessness.expire ) || ( TO_SECONDS( REMAIN( recklessness.cd ) ) > 60.000000f ) ) || ( TO_SECONDS( TIME_DISTANT( rti->expected_combat_length ) ) < 30.000000f ) ) )T61( SPELL( avatar ), 0 );
+    if( ( ( T62( UP( bloodbath.expire ), 0 ) || !T62( 1, 0 ) ) || UP( recklessness.expire ) ) )ORC( SPELL( bloodfury ), 0 );
+    if( ( ( T62( UP( bloodbath.expire ), 0 ) || !T62( 1, 0 ) ) || UP( recklessness.expire ) ) )TROLL( SPELL( berserking ), 0 );
+    if( ( rti->player.power < ( power_max - 40.000000f ) ) )BELF( SPELL( arcanetorrent ), 0 );
+    if( ( num_enemies == 2.000000f ) ) {
+        T62( SPELL( bloodbath ), 0 );
+        if( ( T62( UP( bloodbath.expire ), 0 ) || !T62( 1, 0 ) ) )T72( SPELL( ravager ), 0 );
+        if( ( T62( UP( bloodbath.expire ), 0 ) || !T62( 1, 0 ) ) )T43( SPELL( dragonroar ), 0 );
+        {
+            if( ( ( TO_SECONDS( REMAIN( enrage.expire ) ) > 6.000000f ) && ( ( ( ( T71( 1, 0 ) && ( 0 > 45.000000f ) ) || ( !T71( 1, 0 ) && ( 0 > 60.000000f ) ) ) || !0 ) || ( num_enemies > num_enemies ) ) ) )SPELL( recklessness );
+            if( ( ( TO_SECONDS( REMAIN( enrage.expire ) ) > 6.000000f ) && ( ( ( ( T71( 1, 0 ) && ( 0 > 45.000000f ) ) || ( !T71( 1, 0 ) && ( 0 > 60.000000f ) ) ) || !0 ) || ( num_enemies > num_enemies ) ) ) )T63( SPELL( bladestorm ), 0 );
+        }
+        if( ( ( !UP( enrage.expire ) || ( rti->player.power < 40.000000f ) ) || !UP( ragingblow.expire ) ) )SPELL( bloodthirst );
+        T73( SPELL( siegebreaker ), 0 );
+        SPELL( execute );
+        if( ( UP( meatcleaver.expire ) || ( enemy_health_percent( rti ) < 20.000000f ) ) )SPELL( ragingblow );
+        if( ( !UP( meatcleaver.expire ) && ( enemy_health_percent( rti ) > 20.000000f ) ) )SPELL( whirlwind );
+        if( UP( bloodsurge.expire ) )SPELL( wildstrike );
+        SPELL( bloodthirst );
+        SPELL( whirlwind );
+    }
+    if( ( num_enemies == 3.000000f ) ) {
+        T62( SPELL( bloodbath ), 0 );
+        if( ( T62( UP( bloodbath.expire ), 0 ) || !T62( 1, 0 ) ) )T72( SPELL( ravager ), 0 );
+        {
+            if( ( ( TO_SECONDS( REMAIN( enrage.expire ) ) > 6.000000f ) && ( ( ( ( T71( 1, 0 ) && ( 0 > 45.000000f ) ) || ( !T71( 1, 0 ) && ( 0 > 60.000000f ) ) ) || !0 ) || ( num_enemies > num_enemies ) ) ) )SPELL( recklessness );
+            if( ( ( TO_SECONDS( REMAIN( enrage.expire ) ) > 6.000000f ) && ( ( ( ( T71( 1, 0 ) && ( 0 > 45.000000f ) ) || ( !T71( 1, 0 ) && ( 0 > 60.000000f ) ) ) || !0 ) || ( num_enemies > num_enemies ) ) ) )T63( SPELL( bladestorm ), 0 );
+        }
+        if( ( ( !UP( enrage.expire ) || ( rti->player.power < 50.000000f ) ) || !UP( ragingblow.expire ) ) )SPELL( bloodthirst );
+        if( ( rti->player.meatcleaver.stack >= 2.000000f ) )SPELL( ragingblow );
+        T73( SPELL( siegebreaker ), 0 );
+        SPELL( execute );
+        if( ( T62( UP( bloodbath.expire ), 0 ) || !T62( 1, 0 ) ) )T43( SPELL( dragonroar ), 0 );
+        if( ( enemy_health_percent( rti ) > 20.000000f ) )SPELL( whirlwind );
+        SPELL( bloodthirst );
+        if( UP( bloodsurge.expire ) )SPELL( wildstrike );
+        SPELL( ragingblow );
+    }
+    if( ( num_enemies > 3.000000f ) ) {
+        T62( SPELL( bloodbath ), 0 );
+        if( ( T62( UP( bloodbath.expire ), 0 ) || !T62( 1, 0 ) ) )T72( SPELL( ravager ), 0 );
+        if( ( ( rti->player.meatcleaver.stack >= 3.000000f ) && UP( enrage.expire ) ) )SPELL( ragingblow );
+        if( ( ( !UP( enrage.expire ) || ( rti->player.power < 50.000000f ) ) || !UP( ragingblow.expire ) ) )SPELL( bloodthirst );
+        if( ( rti->player.meatcleaver.stack >= 3.000000f ) )SPELL( ragingblow );
+        {
+            if( ( ( TO_SECONDS( REMAIN( enrage.expire ) ) > 6.000000f ) && ( ( ( ( T71( 1, 0 ) && ( 0 > 45.000000f ) ) || ( !T71( 1, 0 ) && ( 0 > 60.000000f ) ) ) || !0 ) || ( num_enemies > num_enemies ) ) ) )SPELL( recklessness );
+            if( ( ( TO_SECONDS( REMAIN( enrage.expire ) ) > 6.000000f ) && ( ( ( ( T71( 1, 0 ) && ( 0 > 45.000000f ) ) || ( !T71( 1, 0 ) && ( 0 > 60.000000f ) ) ) || !0 ) || ( num_enemies > num_enemies ) ) ) )T63( SPELL( bladestorm ), 0 );
+        }
+        SPELL( whirlwind );
+        T73( SPELL( siegebreaker ), 0 );
+        if( T32( UP( suddendeath.expire ), 0 ) )SPELL( execute );
+        if( ( T62( UP( bloodbath.expire ), 0 ) || !T62( 1, 0 ) ) )T43( SPELL( dragonroar ), 0 );
+        SPELL( bloodthirst );
+        if( UP( bloodsurge.expire ) )SPELL( wildstrike );
+    }
+    {
+        T62( SPELL( bloodbath ), 0 );
+        if( ( ( enemy_health_percent( rti ) < 20.000000f ) && 0 ) )SPELL( recklessness );
+        if( ( ( rti->player.power > ( power_max - 20.000000f ) ) && ( enemy_health_percent( rti ) > 20.000000f ) ) )SPELL( wildstrike );
+        if( ( ( ( !T33( 1, 0 ) && ( rti->player.power < ( power_max - 40.000000f ) ) ) || !UP( enrage.expire ) ) || ( rti->player.ragingblow.stack < 2.000000f ) ) )SPELL( bloodthirst );
+        if( ( T62( UP( bloodbath.expire ), 0 ) || ( !T62( 1, 0 ) && ( ( !0 || ( 0 > 60.000000f ) ) || ( TO_SECONDS( TIME_DISTANT( rti->expected_combat_length ) ) < 40.000000f ) ) ) ) )T72( SPELL( ravager ), 0 );
+        T73( SPELL( siegebreaker ), 0 );
+        if( T32( UP( suddendeath.expire ), 0 ) )SPELL( execute );
+        T41( SPELL( stormbolt ), 0 );
+        if( UP( bloodsurge.expire ) )SPELL( wildstrike );
+        if( ( UP( enrage.expire ) || ( TO_SECONDS( TIME_DISTANT( rti->expected_combat_length ) ) < 12.000000f ) ) )SPELL( execute );
+        if( ( T62( UP( bloodbath.expire ), 0 ) || !T62( 1, 0 ) ) )T43( SPELL( dragonroar ), 0 );
+        SPELL( ragingblow );
+        if( ( ( TO_SECONDS( REMAIN( bloodthirst.cd ) ) < 0.500000f ) && ( rti->player.power < 50.000000f ) ) )return;
+        if( ( UP( enrage.expire ) && ( enemy_health_percent( rti ) > 20.000000f ) ) )SPELL( wildstrike );
+        if( !0 )T63( SPELL( bladestorm ), 0 );
+        if( !T33( 1, 0 ) )T42( SPELL( shockwave ), 0 );
+        SPELL( bloodthirst );
+    }
 
 }
 

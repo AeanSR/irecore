@@ -1,13 +1,16 @@
 /**
-    IreCore kernel, Aean <v#aean.net>
-    based on LuaCL kernel https://github.com/llxibo/LuaCL
+    IreCore kernel
 
     *** EDIT AT YOUR OWN RISK! ***
     All kernel source goes here exposed to the air, for your convenience to edit.
     But it is NOT recommended if you are not definitely sure how to edit.
 
+	Copyright (C) 2014, 2015 Aean <v#aean.net>
+    All rights reserved.
+
     IreCore is distributed under the terms of The MIT License.
-    Free to use for any purpose. No warranty given.
+    You should have received a copy of the MIT License along with this program.
+    If not, see <http://opensource.org/licenses/mit-license.php>.
 */
 
 /*

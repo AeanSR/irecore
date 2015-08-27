@@ -1,6 +1,10 @@
 /*
     action priority list translator from SimC to IreCore.
-    Aeandarian 2015.8.21
+    Aeandarian(a.k.a. fhsvengetta) 2015.8.21
+    
+    IreCore is distributed under the terms of The MIT License.
+    You should have received a copy of the MIT License along with this program.
+    If not, see <http://opensource.org/licenses/mit-license.php>.
 */
 #define _CRT_SECURE_NO_WARNINGS
 #ifdef _MSC_VER

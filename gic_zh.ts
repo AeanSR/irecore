@@ -87,7 +87,7 @@ CPU is recommended since it outperforms most GPUs, and works more stably.</sourc
     <message>
         <location filename="gic.ui" line="367"/>
         <location filename="gic.ui" line="758"/>
-        <location filename="gic.cpp" line="402"/>
+        <location filename="gic.cpp" line="415"/>
         <source>Crit</source>
         <translation>爆击</translation>
     </message>
@@ -168,14 +168,14 @@ CPU is recommended since it outperforms most GPUs, and works more stably.</sourc
     <message>
         <location filename="gic.ui" line="377"/>
         <location filename="gic.ui" line="768"/>
-        <location filename="gic.cpp" line="403"/>
+        <location filename="gic.cpp" line="416"/>
         <source>Haste</source>
         <translation>急速</translation>
     </message>
     <message>
         <location filename="gic.ui" line="387"/>
         <location filename="gic.ui" line="778"/>
-        <location filename="gic.cpp" line="404"/>
+        <location filename="gic.cpp" line="417"/>
         <source>Mastery</source>
         <translation>精通</translation>
     </message>
@@ -482,7 +482,7 @@ When you meet compilation errors (Error -11) and got debug messages like &quot;e
     </message>
     <message>
         <location filename="gic.ui" line="1337"/>
-        <location filename="gic.cpp" line="400"/>
+        <location filename="gic.cpp" line="413"/>
         <source>Strength</source>
         <translation>力量</translation>
     </message>
@@ -710,489 +710,489 @@ When you meet compilation errors (Error -11) and got debug messages like &quot;e
         <translation>运行</translation>
     </message>
     <message>
-        <location filename="battlenet.cpp" line="17"/>
-        <location filename="battlenet.cpp" line="114"/>
-        <location filename="battlenet.cpp" line="118"/>
-        <location filename="battlenet.cpp" line="141"/>
+        <location filename="battlenet.cpp" line="33"/>
+        <location filename="battlenet.cpp" line="130"/>
+        <location filename="battlenet.cpp" line="134"/>
+        <location filename="battlenet.cpp" line="157"/>
         <source>Import Fail</source>
         <translation>导入失败</translation>
     </message>
     <message>
-        <location filename="battlenet.cpp" line="17"/>
+        <location filename="battlenet.cpp" line="33"/>
         <source>Cannot connect Battle.Net:
 </source>
         <translation>无法连接战网：
 </translation>
     </message>
     <message>
-        <location filename="battlenet.cpp" line="114"/>
+        <location filename="battlenet.cpp" line="130"/>
         <source>This character is not a warrior.</source>
         <translation>这个角色不是战士。</translation>
     </message>
     <message>
-        <location filename="battlenet.cpp" line="118"/>
+        <location filename="battlenet.cpp" line="134"/>
         <source>This character is not 100 lvl.</source>
         <translation>这个角色没有达到100级。</translation>
     </message>
     <message>
-        <location filename="battlenet.cpp" line="141"/>
+        <location filename="battlenet.cpp" line="157"/>
         <source>This character do not have fury spec.</source>
         <translation>这个角色没有狂暴专精。</translation>
     </message>
     <message>
-        <location filename="gic.cpp" line="80"/>
+        <location filename="gic.cpp" line="88"/>
         <source>Plate</source>
         <translation>板甲</translation>
     </message>
     <message>
-        <location filename="gic.cpp" line="81"/>
+        <location filename="gic.cpp" line="89"/>
         <source>Mail/Leather/Cloth</source>
         <translation>布/皮/锁</translation>
     </message>
     <message>
-        <location filename="gic.cpp" line="83"/>
+        <location filename="gic.cpp" line="91"/>
         <source>1H Sword/Axe/Mace/Fist</source>
         <translation>单手武器/拳套</translation>
     </message>
     <message>
-        <location filename="gic.cpp" line="82"/>
+        <location filename="gic.cpp" line="90"/>
         <source>2H Sword/Axe/Mace/Polearm</source>
         <translation>双手武器</translation>
     </message>
     <message>
-        <location filename="gic.cpp" line="84"/>
+        <location filename="gic.cpp" line="92"/>
         <source>Dagger</source>
         <translation>匕首</translation>
     </message>
     <message>
-        <location filename="gic.cpp" line="87"/>
+        <location filename="gic.cpp" line="95"/>
         <source>  Current Version: </source>
         <translation>  当前版本： </translation>
     </message>
     <message>
-        <location filename="gic.cpp" line="300"/>
+        <location filename="gic.cpp" line="313"/>
         <source>No Legendary Ring</source>
         <translation>没有传说戒指</translation>
     </message>
     <message>
-        <location filename="gic.cpp" line="301"/>
+        <location filename="gic.cpp" line="314"/>
         <source>Incandescence(690)</source>
         <translation>大法师的灼热（690）</translation>
     </message>
     <message>
-        <location filename="gic.cpp" line="302"/>
+        <location filename="gic.cpp" line="315"/>
         <source>Greater Incandescence(715)</source>
         <translation>大法师的炽燃（715）</translation>
     </message>
     <message>
-        <location filename="gic.cpp" line="303"/>
+        <location filename="gic.cpp" line="316"/>
         <source>Thorasus(735~795)</source>
         <translation>索拉苏斯（735~795）</translation>
     </message>
     <message>
-        <location filename="gic.cpp" line="306"/>
-        <location filename="gic.cpp" line="307"/>
+        <location filename="gic.cpp" line="319"/>
+        <location filename="gic.cpp" line="320"/>
         <source>No Enchantment.</source>
         <translation>没有附魔</translation>
     </message>
     <message>
-        <location filename="gic.cpp" line="308"/>
-        <location filename="gic.cpp" line="309"/>
+        <location filename="gic.cpp" line="321"/>
+        <location filename="gic.cpp" line="322"/>
         <source>Thunderlord</source>
         <translation>雷神之印</translation>
     </message>
     <message>
-        <location filename="gic.cpp" line="310"/>
-        <location filename="gic.cpp" line="311"/>
+        <location filename="gic.cpp" line="323"/>
+        <location filename="gic.cpp" line="324"/>
         <source>Bleeding Hollow</source>
         <translation>血环之印</translation>
     </message>
     <message>
-        <location filename="gic.cpp" line="312"/>
-        <location filename="gic.cpp" line="313"/>
+        <location filename="gic.cpp" line="325"/>
+        <location filename="gic.cpp" line="326"/>
         <source>Shattered Hand</source>
         <translation>碎手之印</translation>
     </message>
     <message>
-        <location filename="gic.cpp" line="323"/>
+        <location filename="gic.cpp" line="336"/>
         <source>No Trinket Special.</source>
         <translation>没有饰品特效</translation>
     </message>
     <message>
-        <location filename="gic.cpp" line="324"/>
-        <location filename="trinket_cmp.cpp" line="47"/>
-        <location filename="trinket_cmp.cpp" line="48"/>
-        <location filename="trinket_cmp.cpp" line="49"/>
-        <location filename="trinket_cmp.cpp" line="50"/>
-        <location filename="trinket_cmp.cpp" line="51"/>
-        <location filename="trinket_cmp.cpp" line="52"/>
+        <location filename="gic.cpp" line="337"/>
+        <location filename="trinket_cmp.cpp" line="56"/>
+        <location filename="trinket_cmp.cpp" line="57"/>
+        <location filename="trinket_cmp.cpp" line="58"/>
+        <location filename="trinket_cmp.cpp" line="59"/>
+        <location filename="trinket_cmp.cpp" line="60"/>
+        <location filename="trinket_cmp.cpp" line="61"/>
         <source>Vial of Convulsive Shadows</source>
         <translation>抽搐暗影之瓶</translation>
     </message>
     <message>
-        <location filename="gic.cpp" line="325"/>
-        <location filename="trinket_cmp.cpp" line="53"/>
-        <location filename="trinket_cmp.cpp" line="54"/>
-        <location filename="trinket_cmp.cpp" line="55"/>
-        <location filename="trinket_cmp.cpp" line="56"/>
-        <location filename="trinket_cmp.cpp" line="57"/>
-        <location filename="trinket_cmp.cpp" line="58"/>
+        <location filename="gic.cpp" line="338"/>
+        <location filename="trinket_cmp.cpp" line="62"/>
+        <location filename="trinket_cmp.cpp" line="63"/>
+        <location filename="trinket_cmp.cpp" line="64"/>
+        <location filename="trinket_cmp.cpp" line="65"/>
+        <location filename="trinket_cmp.cpp" line="66"/>
+        <location filename="trinket_cmp.cpp" line="67"/>
         <source>Forgemaster&apos;s Insignia</source>
         <translation>熔炉主管的徽记</translation>
     </message>
     <message>
-        <location filename="gic.cpp" line="326"/>
-        <location filename="trinket_cmp.cpp" line="59"/>
-        <location filename="trinket_cmp.cpp" line="60"/>
-        <location filename="trinket_cmp.cpp" line="61"/>
-        <location filename="trinket_cmp.cpp" line="62"/>
-        <location filename="trinket_cmp.cpp" line="63"/>
-        <location filename="trinket_cmp.cpp" line="64"/>
+        <location filename="gic.cpp" line="339"/>
+        <location filename="trinket_cmp.cpp" line="68"/>
+        <location filename="trinket_cmp.cpp" line="69"/>
+        <location filename="trinket_cmp.cpp" line="70"/>
+        <location filename="trinket_cmp.cpp" line="71"/>
+        <location filename="trinket_cmp.cpp" line="72"/>
+        <location filename="trinket_cmp.cpp" line="73"/>
         <source>Horn of Screaming Spirits</source>
         <translation>尖啸之魂号角</translation>
     </message>
     <message>
-        <location filename="gic.cpp" line="327"/>
-        <location filename="trinket_cmp.cpp" line="65"/>
+        <location filename="gic.cpp" line="340"/>
+        <location filename="trinket_cmp.cpp" line="74"/>
         <source>Scabbard of Kyanos</source>
         <translation>奇亚诺斯的剑鞘</translation>
     </message>
     <message>
-        <location filename="gic.cpp" line="328"/>
+        <location filename="gic.cpp" line="341"/>
         <source>Badge of Victory</source>
         <translation>胜利徽章</translation>
     </message>
     <message>
-        <location filename="gic.cpp" line="329"/>
+        <location filename="gic.cpp" line="342"/>
         <source>Insignia of Victory</source>
         <translation>胜利徽记</translation>
     </message>
     <message>
-        <location filename="gic.cpp" line="330"/>
-        <location filename="trinket_cmp.cpp" line="72"/>
-        <location filename="trinket_cmp.cpp" line="73"/>
-        <location filename="trinket_cmp.cpp" line="74"/>
-        <location filename="trinket_cmp.cpp" line="75"/>
-        <location filename="trinket_cmp.cpp" line="76"/>
-        <location filename="trinket_cmp.cpp" line="77"/>
+        <location filename="gic.cpp" line="343"/>
+        <location filename="trinket_cmp.cpp" line="81"/>
+        <location filename="trinket_cmp.cpp" line="82"/>
+        <location filename="trinket_cmp.cpp" line="83"/>
+        <location filename="trinket_cmp.cpp" line="84"/>
+        <location filename="trinket_cmp.cpp" line="85"/>
+        <location filename="trinket_cmp.cpp" line="86"/>
         <source>Tectus&apos; Beating Heart</source>
         <translation>泰克图斯的脉动之心</translation>
     </message>
     <message>
-        <location filename="gic.cpp" line="331"/>
-        <location filename="trinket_cmp.cpp" line="84"/>
+        <location filename="gic.cpp" line="344"/>
+        <location filename="trinket_cmp.cpp" line="93"/>
         <source>Formidable Fang</source>
         <translation>威凌之牙</translation>
     </message>
     <message>
-        <location filename="gic.cpp" line="332"/>
+        <location filename="gic.cpp" line="345"/>
         <source>Draenic Stone</source>
         <translation>点金石</translation>
     </message>
     <message>
-        <location filename="gic.cpp" line="333"/>
-        <location filename="trinket_cmp.cpp" line="93"/>
-        <location filename="trinket_cmp.cpp" line="94"/>
-        <location filename="trinket_cmp.cpp" line="95"/>
-        <location filename="trinket_cmp.cpp" line="96"/>
-        <location filename="trinket_cmp.cpp" line="97"/>
-        <location filename="trinket_cmp.cpp" line="98"/>
-        <source>Skull of War</source>
-        <translation>战争之颅</translation>
-    </message>
-    <message>
-        <location filename="gic.cpp" line="334"/>
-        <location filename="trinket_cmp.cpp" line="99"/>
-        <location filename="trinket_cmp.cpp" line="100"/>
-        <source>Mote of the Mountain</source>
-        <translation>活体之山微粒</translation>
-    </message>
-    <message>
-        <location filename="gic.cpp" line="335"/>
+        <location filename="gic.cpp" line="346"/>
+        <location filename="trinket_cmp.cpp" line="102"/>
         <location filename="trinket_cmp.cpp" line="103"/>
         <location filename="trinket_cmp.cpp" line="104"/>
         <location filename="trinket_cmp.cpp" line="105"/>
         <location filename="trinket_cmp.cpp" line="106"/>
         <location filename="trinket_cmp.cpp" line="107"/>
+        <source>Skull of War</source>
+        <translation>战争之颅</translation>
+    </message>
+    <message>
+        <location filename="gic.cpp" line="347"/>
         <location filename="trinket_cmp.cpp" line="108"/>
+        <location filename="trinket_cmp.cpp" line="109"/>
+        <source>Mote of the Mountain</source>
+        <translation>活体之山微粒</translation>
+    </message>
+    <message>
+        <location filename="gic.cpp" line="348"/>
+        <location filename="trinket_cmp.cpp" line="112"/>
+        <location filename="trinket_cmp.cpp" line="113"/>
+        <location filename="trinket_cmp.cpp" line="114"/>
+        <location filename="trinket_cmp.cpp" line="115"/>
+        <location filename="trinket_cmp.cpp" line="116"/>
+        <location filename="trinket_cmp.cpp" line="117"/>
         <source>Worldbreaker&apos;s Resolve</source>
         <translation>灭世者的决意</translation>
     </message>
     <message>
-        <location filename="gic.cpp" line="336"/>
-        <location filename="trinket_cmp.cpp" line="109"/>
-        <location filename="trinket_cmp.cpp" line="110"/>
-        <location filename="trinket_cmp.cpp" line="111"/>
-        <location filename="trinket_cmp.cpp" line="112"/>
-        <location filename="trinket_cmp.cpp" line="113"/>
-        <location filename="trinket_cmp.cpp" line="114"/>
+        <location filename="gic.cpp" line="349"/>
+        <location filename="trinket_cmp.cpp" line="118"/>
+        <location filename="trinket_cmp.cpp" line="119"/>
+        <location filename="trinket_cmp.cpp" line="120"/>
+        <location filename="trinket_cmp.cpp" line="121"/>
+        <location filename="trinket_cmp.cpp" line="122"/>
+        <location filename="trinket_cmp.cpp" line="123"/>
         <source>Discordant Chorus</source>
         <translation>不谐合声</translation>
     </message>
     <message>
-        <location filename="gic.cpp" line="337"/>
-        <location filename="trinket_cmp.cpp" line="115"/>
-        <location filename="trinket_cmp.cpp" line="116"/>
-        <location filename="trinket_cmp.cpp" line="117"/>
-        <location filename="trinket_cmp.cpp" line="118"/>
-        <location filename="trinket_cmp.cpp" line="119"/>
-        <location filename="trinket_cmp.cpp" line="120"/>
+        <location filename="gic.cpp" line="350"/>
+        <location filename="trinket_cmp.cpp" line="124"/>
+        <location filename="trinket_cmp.cpp" line="125"/>
+        <location filename="trinket_cmp.cpp" line="126"/>
+        <location filename="trinket_cmp.cpp" line="127"/>
+        <location filename="trinket_cmp.cpp" line="128"/>
+        <location filename="trinket_cmp.cpp" line="129"/>
         <source>Empty Drinking Horn</source>
         <translation>空角杯</translation>
     </message>
     <message>
-        <location filename="gic.cpp" line="338"/>
-        <location filename="trinket_cmp.cpp" line="121"/>
-        <location filename="trinket_cmp.cpp" line="122"/>
-        <location filename="trinket_cmp.cpp" line="123"/>
-        <location filename="trinket_cmp.cpp" line="124"/>
-        <location filename="trinket_cmp.cpp" line="125"/>
-        <location filename="trinket_cmp.cpp" line="126"/>
+        <location filename="gic.cpp" line="351"/>
+        <location filename="trinket_cmp.cpp" line="130"/>
+        <location filename="trinket_cmp.cpp" line="131"/>
+        <location filename="trinket_cmp.cpp" line="132"/>
+        <location filename="trinket_cmp.cpp" line="133"/>
+        <location filename="trinket_cmp.cpp" line="134"/>
+        <location filename="trinket_cmp.cpp" line="135"/>
         <source>Unending Hunger</source>
         <translation>无餍之饥</translation>
     </message>
     <message>
-        <location filename="gic.cpp" line="339"/>
-        <location filename="trinket_cmp.cpp" line="133"/>
-        <location filename="trinket_cmp.cpp" line="134"/>
-        <location filename="trinket_cmp.cpp" line="135"/>
-        <location filename="trinket_cmp.cpp" line="136"/>
+        <location filename="gic.cpp" line="352"/>
+        <location filename="trinket_cmp.cpp" line="142"/>
+        <location filename="trinket_cmp.cpp" line="143"/>
+        <location filename="trinket_cmp.cpp" line="144"/>
+        <location filename="trinket_cmp.cpp" line="145"/>
         <source>Spores of Alacrity</source>
         <translation>轻盈孢子</translation>
     </message>
     <message>
-        <location filename="gic.cpp" line="340"/>
-        <location filename="trinket_cmp.cpp" line="137"/>
-        <location filename="trinket_cmp.cpp" line="138"/>
-        <location filename="trinket_cmp.cpp" line="139"/>
-        <location filename="trinket_cmp.cpp" line="140"/>
+        <location filename="gic.cpp" line="353"/>
+        <location filename="trinket_cmp.cpp" line="146"/>
+        <location filename="trinket_cmp.cpp" line="147"/>
+        <location filename="trinket_cmp.cpp" line="148"/>
+        <location filename="trinket_cmp.cpp" line="149"/>
         <source>Bonemaw&apos;s Big Toe</source>
         <translation>骨喉的大脚趾</translation>
     </message>
     <message>
-        <location filename="gic.cpp" line="341"/>
-        <location filename="trinket_cmp.cpp" line="141"/>
-        <location filename="trinket_cmp.cpp" line="142"/>
-        <location filename="trinket_cmp.cpp" line="143"/>
-        <location filename="trinket_cmp.cpp" line="144"/>
+        <location filename="gic.cpp" line="354"/>
+        <location filename="trinket_cmp.cpp" line="150"/>
+        <location filename="trinket_cmp.cpp" line="151"/>
+        <location filename="trinket_cmp.cpp" line="152"/>
+        <location filename="trinket_cmp.cpp" line="153"/>
         <source>Emberscale Talisman</source>
         <translation>烬鳞护符</translation>
     </message>
     <message>
-        <location filename="gic.cpp" line="347"/>
-        <location filename="gic.cpp" line="365"/>
-        <location filename="gic.cpp" line="370"/>
-        <location filename="gic.cpp" line="375"/>
-        <location filename="gic.cpp" line="380"/>
-        <location filename="gic.cpp" line="385"/>
-        <location filename="gic.cpp" line="390"/>
-        <location filename="gic.cpp" line="395"/>
+        <location filename="gic.cpp" line="360"/>
+        <location filename="gic.cpp" line="378"/>
+        <location filename="gic.cpp" line="383"/>
+        <location filename="gic.cpp" line="388"/>
+        <location filename="gic.cpp" line="393"/>
+        <location filename="gic.cpp" line="398"/>
+        <location filename="gic.cpp" line="403"/>
+        <location filename="gic.cpp" line="408"/>
         <source>Not set.</source>
         <translation>未设置</translation>
     </message>
     <message>
-        <location filename="gic.cpp" line="348"/>
+        <location filename="gic.cpp" line="361"/>
         <source>Human</source>
         <translation>人类</translation>
     </message>
     <message>
-        <location filename="gic.cpp" line="349"/>
+        <location filename="gic.cpp" line="362"/>
         <source>Dwarf</source>
         <translation>矮人</translation>
     </message>
     <message>
-        <location filename="gic.cpp" line="350"/>
+        <location filename="gic.cpp" line="363"/>
         <source>Gnome</source>
         <translation>侏儒</translation>
     </message>
     <message>
-        <location filename="gic.cpp" line="351"/>
+        <location filename="gic.cpp" line="364"/>
         <source>Night Elf(day)</source>
         <translation>暗夜精灵（白天）</translation>
     </message>
     <message>
-        <location filename="gic.cpp" line="352"/>
+        <location filename="gic.cpp" line="365"/>
         <source>Night Elf(night)</source>
         <translation>暗夜精灵（夜晚）</translation>
     </message>
     <message>
-        <location filename="gic.cpp" line="353"/>
+        <location filename="gic.cpp" line="366"/>
         <source>Draenei</source>
         <translation>德莱尼</translation>
     </message>
     <message>
-        <location filename="gic.cpp" line="354"/>
+        <location filename="gic.cpp" line="367"/>
         <source>Worgen</source>
         <translation>狼人</translation>
     </message>
     <message>
-        <location filename="gic.cpp" line="355"/>
+        <location filename="gic.cpp" line="368"/>
         <source>Orc</source>
         <translation>兽人</translation>
     </message>
     <message>
-        <location filename="gic.cpp" line="356"/>
+        <location filename="gic.cpp" line="369"/>
         <source>Troll</source>
         <translation>巨魔</translation>
     </message>
     <message>
-        <location filename="gic.cpp" line="357"/>
+        <location filename="gic.cpp" line="370"/>
         <source>Tauren</source>
         <translation>牛头人</translation>
     </message>
     <message>
-        <location filename="gic.cpp" line="358"/>
+        <location filename="gic.cpp" line="371"/>
         <source>Undead</source>
         <translation>亡灵</translation>
     </message>
     <message>
-        <location filename="gic.cpp" line="359"/>
+        <location filename="gic.cpp" line="372"/>
         <source>Blood Elf</source>
         <translation>血精灵</translation>
     </message>
     <message>
-        <location filename="gic.cpp" line="360"/>
+        <location filename="gic.cpp" line="373"/>
         <source>Goblin</source>
         <translation>地精</translation>
     </message>
     <message>
-        <location filename="gic.cpp" line="361"/>
+        <location filename="gic.cpp" line="374"/>
         <source>Pandaren</source>
         <translation>熊猫人</translation>
     </message>
     <message>
-        <location filename="gic.cpp" line="366"/>
+        <location filename="gic.cpp" line="379"/>
         <source>Juggernaut</source>
         <translation>主宰</translation>
     </message>
     <message>
-        <location filename="gic.cpp" line="367"/>
+        <location filename="gic.cpp" line="380"/>
         <source>Double Time</source>
         <translation>再度冲锋</translation>
     </message>
     <message>
-        <location filename="gic.cpp" line="368"/>
+        <location filename="gic.cpp" line="381"/>
         <source>Warbringer</source>
         <translation>战神</translation>
     </message>
     <message>
-        <location filename="gic.cpp" line="371"/>
+        <location filename="gic.cpp" line="384"/>
         <source>Enraged Regeneration</source>
         <translation>狂暴回复</translation>
     </message>
     <message>
-        <location filename="gic.cpp" line="372"/>
+        <location filename="gic.cpp" line="385"/>
         <source>Second Wind</source>
         <translation>复苏之风</translation>
     </message>
     <message>
-        <location filename="gic.cpp" line="373"/>
+        <location filename="gic.cpp" line="386"/>
         <source>Impending Victory</source>
         <translation>胜利在望</translation>
     </message>
     <message>
-        <location filename="gic.cpp" line="376"/>
+        <location filename="gic.cpp" line="389"/>
         <source>Furious Strike</source>
         <translation>狂怒打击</translation>
     </message>
     <message>
-        <location filename="gic.cpp" line="377"/>
+        <location filename="gic.cpp" line="390"/>
         <source>Sudden Death</source>
         <translation>猝死</translation>
     </message>
     <message>
-        <location filename="gic.cpp" line="378"/>
+        <location filename="gic.cpp" line="391"/>
         <source>Unquenchable Thirst</source>
         <translation>无尽渴望</translation>
     </message>
     <message>
-        <location filename="gic.cpp" line="381"/>
+        <location filename="gic.cpp" line="394"/>
         <source>Storm Bolt</source>
         <translation>风暴之锤</translation>
     </message>
     <message>
-        <location filename="gic.cpp" line="382"/>
+        <location filename="gic.cpp" line="395"/>
         <source>Shockwave</source>
         <translation>震荡波</translation>
     </message>
     <message>
-        <location filename="gic.cpp" line="383"/>
+        <location filename="gic.cpp" line="396"/>
         <source>Dragon Roar</source>
         <translation>巨龙怒吼</translation>
     </message>
     <message>
-        <location filename="gic.cpp" line="386"/>
+        <location filename="gic.cpp" line="399"/>
         <source>Mass Spell Reflection</source>
         <translation>群体反射</translation>
     </message>
     <message>
-        <location filename="gic.cpp" line="387"/>
+        <location filename="gic.cpp" line="400"/>
         <source>Safeguard</source>
         <translation>捍卫</translation>
     </message>
     <message>
-        <location filename="gic.cpp" line="388"/>
+        <location filename="gic.cpp" line="401"/>
         <source>Vigilance</source>
         <translation>警戒</translation>
     </message>
     <message>
-        <location filename="gic.cpp" line="391"/>
+        <location filename="gic.cpp" line="404"/>
         <source>Avatar</source>
         <translation>天神下凡</translation>
     </message>
     <message>
-        <location filename="gic.cpp" line="392"/>
+        <location filename="gic.cpp" line="405"/>
         <source>Bloodbath</source>
         <translation>浴血奋战</translation>
     </message>
     <message>
-        <location filename="gic.cpp" line="393"/>
+        <location filename="gic.cpp" line="406"/>
         <source>Bladestorm</source>
         <translation>剑刃风暴</translation>
     </message>
     <message>
-        <location filename="gic.cpp" line="396"/>
+        <location filename="gic.cpp" line="409"/>
         <source>Anger Management</source>
         <translation>愤怒掌控</translation>
     </message>
     <message>
-        <location filename="gic.cpp" line="397"/>
+        <location filename="gic.cpp" line="410"/>
         <source>Ravager</source>
         <translation>破坏者</translation>
     </message>
     <message>
-        <location filename="gic.cpp" line="398"/>
+        <location filename="gic.cpp" line="411"/>
         <source>Siegebreaker</source>
         <translation>破城者</translation>
     </message>
     <message>
-        <location filename="gic.cpp" line="401"/>
+        <location filename="gic.cpp" line="414"/>
         <source>AP</source>
         <translation>攻击强度</translation>
     </message>
     <message>
-        <location filename="gic.cpp" line="743"/>
+        <location filename="gic.cpp" line="756"/>
         <source>Maxima Descent Start.
 </source>
         <translation>属性爬山开始
 </translation>
     </message>
     <message>
-        <location filename="gic.cpp" line="751"/>
+        <location filename="gic.cpp" line="764"/>
         <source>Maxima Descent Finished.
 </source>
         <translation>属性爬山完成
 </translation>
     </message>
     <message>
-        <location filename="gic.cpp" line="779"/>
+        <location filename="gic.cpp" line="792"/>
         <source>Contour Plot Start.
 </source>
         <translation>等高图开始
 </translation>
     </message>
     <message>
-        <location filename="gic.cpp" line="801"/>
+        <location filename="gic.cpp" line="814"/>
         <source>Contour Plot stats not set properly. Exact 3 stats should be checked.
 Reset to Crit-Haste-Mastery.
 </source>
@@ -1203,7 +1203,7 @@ Reset to Crit-Haste-Mastery.</oldsource>
 </translation>
     </message>
     <message>
-        <location filename="gic.cpp" line="805"/>
+        <location filename="gic.cpp" line="818"/>
         <source>Contour Plot Finished. Run &quot;plot.sci&quot; with SciLab(http://scilab.org/) to draw a figure.
 </source>
         <translation>等高图完成，使用SciLab(http://scilab.org)运行&quot;plot.sci&quot;来绘制图像</translation>
@@ -1216,185 +1216,195 @@ Reset to Crit-Haste-Mastery.</oldsource>
     </message>
     <message>
         <location filename="gic.ui" line="397"/>
-        <location filename="gic.cpp" line="405"/>
+        <location filename="gic.cpp" line="418"/>
         <source>Mult</source>
         <translation>溅射</translation>
     </message>
     <message>
         <location filename="gic.ui" line="404"/>
-        <location filename="gic.cpp" line="406"/>
+        <location filename="gic.cpp" line="419"/>
         <source>Vers</source>
         <translation>全能</translation>
     </message>
     <message>
-        <location filename="gic.cpp" line="407"/>
+        <location filename="gic.cpp" line="420"/>
         <source>Gear</source>
         <translation>装备</translation>
     </message>
     <message>
-        <location filename="gic.cpp" line="408"/>
+        <location filename="gic.cpp" line="421"/>
         <source>Buffed</source>
         <translation>Buff后</translation>
     </message>
     <message>
-        <location filename="gic.cpp" line="565"/>
+        <location filename="gic.cpp" line="578"/>
         <source>Set arguments...
 </source>
         <translation>设置参数...
 </translation>
     </message>
     <message>
-        <location filename="gic.cpp" line="624"/>
+        <location filename="gic.cpp" line="637"/>
         <source>Initializing compute cnvironment...
 </source>
         <translation>初始化运算环境...
 </translation>
     </message>
     <message>
-        <location filename="gic.cpp" line="629"/>
+        <location filename="gic.cpp" line="642"/>
         <source>Start simulation...
 </source>
         <translation>启动模拟...
 </translation>
     </message>
     <message>
-        <location filename="gic.cpp" line="632"/>
+        <location filename="gic.cpp" line="645"/>
         <source>Simulation finished.
 </source>
         <translation>模拟完成
 </translation>
     </message>
     <message>
-        <location filename="trinket_cmp.cpp" line="66"/>
+        <location filename="trinket_cmp.cpp" line="75"/>
         <source>Wild Gladiator&apos;s Badge of Victory</source>
         <translation>狂野角斗士的胜利徽章</translation>
     </message>
     <message>
-        <location filename="trinket_cmp.cpp" line="67"/>
+        <location filename="trinket_cmp.cpp" line="76"/>
         <source>Wild Combatant&apos;s Badge of Victory</source>
         <translation>狂野候选者的胜利徽章</translation>
     </message>
     <message>
-        <location filename="trinket_cmp.cpp" line="68"/>
+        <location filename="trinket_cmp.cpp" line="77"/>
         <source>Primal Combatant&apos;s Badge of Victory</source>
         <translation>原祖候选者的胜利徽章</translation>
     </message>
     <message>
-        <location filename="trinket_cmp.cpp" line="69"/>
+        <location filename="trinket_cmp.cpp" line="78"/>
         <source>Wild Gladiator&apos;s Insignia of Victory</source>
         <translation>狂野角斗士的胜利徽记</translation>
     </message>
     <message>
-        <location filename="trinket_cmp.cpp" line="70"/>
+        <location filename="trinket_cmp.cpp" line="79"/>
         <source>Wild Combatant&apos;s Insignia of Victory</source>
         <translation>狂野候选者的胜利徽记</translation>
     </message>
     <message>
-        <location filename="trinket_cmp.cpp" line="71"/>
+        <location filename="trinket_cmp.cpp" line="80"/>
         <source>Primal Combatant&apos;s Insignia of Victory</source>
         <translation>原祖候选者的胜利徽记</translation>
     </message>
     <message>
-        <location filename="trinket_cmp.cpp" line="78"/>
-        <location filename="trinket_cmp.cpp" line="79"/>
-        <location filename="trinket_cmp.cpp" line="80"/>
-        <location filename="trinket_cmp.cpp" line="81"/>
-        <location filename="trinket_cmp.cpp" line="82"/>
-        <location filename="trinket_cmp.cpp" line="83"/>
+        <location filename="trinket_cmp.cpp" line="87"/>
+        <location filename="trinket_cmp.cpp" line="88"/>
+        <location filename="trinket_cmp.cpp" line="89"/>
+        <location filename="trinket_cmp.cpp" line="90"/>
+        <location filename="trinket_cmp.cpp" line="91"/>
+        <location filename="trinket_cmp.cpp" line="92"/>
         <source>Bottle of Infesting Spores</source>
         <translation>感染孢子瓶</translation>
     </message>
     <message>
-        <location filename="trinket_cmp.cpp" line="85"/>
+        <location filename="trinket_cmp.cpp" line="94"/>
         <source>Grandiose Carnage</source>
         <translation>豪华之杀戮</translation>
     </message>
     <message>
-        <location filename="trinket_cmp.cpp" line="86"/>
+        <location filename="trinket_cmp.cpp" line="95"/>
         <source>Draenic Philosopher&apos;s Stone</source>
         <translation>德拉诺点金石</translation>
     </message>
     <message>
-        <location filename="trinket_cmp.cpp" line="87"/>
+        <location filename="trinket_cmp.cpp" line="96"/>
         <source>Stone of Wind</source>
         <translation>旋风之石</translation>
     </message>
     <message>
-        <location filename="trinket_cmp.cpp" line="88"/>
+        <location filename="trinket_cmp.cpp" line="97"/>
         <source>Stone of the Earth</source>
         <translation>大地之石</translation>
     </message>
     <message>
-        <location filename="trinket_cmp.cpp" line="89"/>
+        <location filename="trinket_cmp.cpp" line="98"/>
         <source>Stone of the Water</source>
         <translation>流水之石</translation>
     </message>
     <message>
-        <location filename="trinket_cmp.cpp" line="90"/>
+        <location filename="trinket_cmp.cpp" line="99"/>
         <source>Stone of Fire</source>
         <translation>烈火之石</translation>
     </message>
     <message>
-        <location filename="trinket_cmp.cpp" line="91"/>
+        <location filename="trinket_cmp.cpp" line="100"/>
         <source>Stone of the Wilds</source>
         <translation>荒野之石</translation>
     </message>
     <message>
-        <location filename="trinket_cmp.cpp" line="92"/>
+        <location filename="trinket_cmp.cpp" line="101"/>
         <source>Stone of the Elements</source>
         <translation>元素之石</translation>
     </message>
     <message>
-        <location filename="trinket_cmp.cpp" line="101"/>
-        <location filename="trinket_cmp.cpp" line="102"/>
+        <location filename="trinket_cmp.cpp" line="110"/>
+        <location filename="trinket_cmp.cpp" line="111"/>
         <source>Storage House Key</source>
         <translation>储藏室钥匙</translation>
     </message>
     <message>
-        <location filename="trinket_cmp.cpp" line="127"/>
-        <location filename="trinket_cmp.cpp" line="128"/>
-        <location filename="trinket_cmp.cpp" line="129"/>
-        <location filename="trinket_cmp.cpp" line="130"/>
-        <location filename="trinket_cmp.cpp" line="131"/>
-        <location filename="trinket_cmp.cpp" line="132"/>
+        <location filename="trinket_cmp.cpp" line="136"/>
+        <location filename="trinket_cmp.cpp" line="137"/>
+        <location filename="trinket_cmp.cpp" line="138"/>
+        <location filename="trinket_cmp.cpp" line="139"/>
+        <location filename="trinket_cmp.cpp" line="140"/>
+        <location filename="trinket_cmp.cpp" line="141"/>
         <source>Rumbling Pebble</source>
         <translation>低鸣之石</translation>
     </message>
     <message>
-        <location filename="trinket_cmp.cpp" line="45"/>
+        <location filename="trinket_cmp.cpp" line="54"/>
         <source>Start Trinket Benchmark.</source>
         <translation>开始饰品评分</translation>
     </message>
     <message>
-        <location filename="trinket_cmp.cpp" line="145"/>
-        <location filename="trinket_cmp.cpp" line="146"/>
-        <location filename="trinket_cmp.cpp" line="147"/>
-        <location filename="trinket_cmp.cpp" line="148"/>
+        <location filename="trinket_cmp.cpp" line="154"/>
+        <location filename="trinket_cmp.cpp" line="155"/>
+        <location filename="trinket_cmp.cpp" line="156"/>
+        <location filename="trinket_cmp.cpp" line="157"/>
         <source>Mote of Corruption</source>
         <translation>腐蚀微粒</translation>
     </message>
     <message>
-        <location filename="trinket_cmp.cpp" line="149"/>
-        <location filename="trinket_cmp.cpp" line="150"/>
-        <location filename="trinket_cmp.cpp" line="151"/>
-        <location filename="trinket_cmp.cpp" line="152"/>
+        <location filename="trinket_cmp.cpp" line="158"/>
+        <location filename="trinket_cmp.cpp" line="159"/>
+        <location filename="trinket_cmp.cpp" line="160"/>
+        <location filename="trinket_cmp.cpp" line="161"/>
         <source>Fires of the Sun</source>
         <translation>骄阳烈火</translation>
     </message>
     <message>
-        <location filename="trinket_cmp.cpp" line="153"/>
-        <location filename="trinket_cmp.cpp" line="154"/>
+        <location filename="trinket_cmp.cpp" line="162"/>
+        <location filename="trinket_cmp.cpp" line="163"/>
         <source>Unquenchable Doomfire Censer</source>
         <translation>不灭的魔火熏炉</translation>
     </message>
     <message>
-        <location filename="trinket_cmp.cpp" line="155"/>
-        <location filename="trinket_cmp.cpp" line="156"/>
+        <location filename="trinket_cmp.cpp" line="164"/>
+        <location filename="trinket_cmp.cpp" line="165"/>
         <source>Fetid Salivation</source>
         <translation>腐臭灵液</translation>
     </message>
     <message>
-        <location filename="trinket_cmp.cpp" line="194"/>
+        <location filename="trinket_cmp.cpp" line="166"/>
+        <source>Mark of Supreme Doom</source>
+        <translation>终极末日印记</translation>
+    </message>
+    <message>
+        <location filename="trinket_cmp.cpp" line="167"/>
+        <source>Chipped Soul Prism</source>
+        <translation>碎裂的灵魂棱镜</translation>
+    </message>
+    <message>
+        <location filename="trinket_cmp.cpp" line="205"/>
         <source>Trinket ladder saved as &quot;trinket_ladder.csv&quot;.</source>
         <translation>饰品天梯保存在&quot;trinket_ladder.csv&quot;当中</translation>
     </message>

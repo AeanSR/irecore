@@ -163,6 +163,8 @@ void trinket_benchmark() {
     trinkets_to_cmp.push_back( trinket_profile_t( QApplication::translate( "gicClass", "Unquenchable Doomfire Censer" ).toStdString(), 128153, 691, 281, 140, 0, 140, 0, 0 ) );
     trinkets_to_cmp.push_back( trinket_profile_t( QApplication::translate( "gicClass", "Fetid Salivation" ).toStdString(), 128148, 685, 265, 0, 265, 0, 0, 0 ) );
     trinkets_to_cmp.push_back( trinket_profile_t( QApplication::translate( "gicClass", "Fetid Salivation" ).toStdString(), 128148, 691, 281, 0, 281, 0, 0, 0 ) );
+    trinkets_to_cmp.push_back( trinket_profile_t( QApplication::translate( "gicClass", "Mark of Supreme Doom" ).toStdString(), 124546, 705, 187, 0, 0, 0, 0, 0 ) );
+    trinkets_to_cmp.push_back( trinket_profile_t( QApplication::translate( "gicClass", "Chipped Soul Prism" ).toStdString(), 124545, 705, 187, 187, 187, 187, 187, 187 ) );
 
     current_stat.gear_str = 0;
     current_stat.gear_crit = 0;

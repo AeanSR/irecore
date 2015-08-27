@@ -3751,7 +3751,7 @@ if((((TO_SECONDS(TIME_DISTANT(rti->expected_combat_length))>190.000000f)||(enemy
 if(((UP(recklessness.expire)||(TO_SECONDS(REMAIN(recklessness.cd))>60.000000f))||(TO_SECONDS(TIME_DISTANT(rti->expected_combat_length))<30.000000f)))T61(SPELL(avatar),0);
 if(((T62(UP(bloodbath.expire),0)||!T62(1,0))||UP(recklessness.expire)))ORC(SPELL(bloodfury),0);
 if(((T62(UP(bloodbath.expire),0)||!T62(1,0))||UP(recklessness.expire)))TROLL(SPELL(berserking),0);
-if((rti->player.power<(power_max-40.000000f)))BELF(SPELL(arcane_torrent),0);
+if((rti->player.power<(power_max-40.000000f)))BELF(SPELL(arcanetorrent),0);
 if((num_enemies==2.000000f)){
 T62(SPELL(bloodbath),0);
 if((T62(UP(bloodbath.expire),0)||!T62(1,0)))T72(SPELL(ravager),0);

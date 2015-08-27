@@ -175,7 +175,7 @@ item_t act_list[] =
     { "bladestorm",     "T63(SPELL(bladestorm),0)",         0 },
     { "avatar",         "T61(SPELL(avatar),0)",             0 },
     { "bloodbath",      "T62(SPELL(bloodbath),0)",          0 },
-    { "arcane_torrent", "BELF(SPELL(arcane_torrent),0)",    0 },
+    { "arcane_torrent", "BELF(SPELL(arcanetorrent),0)",    0 },
     { "blood_fury",     "ORC(SPELL(bloodfury),0)",          0 },
     { "berserking",     "TROLL(SPELL(berserking),0)",       0 },
     { "thorasus_the_stone_heart_of_draenor", "LEGENDARY(SPELL(thorasus_the_stone_heart_of_draenor),0)", 0 },

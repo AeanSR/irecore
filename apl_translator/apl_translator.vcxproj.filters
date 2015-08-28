@@ -15,7 +15,7 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="apl_translator\translator.cpp">
+    <ClCompile Include="translator.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

@@ -7,13 +7,6 @@
     If not, see <http://opensource.org/licenses/mit-license.php>.
 */
 
-/**
-    TODO:
-    * Chipped Soul Prism(124545) still only give intellect(5) in armory.
-      Double check it when next patch go live. str/agi/int may uses a different stat id from 4/72/74 so the importer would not recognize it.
-    * same for the Mark of Supreme Doom(124546), which only give str/agi(72) in armory.
-*/
-
 #include "irecore.h"
 #include "gic.h"
 
@@ -96,7 +89,7 @@ QString qsprint( int v );
     }
 }*/
 
-// stat 4,72,74 -> strength
+// stat 4,71,72,74 -> strength
 //      32 -> crit
 //      36 -> haste
 //      49 -> mastery
@@ -222,6 +215,7 @@ void gic::import_player( std::string& realm, std::string& name, std::string& reg
         for ( int k = 0; k < piecestat.Size(); k++ ) {
             switch ( piecestat[k]["stat"].GetInt() ) {
             case 5: if(itemid != 124545) break; /* Chipped Soul Prism uses 5 for Str/Agi/Int, which is only for Int on other items. */
+            case 71:
             case 4: case 72: case 74: gear_list[i].str += piecestat[k]["amount"].GetInt(); break;
             case 32: gear_list[i].crit += piecestat[k]["amount"].GetInt(); break;
             case 36: gear_list[i].haste += piecestat[k]["amount"].GetInt(); break;

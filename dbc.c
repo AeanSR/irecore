@@ -1,5 +1,5 @@
 /*
-	IreCore Database Jun 27 2015
+	IreCore Database Aug 29 2015
 */
 
 typedef struct{
@@ -2572,6 +2572,7 @@ int plate_list[] = {
 	 42883,// Iva's Boots
 	 42884,// Steel-Tipped Snowboots
 	 42885,// Mountaineer's Helm
+	 42949,// Polished Spaulders of Valor
 	 43068,// Blessed Spaulders of Undead Slaying
 	 43069,// Blessed Breastplate of Undead Slaying
 	 43070,// Blessed Gauntlets of Undead Slaying
@@ -2665,6 +2666,8 @@ int plate_list[] = {
 	 44046,// The Argent Crown
 	 44057,// Ivory-Reinforced Chestguard
 	 44058,// Whalebone Carapace
+	 44099,// Strengthened Stockade Pauldrons
+	 44100,// Pristine Lightforge Spaulders
 	 44111,// Gold Star Spaulders
 	 44112,// Glimmershell Shoulder Protectors
 	 44120,// Giant-Sized Gauntlets
@@ -3270,6 +3273,7 @@ int plate_list[] = {
 	 48659,// Liadrin's Faceguard of Triumph
 	 48660,// Liadrin's Legguards of Triumph
 	 48661,// Liadrin's Shoulderguards of Triumph
+	 48685,// Polished Breastplate of Valor
 	 48860,// Hellscream's Battleplate 
 	 48861,// Hellscream's Gauntlets 
 	 48862,// Hellscream's Helmet 
@@ -4082,6 +4086,8 @@ int plate_list[] = {
 	 61484,// Midnight Service Treads
 	 61487,// Rough Stone Carapace
 	 61502,// Deepstone Treads
+	 61931,// Polished Helm of Valor
+	 62023,// Polished Legplates of Valor
 	 62075,// Perforated Plate Shoulderpads
 	 62076,// Perforated Plate Pants
 	 62077,// Perforated Plate Gloves
@@ -4411,6 +4417,10 @@ int plate_list[] = {
 	 69641,// Troll Skull Chestplate
 	 69801,// Amani Armguards
 	 69842,// Garr's Reinforced Girdle of Memories
+	 69887,// Burnished Helm of Might
+	 69888,// Burnished Legplates of Might
+	 69889,// Burnished Breastplate of Might
+	 69890,// Burnished Pauldrons of Might
 	 69936,// Fists of Fury
 	 69937,// Eternal Elementium Handguards
 	 69938,// Holy Flame Gauntlets
@@ -6265,6 +6275,12 @@ int plate_list[] = {
 	 93622,// Crafted Dreadful Gladiator's Plate Helm
 	 93623,// Crafted Dreadful Gladiator's Plate Legguards
 	 93624,// Crafted Dreadful Gladiator's Plate Shoulders
+	 93890,// Gleaming Spaulders of Valor
+	 93891,// Gleaming Breastplate of Valor
+	 93892,// Brushed Breastplate of Might
+	 93893,// Brushed Pauldrons of Might
+	 93894,// Immaculate Lightforge Spaulders
+	 93895,// Reinforced Stockade Pauldrons
 	 94030,// Primordial Bloodsoaked Legplates
 	 94031,// Primordial Bloodsoaked Pauldrons
 	 94032,// Primordial Bloodsoaked Gauntlets
@@ -8800,11 +8816,21 @@ int plate_list[] = {
 	122166,// Blackrock Iron Stranglers
 	122169,// Sooty Blackrock Iron Legplates
 	122173,// Charred Blackrock Iron Waistplate
+	122245,// Polished Helm of Valor
+	122251,// Polished Legplates of Valor
+	122263,// Burnished Helm of Might
+	122264,// Burnished Legplates of Might
 	122311,// Ethereal Crystal-Plated Greathelm
 	122315,// Ethereal Crystal-Plated Bracers
 	122319,// Ethereal Crystal-Plated Legplates
 	122323,// Ethereal Crystal-Plated Greatbelt
 	122327,// Ethereal Crystal-Plated Gauntlets
+	122355,// Polished Spaulders of Valor
+	122372,// Strengthened Stockade Pauldrons
+	122373,// Pristine Lightforge Spaulders
+	122381,// Polished Breastplate of Valor
+	122387,// Burnished Breastplate of Might
+	122388,// Burnished Pauldrons of Might
 	123984,// Greathelm of the Unbreakable
 	123990,// Greaves of the Shatterer
 	123996,// Gauntlets of the Righteous
@@ -9226,6 +9252,9 @@ int plate_list[] = {
 	126891,// Warmongering Gladiator's Plate Helm
 	126892,// Warmongering Gladiator's Plate Legguards
 	126893,// Warmongering Gladiator's Plate Shoulders
+	127010,// Pristine Lightforge Breastplate
+	127011,// Pristine Lightforge Legplates
+	127012,// Pristine Lightforge Helm
 	127049,// Gladiator's Dreadplate Chestpiece
 	127052,// Gladiator's Scaled Chestpiece
 	127055,// Gladiator's Plate Chestpiece
@@ -10313,6 +10342,10 @@ item_subclass_t weapon_type_list[] = {
 	{ 42857,    10},// Thorim's Riding Crop
 	{ 42859,     5},// Thorim's Crusher
 	{ 42868,     4},// Hyldnir Headcracker
+	{ 42943,     1},// Bloodied Arcanite Reaper
+	{ 42945,     7},// Venerable Dal'Rend's Sacred Charge
+	{ 42947,    10},// Dignified Headmaster's Charge
+	{ 42948,     4},// Devout Aurastone Hammer
 	{ 43281,     1},// Edge of Oblivion
 	{ 43407,     4},// Stormstrike Mace
 	{ 43409,     6},// Saliva Corroded Pike
@@ -10340,6 +10373,10 @@ item_subclass_t weapon_type_list[] = {
 	{ 44029,     7},// Quickblade of Cold Return
 	{ 44052,     4},// Totemic Purification Rod
 	{ 44053,     6},// Whale-Stick Harpoon
+	{ 44092,     8},// Reforged Truesilver Champion
+	{ 44094,     4},// The Blessed Hammer of Grace
+	{ 44095,    10},// Grand Staff of Jordan
+	{ 44096,     7},// Battleworn Thrash Blade
 	{ 44174,    10},// Stave of Shrouded Mysteries
 	{ 44187,     7},// Fang of Truth
 	{ 44191,     1},// Ice-Rimed Chopper
@@ -10550,6 +10587,8 @@ item_subclass_t weapon_type_list[] = {
 	{ 48710,    10},// Paragon's Breadth
 	{ 48713,     1},// Lothar's Edge
 	{ 48714,     4},// Honor of the Fallen
+	{ 48716,     4},// Venerable Mass of McGowan
+	{ 48718,     5},// Repurposed Lava Dredger
 	{ 49128,     7},// The Horseman's Baleful Blade
 	{ 49296,     7},// Singed Vis'kag the Bloodletter
 	{ 49297,     0},// Empowered Deathbringer
@@ -11046,7 +11085,9 @@ item_subclass_t weapon_type_list[] = {
 	{ 69639,     7},// Renataki's Soul Slicer
 	{ 69771,    10},// Frostscythe of Lord Ahune
 	{ 69803,     4},// Gurubashi Punisher
+	{ 69814,     4},// Bug Test Heirloom Weapon
 	{ 69843,     6},// Mobus's Dripping Halberd
+	{ 69893,     7},// Bloodsoaked Skullforge Reaver
 	{ 69897,    10},// Fandral's Flamescythe
 	{ 69916,     1},// Trollbane (Daakara)
 	{ 70080,     7},// Reforged Heartless
@@ -11227,6 +11268,7 @@ item_subclass_t weapon_type_list[] = {
 	{ 78487,     8},// Gurthalak, Voice of the Deeps
 	{ 78488,     7},// Souldrinker
 	{ 78878,     7},// Spine of the Thousand Cuts
+	{ 79131,    10},// Burnished Warden Staff
 	{ 79339,    10},// Rain Poppy Staff
 	{ 79340,    10},// Inscribed Crane Staff
 	{ 79341,    10},// Inscribed Serpent Staff
@@ -11708,6 +11750,18 @@ item_subclass_t weapon_type_list[] = {
 	{ 93603,     0},// Crafted Dreadful Gladiator's Hacker
 	{ 93604,     4},// Crafted Dreadful Gladiator's Bonecracker
 	{ 93605,     7},// Crafted Dreadful Gladiator's Slicer
+	{ 93843,     1},// Hardened Arcanite Reaper
+	{ 93844,    10},// Refinished Warden Staff
+	{ 93845,     7},// Gore-Steeped Skullforge Reaver
+	{ 93846,     5},// Re-Engineered Lava Dredger
+	{ 93847,     4},// Crushing Mass of McGowan
+	{ 93848,     7},// Battle-Hardened Thrash Blade
+	{ 93849,    10},// Elder Staff of Jordan
+	{ 93850,     4},// The Sanctified Hammer of Grace
+	{ 93851,     8},// Battle-Forged Truesilver Champion
+	{ 93853,     4},// Pious Aurastone Hammer
+	{ 93854,    10},// Scholarly Headmaster's Charge
+	{ 93856,     7},// Noble Dal'Rend's Sacred Charge
 	{ 94028,     0},// Zandalari Head-Cleaver
 	{ 94093,     7},// Saur-Singer Spellblade
 	{ 94095,    10},// Thunder Eagle Staff
@@ -12863,6 +12917,18 @@ item_subclass_t weapon_type_list[] = {
 	{120259,     0},// Steelforged Axe
 	{120427,     8},// Owen Test 2H Sword
 	{120430,     4},// Mighty Gorian Headcracker
+	{122349,     1},// Bloodied Arcanite Reaper
+	{122351,     7},// Venerable Dal'Rend's Sacred Charge
+	{122353,    10},// Dignified Headmaster's Charge
+	{122354,     4},// Devout Aurastone Hammer
+	{122363,    10},// Burnished Warden Staff
+	{122365,     8},// Reforged Truesilver Champion
+	{122367,     4},// The Blessed Hammer of Grace
+	{122368,    10},// Grand Staff of Jordan
+	{122369,     7},// Battleworn Thrash Blade
+	{122385,     4},// Venerable Mass of McGowan
+	{122386,     5},// Repurposed Lava Dredger
+	{122389,     7},// Bloodsoaked Skullforge Reaver
 	{123987,     5},// Firemaul of Destruction
 	{123999,     4},// Lightsworn Hammer
 	{124358,     0},// Runeaxe of the Breaker

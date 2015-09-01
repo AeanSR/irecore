@@ -92,9 +92,14 @@ void veprintf( token_t tok, int type, const char* message, va_list vl )
         head = std::min( head, 1023 );
         pos = tok.pos - head;
         p = &buffer[head];
-        p[73] = 0;
-        if( tail < source.at( tok.line ).length() )
+
+        if( tail < source.at( tok.line ).length() - 3 ) {
+            p[73] = 0;
             strcat( p, "..." );
+        }
+        else {
+            tail = source.at( tok.line ).length();
+        }
         if( head > 0 )
         {
             if( head < 3 )

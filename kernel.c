@@ -16,7 +16,7 @@
 /*
     TODO list:
     Touch of the Grave (Undead trait) is a mystery. Need more feedbacks since I play nelf only.
-    Now implemented as 20%-15s ICD, 1932~2244 damage scales with enrage, mastery and vers. Do not crit.
+    Now implemented as 20%-15s ICD, (0.5*ap) damage scales with enrage, mastery and vers. Do not crit.
 */
 
 #define SHOW_LOG
@@ -1896,11 +1896,11 @@ DECL_EVENT( wildstrike_execute ) {
 #if (t18_4pc)
         if( UP( recklessness.cd ) ) {
 #if (TALENT_TIER7 == 1)
-            rti->player.recklessness.cd = max( rti->player.recklessness.cd - FROM_SECONDS( 25 ), rti->timestamp );
+            rti->player.recklessness.cd = max( rti->player.recklessness.cd - FROM_SECONDS( 30 ), rti->timestamp ); // 25->30 patch 6.2.2
             if( rti->player.recklessness.cd == rti->timestamp )
                 eq_enqueue( rti, rti->player.recklessness.cd, routnum_recklessness_cd, target_id );
 #else
-            rti->player.recklessness.cd = max( rti->player.recklessness.cd - FROM_SECONDS( 25 ), rti->timestamp );
+            rti->player.recklessness.cd = max( rti->player.recklessness.cd - FROM_SECONDS( 30 ), rti->timestamp ); // 25->30 patch 6.2.2
             eq_enqueue( rti, rti->player.recklessness.cd, routnum_recklessness_cd, target_id );
 #endif
         }
@@ -2647,7 +2647,7 @@ DECL_SPELL( arcanetorrent ) {
 #if (TALENT_TIER6 == 3)
     if ( UP( bladestorm.expire ) ) return 0;
 #endif
-    rti->player.arcanetorrent.cd = TIME_OFFSET( FROM_SECONDS( 120 ) );
+    rti->player.arcanetorrent.cd = TIME_OFFSET( FROM_SECONDS( 90 ) ); // 120->90 patch 6.2.2
     eq_enqueue( rti, rti->player.arcanetorrent.cd, routnum_arcanetorrent_cd, 0 );
     eq_enqueue_ps( rti, rti->timestamp );
     power_gain( rti, 15.0f );
@@ -2713,9 +2713,11 @@ DECL_SPELL( bloodfury ) {
 #endif
 #if (RACE == RACE_UNDEAD)
 DECL_EVENT( touch_of_the_grave_trigger ) {
-    float d = 1932.0f;
-    d += uni_rng( rti ) * ( 2244.0f - 1932.0f );
-    deal_damage( rti, target_id, d, DMGTYPE_NONE, 0, 0, 0 );
+    // old data for 6.2.0
+	//float d = 1932.0f;
+    //d += uni_rng( rti ) * ( 2244.0f - 1932.0f );
+    float d = 0.5f * rti->player.stat.ap; // To avoid SMF bonus.
+	deal_damage( rti, target_id, d, DMGTYPE_NONE, 0, 0, 0 );
 }
 #endif
 

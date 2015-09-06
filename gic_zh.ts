@@ -700,42 +700,71 @@ When you meet compilation errors (Error -11) and got debug messages like &quot;e
         <translation>属性权重：</translation>
     </message>
     <message>
-        <location filename="gic.ui" line="3182"/>
+        <location filename="gic.ui" line="3177"/>
+        <source>Script</source>
+        <translation>脚本</translation>
+    </message>
+    <message>
+        <location filename="gic.ui" line="3189"/>
+        <source>Write Lua scripts here.</source>
+        <translation>在这里编写Lua脚本。</translation>
+    </message>
+    <message>
+        <location filename="gic.ui" line="3213"/>
+        <source>IreCore embedded the Lua programming language to extend its functions. Scripting with IreCore internally is both convenient and effective. You don&apos;t bother to write an external program, call IreCore by command lines and get results from standard output or by parsing the report file. That is how the mainstream simulators works.
+
+If you want to start, just check the box to enable script. When script is enabled, the hardcoded logics configured by graphic options are ignored.</source>
+        <translation>IreCore集成了Lua语言来拓展功能。在IreCore内部进行脚本编程更方便也更高效。你不必再去编写外部程序，通过命令行来调用IreCore，再从标准输出或报告文件里解析计算结果，而这正是主流模拟器的工作方式。
+
+要开始，请勾选启用脚本。当脚本启用时，通过图形界面配置的硬编码逻辑将被忽略。</translation>
+    </message>
+    <message>
+        <location filename="gic.ui" line="3234"/>
+        <source>Enable Script</source>
+        <translation>启用脚本</translation>
+    </message>
+    <message>
+        <location filename="gic.ui" line="3249"/>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;img src=&quot;:/gic/lua/logo.gif&quot;/&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;img src=&quot;:/gic/lua/logo.gif&quot;/&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+    </message>
+    <message>
+        <location filename="gic.ui" line="3266"/>
         <source>Current Version</source>
         <translation>当前版本</translation>
     </message>
     <message>
-        <location filename="gic.ui" line="3195"/>
+        <location filename="gic.ui" line="3279"/>
         <source>Run</source>
         <translation>运行</translation>
     </message>
     <message>
-        <location filename="battlenet.cpp" line="33"/>
-        <location filename="battlenet.cpp" line="130"/>
-        <location filename="battlenet.cpp" line="134"/>
-        <location filename="battlenet.cpp" line="157"/>
+        <location filename="battlenet.cpp" line="26"/>
+        <location filename="battlenet.cpp" line="124"/>
+        <location filename="battlenet.cpp" line="129"/>
+        <location filename="battlenet.cpp" line="153"/>
         <source>Import Fail</source>
         <translation>导入失败</translation>
     </message>
     <message>
-        <location filename="battlenet.cpp" line="33"/>
+        <location filename="battlenet.cpp" line="26"/>
         <source>Cannot connect Battle.Net:
 </source>
         <translation>无法连接战网：
 </translation>
     </message>
     <message>
-        <location filename="battlenet.cpp" line="130"/>
+        <location filename="battlenet.cpp" line="124"/>
         <source>This character is not a warrior.</source>
         <translation>这个角色不是战士。</translation>
     </message>
     <message>
-        <location filename="battlenet.cpp" line="134"/>
+        <location filename="battlenet.cpp" line="129"/>
         <source>This character is not 100 lvl.</source>
         <translation>这个角色没有达到100级。</translation>
     </message>
     <message>
-        <location filename="battlenet.cpp" line="157"/>
+        <location filename="battlenet.cpp" line="153"/>
         <source>This character do not have fury spec.</source>
         <translation>这个角色没有狂暴专精。</translation>
     </message>
@@ -1171,28 +1200,28 @@ When you meet compilation errors (Error -11) and got debug messages like &quot;e
         <translation>攻击强度</translation>
     </message>
     <message>
-        <location filename="gic.cpp" line="756"/>
+        <location filename="gic.cpp" line="721"/>
         <source>Maxima Descent Start.
 </source>
         <translation>属性爬山开始
 </translation>
     </message>
     <message>
-        <location filename="gic.cpp" line="764"/>
+        <location filename="gic.cpp" line="729"/>
         <source>Maxima Descent Finished.
 </source>
         <translation>属性爬山完成
 </translation>
     </message>
     <message>
-        <location filename="gic.cpp" line="792"/>
+        <location filename="gic.cpp" line="757"/>
         <source>Contour Plot Start.
 </source>
         <translation>等高图开始
 </translation>
     </message>
     <message>
-        <location filename="gic.cpp" line="814"/>
+        <location filename="gic.cpp" line="779"/>
         <source>Contour Plot stats not set properly. Exact 3 stats should be checked.
 Reset to Crit-Haste-Mastery.
 </source>
@@ -1203,7 +1232,7 @@ Reset to Crit-Haste-Mastery.</oldsource>
 </translation>
     </message>
     <message>
-        <location filename="gic.cpp" line="818"/>
+        <location filename="gic.cpp" line="783"/>
         <source>Contour Plot Finished. Run &quot;plot.sci&quot; with SciLab(http://scilab.org/) to draw a figure.
 </source>
         <translation>等高图完成，使用SciLab(http://scilab.org)运行&quot;plot.sci&quot;来绘制图像</translation>
@@ -1237,28 +1266,28 @@ Reset to Crit-Haste-Mastery.</oldsource>
         <translation>Buff后</translation>
     </message>
     <message>
-        <location filename="gic.cpp" line="578"/>
+        <location filename="gic.cpp" line="546"/>
         <source>Set arguments...
 </source>
         <translation>设置参数...
 </translation>
     </message>
     <message>
-        <location filename="gic.cpp" line="637"/>
+        <location filename="gic.cpp" line="602"/>
         <source>Initializing compute cnvironment...
 </source>
         <translation>初始化运算环境...
 </translation>
     </message>
     <message>
-        <location filename="gic.cpp" line="642"/>
+        <location filename="gic.cpp" line="607"/>
         <source>Start simulation...
 </source>
         <translation>启动模拟...
 </translation>
     </message>
     <message>
-        <location filename="gic.cpp" line="645"/>
+        <location filename="gic.cpp" line="610"/>
         <source>Simulation finished.
 </source>
         <translation>模拟完成
@@ -1407,6 +1436,11 @@ Reset to Crit-Haste-Mastery.</oldsource>
         <location filename="trinket_cmp.cpp" line="205"/>
         <source>Trinket ladder saved as &quot;trinket_ladder.csv&quot;.</source>
         <translation>饰品天梯保存在&quot;trinket_ladder.csv&quot;当中</translation>
+    </message>
+    <message>
+        <location filename="luadriver.cpp" line="423"/>
+        <source>Error occured while script executing.</source>
+        <translation>脚本执行中发生错误。</translation>
     </message>
 </context>
 </TS>

@@ -21,7 +21,7 @@
 #include "rapidjson\stringbuffer.h"
 #include "rapidjson\prettywriter.h"
 
-
+extern int silence_mode;
 
 class gic : public QMainWindow
 {
@@ -33,9 +33,10 @@ public:
     void reset_result_page();
     void run_simulation();
     void set_arguments();
-    void import_player( std::string& realm, std::string& name, std::string& region );
+    int import_player( std::string& realm, std::string& name, std::string& region, int silence = 0 );
     //int retrive_item_subclass(int id, std::string& region);
-private slots:
+	void run_scripts();
+public slots:
     void on_btnRun_clicked();
     void on_btnImport_clicked();
     void on_btnResetBuild_clicked();
@@ -52,6 +53,47 @@ private:
     Ui::gicClass ui;
 
 };
+
+class functionbuf
+        : public std::streambuf {
+private:
+    typedef std::streambuf::traits_type traits_type;
+    char          d_buffer[102400];
+    gic* pg;
+    int overflow( int c ) {
+        if ( !traits_type::eq_int_type( c, traits_type::eof() ) ) {
+            *this->pptr() = traits_type::to_char_type( c );
+            this->pbump( 1 );
+        }
+        return this->sync() ? traits_type::not_eof( c ) : traits_type::eof();
+    }
+    int sync() {
+        if ( this->pbase() != this->pptr() ) {
+			if (!silence_mode)
+            QMetaObject::invokeMethod( pg, "TxtBoxNotify", Q_ARG( QString, QString( std::string( this->pbase(), this->pptr() ).c_str() ) ) );
+            this->setp( this->pbase(), this->epptr() );
+        }
+        return 0;
+    }
+public:
+    functionbuf( gic* pg ) : pg( pg )
+    {
+        this->setp( this->d_buffer, this->d_buffer + sizeof( this->d_buffer ) - 1 );
+    }
+};
+
+class ofunctionstream
+    : private virtual functionbuf
+        , public std::ostream {
+public:
+    ofunctionstream( gic* pg )
+        : functionbuf( pg ), std::ostream( static_cast<std::streambuf*>( this ) ) {
+        this->flags( std::ios_base::unitbuf );
+    }
+};
+
+extern gic* global_pgic;
+extern ofunctionstream* simlog;
 
 class getjson {
 

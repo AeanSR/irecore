@@ -7,10 +7,12 @@
     If not, see <http://opensource.org/licenses/mit-license.php>.
 */
 #include "gic.h"
+#include "irecore.h"
 #include <QtWidgets/QApplication>
 #include <Windows.h>
 
 int clic_main( int argc, char** argv );
+gic* global_pgic = 0;
 
 int main( int argc, char* argv[] )
 {
@@ -27,11 +29,15 @@ int main( int argc, char* argv[] )
         a.setFont( font );
 
         gic w;
+		global_pgic = &w;
+		report_path = simlog = new ofunctionstream( &w );
+
         w.show();
         return a.exec();
     }
     else if ( argc > 1 ) // user given command line arguments. treat as cli.
     {
+		report_path = &std::cout;
         return clic_main( argc, argv );
     }
     else // create a new detached gui process, and close this one.

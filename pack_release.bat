@@ -18,6 +18,7 @@ copy %qt_dir%\bin\Qt5GUI.dll release\Qt5GUI.dll
 copy %qt_dir%\bin\Qt5Widgets.dll release\Qt5Widgets.dll
 copy %qt_dir%\bin\Qt5Network.dll release\Qt5Network.dll
 copy %qt_dir%\plugins\platforms\qwindows.dll release\platforms\qwindows.dll
+copy lua\lua53.dll release\lua53.dll
 :: ICU is no longer needed since irecore-620-50?
 :: copy %qt_dir%\bin\icuin53.dll release\icuin53.dll
 :: copy %qt_dir%\bin\icuuc53.dll release\icuuc53.dll

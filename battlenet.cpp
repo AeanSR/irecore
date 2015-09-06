@@ -95,7 +95,7 @@ QString qsprint( int v );
 //      49 -> mastery
 //      59 -> multistrike
 //      40 -> versatility
-void gic::import_player( std::string& realm, std::string& name, std::string& region ) {
+int gic::import_player( std::string& realm, std::string& name, std::string& region, int silence ) {
     getjson bn;
     QString url;
     bn.set_parent( this );
@@ -120,12 +120,14 @@ void gic::import_player( std::string& realm, std::string& name, std::string& reg
     rapidjson::Document j = bn.get();
 
     if ( j["class"].GetInt() != 1 ) {
+		if(!silence)
         QMessageBox::information( this, QApplication::translate( "gicClass", "Import Fail" ), QApplication::translate( "gicClass", "This character is not a warrior." ), QMessageBox::Ok );
-        return;
+        return -1;
     }
     if ( j["level"].GetInt() != 100 ) {
+        if(!silence)
         QMessageBox::information( this, QApplication::translate( "gicClass", "Import Fail" ), QApplication::translate( "gicClass", "This character is not 100 lvl." ), QMessageBox::Ok );
-        return;
+        return -1;
     }
     rapidjson::Value& jtalentlist = j["talents"];
     talent = -1;
@@ -147,8 +149,9 @@ void gic::import_player( std::string& realm, std::string& name, std::string& reg
         glyph_of_ragingwind = !!strchr( jtalentlist[i]["calcGlyph"].GetString(), 'Q' );
     }
     if ( talent < 0 ) {
-        QMessageBox::information( this, QApplication::translate( "gicClass", "Import Fail" ), QApplication::translate( "gicClass", "This character do not have fury spec." ), QMessageBox::Ok );
-        return;
+        if(!silence)
+		QMessageBox::information( this, QApplication::translate( "gicClass", "Import Fail" ), QApplication::translate( "gicClass", "This character do not have fury spec." ), QMessageBox::Ok );
+        return -1;
     }
     switch ( j["race"].GetInt() ) {
     case 1: race = 1; break;
@@ -297,7 +300,7 @@ void gic::import_player( std::string& realm, std::string& name, std::string& reg
                 ench++;
             }
             switch ( ench->stat ) {
-            case 4: case 72: case 74: gear_list[i].str += ench->value; break;
+			case 4: case 71: case 72: case 74: gear_list[i].str += ench->value; break;
             case 32: gear_list[i].crit += ench->value; break;
             case 36: gear_list[i].haste += ench->value; break;
             case 49: gear_list[i].mastery += ench->value; break;
@@ -323,7 +326,6 @@ void gic::import_player( std::string& realm, std::string& name, std::string& reg
     if ( legendary_ring ) {
         ui.comboIncandescence->setCurrentIndex( 3 );
         ui.txtLegendaryRing->setText( qsprint( legendary_ring ) );
-        legendary_ring = 2500.0 * pow( ilvlScaleCoeff, legendary_ring - 735 );
     }
     else if ( archmages_greater_incandescence ) ui.comboIncandescence->setCurrentIndex( 2 );
     else if ( archmages_incandescence ) ui.comboIncandescence->setCurrentIndex( 1 );
@@ -358,4 +360,6 @@ void gic::import_player( std::string& realm, std::string& name, std::string& reg
     talent /= 10;
     ui.checkGlyphOfUnendingRage->setChecked( glyph_ur );
     ui.checkGlyphOfRagingWind->setChecked( glyph_of_ragingwind );
+
+	return 0;
 }

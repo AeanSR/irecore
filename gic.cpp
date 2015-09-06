@@ -10,7 +10,7 @@
 #include "VersionNo.h"
 #include "irecore.h"
 
-void set_default_parameters();
+int silence_mode = 0;
 
 item_t gear_list[16];
 int selected_gear_slot = 0;
@@ -438,51 +438,19 @@ void gic::TxtBoxNotify( QString value ) {
     ui.txtResult->insertPlainText( value );
 }
 
-class functionbuf
-        : public std::streambuf {
-private:
-    typedef std::streambuf::traits_type traits_type;
-    char          d_buffer[102400];
-    gic* pg;
-    int overflow( int c ) {
-        if ( !traits_type::eq_int_type( c, traits_type::eof() ) ) {
-            *this->pptr() = traits_type::to_char_type( c );
-            this->pbump( 1 );
-        }
-        return this->sync() ? traits_type::not_eof( c ) : traits_type::eof();
-    }
-    int sync() {
-        if ( this->pbase() != this->pptr() ) {
-            QMetaObject::invokeMethod( pg, "TxtBoxNotify", Q_ARG( QString, QString( std::string( this->pbase(), this->pptr() ).c_str() ) ) );
-            this->setp( this->pbase(), this->epptr() );
-        }
-        return 0;
-    }
-public:
-    functionbuf( gic* pg ) : pg( pg )
-    {
-        this->setp( this->d_buffer, this->d_buffer + sizeof( this->d_buffer ) - 1 );
-    }
-};
-
-class ofunctionstream
-    : private virtual functionbuf
-        , public std::ostream {
-public:
-    ofunctionstream( gic* pg )
-        : functionbuf( pg ), std::ostream( static_cast<std::streambuf*>( this ) ) {
-        this->flags( std::ios_base::unitbuf );
-    }
-};
-
 void gic::on_btnRun_clicked()
 {
     reset_result_page();
     ui.tabWidget->setCurrentWidget( ui.tabResult );
     ui.btnRun->setDisabled( true );
-    set_default_parameters();
-    gear_summary_calculate();
-    QtConcurrent::run( this, &gic::run_simulation );
+	set_default_parameters();
+	gear_summary_calculate();
+	set_arguments();
+	if(ui.checkEnableScript->isChecked()){
+		QtConcurrent::run( this, &gic::run_scripts );
+	}else{
+		QtConcurrent::run( this, &gic::run_simulation );
+	}
 }
 
 ofunctionstream* simlog = NULL;
@@ -552,7 +520,6 @@ void gic::set_arguments() {
     archmages_greater_incandescence = ( ui.comboIncandescence->currentIndex() == 2 );
     if ( ui.comboIncandescence->currentIndex() == 3 ) {
         legendary_ring = ui.txtLegendaryRing->text().toInt();
-        legendary_ring = 2500.0 * pow( ilvlScaleCoeff, legendary_ring - 735 );
     }
     else legendary_ring = 0;
     thunderlord_mh = ( ui.comboMHEnchant->currentIndex() == 1 );
@@ -561,6 +528,9 @@ void gic::set_arguments() {
     thunderlord_oh = ( ui.comboOHEnchant->currentIndex() == 1 );
     bleeding_hollow_oh = ( ui.comboOHEnchant->currentIndex() == 2 );
     shattered_hand_oh = ( ui.comboOHEnchant->currentIndex() == 3 );
+
+	apl = ui.txtAPL->toPlainText().toStdString();
+    default_actions = ui.checkDefaultActions->isChecked();
 }
 
 void gic::run_simulation() {
@@ -572,13 +542,8 @@ void gic::run_simulation() {
 
     stat_array.clear();
 
-    if ( !simlog ) simlog = new ofunctionstream( this );
-    report_path = simlog;
     *report_path << header << std::endl;
     *report_path << QApplication::translate( "gicClass", "Set arguments...\n" ).toStdString();
-    set_arguments();
-    apl = ui.txtAPL->toPlainText().toStdString();
-    default_actions = ui.checkDefaultActions->isChecked();
 
     if ( ui.txtOverride->toPlainText().length() ) {
         std::vector<kvpair_t> arglist;

@@ -238,7 +238,7 @@ float ocl_t::run( std::string& apl_cstr, std::string& predef, int reuse ) {
     auto t2 = std::chrono::high_resolution_clock::now();
 
     for ( auto thisstat = stat_array.begin(); thisstat != stat_array.end(); thisstat++ ) {
-        cl_uint setseed = ( seed && !reuse ) ? seed : rand();
+        cl_uint setseed = seed ? seed : rand();
         clSetKernelArg( sim_iterate, 0, sizeof( cl_mem ), &cl_res );
         clSetKernelArg( sim_iterate, 1, sizeof( cl_uint ), &setseed );
         clSetKernelArg( sim_iterate, 2, sizeof( cl_uint ), &thisstat->gear_str );

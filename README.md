@@ -25,7 +25,7 @@ To build IreCore, you should first have all of the listed toolkits installed:
 
 * Visual Studio 2013 Community
 
-* [Qt 5.5](http://www.qt.io/download-open-source/), the component `msvc2013 32-bit` `qtcreator` is required at minimum. If you want to have Chinese Simplified localization, `qtlinguist` is required.
+* [Qt 5.5](http://www.qt.io/download-open-source/), the component `msvc2013 32-bit` `qtcreator` are required at minimum. If you want to have Chinese Simplified localization, `qtlinguist` is required.
 
 * [Visual Studio Add-in 1.2.4 for Qt5](http://www.qt.io/download-open-source/#section-7)
 

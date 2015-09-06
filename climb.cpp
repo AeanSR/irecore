@@ -96,7 +96,7 @@ simresult_t sim( point_t& point ) {
     current_stat.name.append( ultoa( h( point ), digits, 16 ) );
     stat_array.push_back( current_stat );
     parameters_consistency();
-
+	seed = 0;
     double dps, error;
     iterations = iter;
     ocl().run( apl, predef, 1 );
@@ -133,6 +133,7 @@ const simresult_t& sim( simresult_t& r, double target_error ) {
             if ( more_iter > 100000 ) more_iter = 100000;
             double more_dps, more_error;
             iterations = more_iter;
+			seed = 0;
             ocl().run( apl, predef, 1 );
             more_dps = stat_array[0].dps;
             more_error = stat_array[0].dpse / 2.0;

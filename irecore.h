@@ -57,6 +57,7 @@ typedef struct {
 extern stat_t current_stat;
 extern raidbuff_t raidbuff;
 extern std::vector<stat_t> stat_array;
+extern int stat_not_pushed;
 extern cl_uint seed;
 extern int iterations;
 extern int rng_engine;
@@ -82,7 +83,6 @@ extern int mh_type;
 extern int oh_type;
 extern int talent;
 extern int default_actions;
-extern int list_available_devices;
 extern int calculate_scale_factors;
 extern int archmages_incandescence;
 extern int archmages_greater_incandescence;
@@ -133,9 +133,11 @@ typedef struct {
     std::string value;
 } kvpair_t;
 extern std::vector<pdpair_t> ocl_device_list;
+void set_default_parameters();
 void build_arglist( std::vector<kvpair_t>& arglist, int argc, char** argv );
 void parse_parameters( std::vector<kvpair_t>& arglist );
 extern const char* trinket_list[];
+extern const char* race_str_param[];
 
 ocl_t& ocl();
 

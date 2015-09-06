@@ -412,7 +412,6 @@ void set_default_parameters() {
     trinket1 = 0;
     trinket2 = 0;
 
-    report_path = &std::cout;
     calculate_scale_factors = 0;
 }
 
@@ -749,8 +748,7 @@ void parse_parameters( std::vector<kvpair_t>& arglist ) {
             archmages_greater_incandescence = !!atoi( i->value.c_str() );
         }
         else if ( 0 == i->key.compare( "legendary_ring" ) ) {
-            int itemlvl = atoi( i->value.c_str() );
-            legendary_ring = 2500.0 * pow( ilvlScaleCoeff, itemlvl - 735 );
+            legendary_ring = atoi( i->value.c_str() );
         }
         else if ( 0 == i->key.compare( "t17_2pc" ) ) {
             t17_2pc = !!atoi( i->value.c_str() );
@@ -1030,7 +1028,7 @@ void generate_predef() {
     predef.append( buffer ); predef.append( "\r\n" );
 
     predef.append( "#define legendary_ring " );
-    sprintf( buffer, "%d", legendary_ring );
+    sprintf( buffer, "%d", (int)( 2500.0 * pow( ilvlScaleCoeff, legendary_ring - 735 ) ) );
     predef.append( buffer ); predef.append( "\r\n" );
 
     predef.append( "#define t17_2pc " );

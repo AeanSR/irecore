@@ -70,12 +70,12 @@
 #define t17_4pc 0
 #define t18_2pc 1
 #define t18_4pc 1
-#define thunderlord_mh 1
-#define thunderlord_oh 1
+#define thunderlord_mh 0
+#define thunderlord_oh 0
 #define bleedinghollow_mh 0
 #define bleedinghollow_oh 0
-#define shatteredhand_mh 0
-#define shatteredhand_oh 0
+#define shatteredhand_mh 1
+#define shatteredhand_oh 1
 //#define trinket_vial_of_convulsive_shadows 2033
 //#define trinket_forgemasters_insignia 181
 //#define trinket_horn_of_screaming_spirits 2652
@@ -2559,8 +2559,12 @@ DECL_SPELL( thorasus_the_stone_heart_of_draenor ) {
 // === enchants ===============================================================
 #if (thunderlord_mh || bleedinghollow_mh || shatteredhand_mh)
 DECL_EVENT( enchant_mh_expire ) {
-    if ( rti->player.enchant_mh.expire == rti->timestamp ) {
-        lprintf( ( "mh enchant expire" ) );
+#if (shatteredhand_mh)
+	if ( rti->enemy[target_id].enchant_mh.expire == rti->timestamp ) {
+#else
+	if ( rti->player.enchant_mh.expire == rti->timestamp ) {
+#endif
+		lprintf( ( "mh enchant expire" ) );
         if ( thunderlord_mh ) refresh_crit( rti );
         if ( bleedinghollow_mh ) refresh_mastery( rti );
     }
@@ -2581,14 +2585,20 @@ DECL_EVENT( enchant_mh_trigger ) {
     rti->enemy[target_id].enchant_mh.expire = TIME_OFFSET( FROM_SECONDS( 6 ) );
     rti->enemy[target_id].enchant_mh.ticks = 6.0f;
     eq_enqueue( rti, TIME_OFFSET( FROM_SECONDS( 1 ) ), routnum_enchant_mh_tick, target_id );
+	eq_enqueue( rti, rti->enemy[target_id].enchant_mh.expire, routnum_enchant_mh_expire, target_id );
+#else
+	eq_enqueue( rti, rti->player.enchant_mh.expire, routnum_enchant_mh_expire, target_id );
 #endif
-    eq_enqueue( rti, rti->player.enchant_mh.expire, routnum_enchant_mh_expire, target_id );
 }
 #endif
 
 #if (thunderlord_oh || bleedinghollow_oh || shatteredhand_oh)
 DECL_EVENT( enchant_oh_expire ) {
-    if ( rti->player.enchant_oh.expire == rti->timestamp ) {
+#if (shatteredhand_oh)
+	if ( rti->enemy[target_id].enchant_oh.expire == rti->timestamp ) {
+#else
+	if ( rti->player.enchant_oh.expire == rti->timestamp ) {
+#endif
         lprintf( ( "oh enchant expire" ) );
         if ( thunderlord_oh ) refresh_crit( rti );
         if ( bleedinghollow_oh ) refresh_mastery( rti );
@@ -2610,8 +2620,10 @@ DECL_EVENT( enchant_oh_trigger ) {
     rti->enemy[target_id].enchant_oh.expire = TIME_OFFSET( FROM_SECONDS( 6 ) );
     rti->enemy[target_id].enchant_oh.ticks = 6.0f;
     eq_enqueue( rti, TIME_OFFSET( FROM_SECONDS( 1 ) ), routnum_enchant_oh_tick, target_id );
+	eq_enqueue( rti, rti->enemy[target_id].enchant_oh.expire, routnum_enchant_oh_expire, target_id );
+#else
+	eq_enqueue( rti, rti->player.enchant_oh.expire, routnum_enchant_oh_expire, target_id );
 #endif
-    eq_enqueue( rti, rti->player.enchant_oh.expire, routnum_enchant_oh_expire, target_id );
 }
 #endif
 

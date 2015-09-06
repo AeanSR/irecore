@@ -76,6 +76,9 @@
     <ClCompile Include="trinket_cmp.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="luadriver.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <CustomBuild Include="gic.h">
@@ -100,6 +103,12 @@
     </ClInclude>
     <ClInclude Include="VersionNo.h">
       <Filter>Generated Files</Filter>
+    </ClInclude>
+    <ClInclude Include="lua\lua.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="lua\luaconf.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

@@ -65,7 +65,7 @@
 #define TALENT_TIER7 1
 #define archmages_incandescence 0
 #define archmages_greater_incandescence 0
-#define legendary_ring 2500
+//#define legendary_ring 2500
 #define t17_2pc 0
 #define t17_4pc 0
 #define t18_2pc 1

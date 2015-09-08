@@ -147,8 +147,8 @@ int trinket_scaling( int trinket, int itemlvl ) {
         case 660: return 867;
         case 670: return 866;
         case 680: return 951;
-        case 700: return 1259;
-        case 705: return 1319;
+        case 700: return 1007;
+        case 705: return 1054;
         default:  return ( int )( 867.0 * pow( ilvlScaleCoeff, itemlvl - 660 ) );
         }
     }
@@ -1027,9 +1027,11 @@ void generate_predef() {
     sprintf( buffer, "%d", archmages_greater_incandescence );
     predef.append( buffer ); predef.append( "\r\n" );
 
-    predef.append( "#define legendary_ring " );
-    sprintf( buffer, "%d", (int)( 2500.0 * pow( ilvlScaleCoeff, legendary_ring - 735 ) ) );
-    predef.append( buffer ); predef.append( "\r\n" );
+	if (legendary_ring){
+		predef.append( "#define legendary_ring " );
+		sprintf( buffer, "%d", (int)( 2500.0 * pow( ilvlScaleCoeff, legendary_ring - 735 ) ) );
+		predef.append( buffer ); predef.append( "\r\n" );
+	}
 
     predef.append( "#define t17_2pc " );
     sprintf( buffer, "%d", t17_2pc );

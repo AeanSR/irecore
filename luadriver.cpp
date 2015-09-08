@@ -118,6 +118,9 @@ const char* reuse_param_list[] = {
 	"gear_mastery",
 	"gear_mult",
 	"gear_vers",
+	"iterations",
+	"raidbuff_food",
+	"raidbuff_flask",
 	0,
 };
 

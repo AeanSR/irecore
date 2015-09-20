@@ -154,7 +154,12 @@ const simresult_t& sim( simresult_t& r, double target_error ) {
 };
 
 void descent( int init_interval, int min_interval, int iteration_limit ) {
-    point_t p( current_stat.gear_crit + current_stat.gear_haste + current_stat.gear_mastery + current_stat.gear_mult + current_stat.gear_vers );
+    point_t p( 0 );
+	p.stat[0] = current_stat.gear_crit;
+    p.stat[1] = current_stat.gear_haste;
+    p.stat[2] = current_stat.gear_mastery;
+    p.stat[3] = current_stat.gear_mult;
+    p.stat[4] = current_stat.gear_vers;
     simresult_t res = sim( p );
     tt.clear();
     transpose( p );
@@ -224,7 +229,7 @@ void descent( int init_interval, int min_interval, int iteration_limit ) {
     }
     *report_path << "** maxima confirmed at(";
     for ( int j = 0; j < stat_count; j++ )
-        *report_path << p.stat[j] << ( ( j == stat_count - 1 ) ? "" : "," );
+        *report_path << stat_name[j] << p.stat[j] << ( ( j == stat_count - 1 ) ? "" : "," );
     *report_path << ") **" << std::endl;
 }
 
@@ -242,7 +247,7 @@ void plot( unsigned mask, int interval, double error_tolerance, int iteration_li
                  ( mask & MSK_HASTE ? current_stat.gear_haste : 0 ) +
                  ( mask & MSK_MASTERY ? current_stat.gear_mastery : 0 ) +
                  ( mask & MSK_MULT ? current_stat.gear_mult : 0 ) +
-                 ( mask & MSK_VERS ? stat_array[0].gear_vers : 0 );
+                 ( mask & MSK_VERS ? current_stat.gear_vers : 0 );
     p.stat[0] = current_stat.gear_crit;
     p.stat[1] = current_stat.gear_haste;
     p.stat[2] = current_stat.gear_mastery;

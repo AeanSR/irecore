@@ -237,6 +237,7 @@ int gic::import_player( std::string& realm, std::string& name, std::string& regi
                 ench++;
             }
             switch ( ench->stat ) {
+			case 71:
             case 4: case 72: case 74: gear_list[i].str += ench->value; break;
             case 32: gear_list[i].crit += ench->value; break;
             case 36: gear_list[i].haste += ench->value; break;
@@ -263,7 +264,7 @@ int gic::import_player( std::string& realm, std::string& name, std::string& regi
                         gear_list[i].type = 1; break;
                     case 1: case 5: case 6: case 8: case 10:
                         gear_list[i].type = 0; break;
-                case 15: default:
+					case 15: default:
                         gear_list[i].type = 2; break;
                     }
                     break;

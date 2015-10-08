@@ -1284,6 +1284,7 @@ enum {
 #endif
 #if (RACE == RACE_BLOODELF)
     routnum_arcanetorrent_cd,
+    routnum_arcanetorrent_execute,
 #endif
 #if (RACE == RACE_TROLL)
     routnum_berserking_start,
@@ -2653,6 +2654,9 @@ DECL_EVENT( enchant_oh_tick ) {
 DECL_EVENT( arcanetorrent_cd ) {
     lprintf( ( "arcanetorrent ready" ) );
 }
+DECL_EVENT( arcanetorrent_execute ) {
+    lprintf( ( "cast arcanetorrent" ) );
+}
 
 DECL_SPELL( arcanetorrent ) {
     if ( rti->player.arcanetorrent.cd > rti->timestamp ) return 0;
@@ -2661,7 +2665,7 @@ DECL_SPELL( arcanetorrent ) {
 #endif
     rti->player.arcanetorrent.cd = TIME_OFFSET( FROM_SECONDS( 90 ) ); // 120->90 patch 6.2.2
     eq_enqueue( rti, rti->player.arcanetorrent.cd, routnum_arcanetorrent_cd, 0 );
-    eq_enqueue_ps( rti, rti->timestamp );
+    eq_enqueue( rti, rti->timestamp, routnum_arcanetorrent_execute, 0 );
     power_gain( rti, 15.0f );
     lprintf( ( "cast arcanetorrent" ) );
     return 1;
@@ -3340,6 +3344,7 @@ void routine_entries( rtinfo_t* rti, _event_t e ) {
 #endif
 #if (RACE == RACE_BLOODELF)
         HOOK_EVENT( arcanetorrent_cd );
+        HOOK_EVENT( arcanetorrent_execute );
 #endif
 #if (RACE == RACE_TROLL)
         HOOK_EVENT( berserking_start );

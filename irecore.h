@@ -103,6 +103,7 @@ extern int trinket1;
 extern int trinket2;
 extern int trinket1_ilvl;
 extern int trinket2_ilvl;
+extern int enemy_is_demonic;
 extern std::ostream* report_path;
 
 class ocl_t {

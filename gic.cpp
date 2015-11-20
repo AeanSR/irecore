@@ -81,6 +81,7 @@ gic::gic( QWidget* parent )
     : QMainWindow( parent )
 {
     ui.setupUi( this );
+    dlgTrinkets = 0;
     qRegisterMetaType<QString>( "QString" );
     reset_result_page();
     ui.tabWidget->setCurrentIndex( 0 );
@@ -351,7 +352,8 @@ gic::gic( QWidget* parent )
           QApplication::translate( "gicClass", "Unending Hunger" ) <<
           QApplication::translate( "gicClass", "Spores of Alacrity" ) <<
           QApplication::translate( "gicClass", "Bonemaw's Big Toe" ) <<
-          QApplication::translate( "gicClass", "Emberscale Talisman" );
+          QApplication::translate( "gicClass", "Emberscale Talisman" ) <<
+          QApplication::translate( "gicClass", "Gronntooth War Horn" );
     ui.comboTrinketSpecial1->addItems( lists );
     ui.comboTrinketSpecial2->addItems( lists );
     lists.clear();
@@ -498,6 +500,8 @@ void gic::set_arguments() {
     trinket2 = ui.comboTrinketSpecial2->currentIndex();
     trinket1_ilvl = ui.txtTrinketValue1->text().toInt();
     trinket2_ilvl = ui.txtTrinketValue2->text().toInt();
+
+    enemy_is_demonic = ui.checkEnemyIsDemonic->isChecked();
 
     mh_high = ui.txtMHHigh->text().toInt();
     oh_high = ui.txtOHHigh->text().toInt();

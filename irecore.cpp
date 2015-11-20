@@ -65,6 +65,8 @@ int trinket2;
 int trinket1_ilvl;
 int trinket2_ilvl;
 
+int enemy_is_demonic;
+
 const char* trinket_list[] = {
     "none",
     "vial_of_convulsive_shadows",
@@ -85,6 +87,7 @@ const char* trinket_list[] = {
     "spores_of_alacrity",
     "bonemaws_big_toe",
     "emberscale_talisman",
+    "gronntooth_war_horn",
     NULL
 };
 
@@ -136,8 +139,8 @@ int trinket_scaling( int trinket, int itemlvl ) {
         case 670: return 727;
         case 680: return 798;
         case 700: return 1057;
-        case 705: return 1108;
-        default:  return ( int )( 728.0 * pow( ilvlScaleCoeff, itemlvl - 660 ) );
+        case 710: return 1160;
+        default:  return ( int )( 1160.0 * pow( ilvlScaleCoeff, itemlvl - 710 ) );
         }
     }
     else if ( trinket == 6 ) {
@@ -148,8 +151,8 @@ int trinket_scaling( int trinket, int itemlvl ) {
         case 670: return 866;
         case 680: return 951;
         case 700: return 1007;
-        case 705: return 1054;
-        default:  return ( int )( 867.0 * pow( ilvlScaleCoeff, itemlvl - 660 ) );
+        case 710: return 1104;
+        default:  return ( int )( 1104.0 * pow( ilvlScaleCoeff, itemlvl - 710 ) );
         }
     }
     else if ( trinket == 7 ) {
@@ -285,6 +288,9 @@ int trinket_scaling( int trinket, int itemlvl ) {
         default:  return ( int )( 1060.0 * pow( ilvlScaleCoeff, itemlvl - 630 ) );
         }
     }
+    else if ( trinket == 19 ) {
+        return 1152;
+    }
     else return 0;
 }
 int trinket_from_id( int id ) {
@@ -307,6 +313,7 @@ int trinket_from_id( int id ) {
     case 110014: return 16;
     case 110012: return 17;
     case 110013: return 18;
+    case 133595: return 19;
     default: return 0;
     }
 }
@@ -413,6 +420,7 @@ void set_default_parameters() {
     trinket2 = 0;
 
     calculate_scale_factors = 0;
+    enemy_is_demonic = 0;
 }
 
 void build_arglist( std::vector<kvpair_t>& arglist, int argc, char** argv ) {
@@ -828,6 +836,9 @@ void parse_parameters( std::vector<kvpair_t>& arglist ) {
             if ( trinket1 == trinket2 && 0 != trinket2 ) { *report_path << "Duplicated trinkets \"" << trinket2_name << "\" not allowed." << std::endl; trinket2 = 0; continue; }
             delete[] buf;
         }
+        else if ( 0 == i->key.compare( "enemy_is_demonic" ) ) {
+            enemy_is_demonic = !!atoi( i->value.c_str() );
+        }
         else if ( 0 == i->key.compare( "rng_engine" ) ) {
             if ( 0 == i->value.compare( "mt127" ) ) rng_engine = 127;
             else if ( 0 == i->value.compare( "mwc64x" ) ) rng_engine = 64;
@@ -873,6 +884,10 @@ void parse_parameters( std::vector<kvpair_t>& arglist ) {
 void generate_predef() {
     char buffer[256];
     predef = "";
+
+    predef.append( "#define ENEMY_IS_DEMONIC " );
+    sprintf( buffer, "%d", enemy_is_demonic );
+    predef.append( buffer ); predef.append( "\r\n" );
 
     predef.append( "#define STRICT_GCD " );
     sprintf( buffer, "%d", strict_gcd );

@@ -88,12 +88,14 @@
 //#define trinket_skull_of_war 2120
 //#define trinket_mote_of_the_mountain 1517
 //#define trinket_worldbreakers_resolve 220
-#define trinket_discordant_chorus 20564
+//#define trinket_discordant_chorus 20564
 #define trinket_empty_drinking_horn 259
 //#define trinket_unending_hunger 54
 //#define trinket_spores_of_alacrity 2304
 //#define trinket_bonemaws_big_toe 1767
 //#define trinket_emberscale_talisman 1767
+#define trinket_gronntooth_war_horn 1152
+#define ENEMY_IS_DEMONIC 1
 #endif /* !defined(__OPENCL_VERSION__) */
 
 /* Debug on Host! */
@@ -660,6 +662,12 @@ typedef struct {
         time_t cd;
         time_t expire;
     } emberscale_talisman;
+#endif
+#if defined(trinket_gronntooth_war_horn)
+    struct {
+        time_t expire;
+        RPPM_t proc;
+    } gronntooth_war_horn;
 #endif
     time_t gcd;
     k32u target;
@@ -1375,6 +1383,10 @@ enum {
     routnum_emberscale_talisman_start,
     routnum_emberscale_talisman_cd,
 #endif
+#if defined(trinket_gronntooth_war_horn)
+    routnum_gronntooth_war_horn_trigger,
+    routnum_gronntooth_war_horn_expire,
+#endif
 };
 
 enum {
@@ -1391,7 +1403,7 @@ k32s deal_damage( rtinfo_t* rti, k32u target_id, float dmg, k32u dmgtype, float 
     switch( dmgtype ) {
     case DMGTYPE_NONE:
         if ( UP( enrage.expire ) ) {
-            dmg *= 1.1f;
+            dmg *= 1.15f;
             dmg *= 1.0f + rti->player.stat.mastery;
         }
         dmg *= 1.0f + rti->player.stat.vers;
@@ -1402,6 +1414,10 @@ k32s deal_damage( rtinfo_t* rti, k32u target_id, float dmg, k32u dmgtype, float 
 #if defined(legendary_ring)
         if ( UP( thorasus_the_stone_heart_of_draenor.expire ) )
             dmg *= 1.0f + legendary_ring * 0.0001;
+#endif
+#if ENEMY_IS_DEMONIC && defined(trinket_gronntooth_war_horn)
+        if ( UP(gronntooth_war_horn.expire ) )
+            dmg *= 1.1f;
 #endif
     case DMGTYPE_BLOODBATH:
         lprintf( ( "damage %.0f", dmg ) );
@@ -1420,7 +1436,7 @@ k32s deal_damage( rtinfo_t* rti, k32u target_id, float dmg, k32u dmgtype, float 
 #endif
 
         if ( UP( enrage.expire ) ) {
-            dmg *= 1.1f;
+            dmg *= 1.15f;
             dmg *= 1.0f + rti->player.stat.mastery;
         }
         dmg *= 1.0f + rti->player.stat.vers;
@@ -1439,6 +1455,10 @@ k32s deal_damage( rtinfo_t* rti, k32u target_id, float dmg, k32u dmgtype, float 
 #if defined(legendary_ring)
         if ( UP( thorasus_the_stone_heart_of_draenor.expire ) )
             dmg *= 1.0f + legendary_ring * 0.0001;
+#endif
+#if ENEMY_IS_DEMONIC && defined(trinket_gronntooth_war_horn)
+        if ( UP(gronntooth_war_horn.expire ) )
+            dmg *= 1.1f;
 #endif
 #if (TALENT_TIER6 == 2) && AVATAR_LIKE_BLOODBATH
         if ( dmgtype == DMGTYPE_ABILITY && UP( bloodbath.expire ) ) {
@@ -2733,6 +2753,7 @@ DECL_EVENT( touch_of_the_grave_trigger ) {
 	//float d = 1932.0f;
     //d += uni_rng( rti ) * ( 2244.0f - 1932.0f );
     float d = 0.5f * rti->player.stat.ap; // To avoid SMF bonus.
+    d *= 2.0f; // 2015.11.19 hotfix
 	deal_damage( rti, target_id, d, DMGTYPE_NONE, 0, 0, 0 );
 }
 #endif
@@ -3185,6 +3206,27 @@ DECL_EVENT( unending_hunger_expire ) {
 }
 #endif
 
+#if defined(trinket_gronntooth_war_horn)
+DECL_EVENT( gronntooth_war_horn_trigger ) {
+    if( !UP( gronntooth_war_horn.expire ) ) {
+        rti->player.stat.gear_str += trinket_gronntooth_war_horn;
+        refresh_str( rti );
+        refresh_ap( rti );
+    }      
+    rti->player.gronntooth_war_horn.expire = TIME_OFFSET( FROM_SECONDS( 15 ) );
+    eq_enqueue( rti, rti->player.gronntooth_war_horn.expire, routnum_gronntooth_war_horn_expire, target_id );
+    lprintf( ( "gronntooth_war_horn trigger" ) );
+}
+DECL_EVENT( gronntooth_war_horn_expire ) {
+    if ( rti->player.gronntooth_war_horn.expire == rti->timestamp ) {
+        lprintf( ( "gronntooth_war_horn expire" ) );
+        rti->player.gronntooth_war_horn.expire = 0;
+        rti->player.stat.gear_str -= trinket_gronntooth_war_horn;
+        refresh_str( rti );
+        refresh_ap( rti );
+    }
+}
+#endif
 
 // === anger_management =======================================================
 void anger_management_count( rtinfo_t* rti, float rage ) {
@@ -3435,6 +3477,10 @@ void routine_entries( rtinfo_t* rti, _event_t e ) {
         HOOK_EVENT( emberscale_talisman_start );
         HOOK_EVENT( emberscale_talisman_cd );
 #endif
+#if defined(trinket_gronntooth_war_horn)
+        HOOK_EVENT( gronntooth_war_horn_trigger );
+        HOOK_EVENT( gronntooth_war_horn_expire );
+#endif
     default:
         assert( 0 );
     }
@@ -3518,6 +3564,10 @@ void module_init( rtinfo_t* rti ) {
     rti->player.spores_of_alacrity.proc.lasttimeattemps = ( time_t ) - ( k32s )FROM_SECONDS( 10 );
     rti->player.spores_of_alacrity.proc.lasttimeprocs = ( time_t ) - ( k32s )FROM_SECONDS( 180 );
 #endif
+#if defined(trinket_gronntooth_war_horn)
+    rti->player.gronntooth_war_horn.proc.lasttimeattemps = ( time_t ) - ( k32s )FROM_SECONDS( 10 );
+    rti->player.gronntooth_war_horn.proc.lasttimeprocs = ( time_t ) - ( k32s )FROM_SECONDS( 180 );
+#endif
 }
 
 void special_procs( rtinfo_t* rti, k32u target_id ) {
@@ -3596,6 +3646,9 @@ void special_procs( rtinfo_t* rti, k32u target_id ) {
     if ( !UP( spores_of_alacrity.expire ) ) {
         proc_RPPM( rti, &rti->player.spores_of_alacrity.proc, 0.92f, routnum_spores_of_alacrity_trigger, target_id );
     }
+#endif
+#if defined(trinket_gronntooth_war_horn)
+    proc_RPPM( rti, &rti->player.gronntooth_war_horn.proc, 1.5f, routnum_gronntooth_war_horn_trigger, target_id );
 #endif
 }
 

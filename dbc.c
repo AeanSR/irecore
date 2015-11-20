@@ -1,5 +1,5 @@
 /*
-	IreCore Database Sep 21 2015
+	IreCore Database Nov 19 2015
 */
 
 typedef struct{
@@ -9362,6 +9362,113 @@ int plate_list[] = {
 	128177,// Demonforged Iron Bracers
 	128300,// Befouled Demonhide Belt
 	128352,// Felbane Shoulderguard
+	129427,// Heart-Lesion Breastplate
+	129428,// Heart-Lesion Sabatons
+	129429,// Heart-Lesion Gauntlets
+	129430,// Heart-Lesion Helm
+	129431,// Heart-Lesion Legplates
+	129432,// Heart-Lesion Pauldrons
+	129433,// Heart-Lesion Girdle
+	129434,// Heart-Lesion Vambraces
+	129442,// Heart-Lesion Chestguard
+	129444,// Heart-Lesion Greaves
+	129445,// Heart-Lesion Handguards
+	129446,// Heart-Lesion Faceguard
+	129447,// Heart-Lesion Legguards
+	129453,// Heart-Lesion Shoulderguards
+	129454,// Heart-Lesion Waistband
+	129455,// Heart-Lesion Armguards
+	129527,// Oathsworn Breastplate
+	129528,// Oathsworn Sabatons
+	129529,// Oathsworn Gauntlets
+	129530,// Oathsworn Helm
+	129531,// Oathsworn Legplates
+	129532,// Oathsworn Pauldrons
+	129533,// Oathsworn Girdle
+	129534,// Oathsworn Vambraces
+	129544,// Oathsworn Chestguard
+	129546,// Oathsworn Greaves
+	129547,// Oathsworn Handguards
+	129548,// Oathsworn Faceguard
+	129549,// Oathsworn Legguards
+	129555,// Oathsworn Shoulderguards
+	129556,// Oathsworn Waistband
+	129557,// Oathsworn Armguards
+	129656,// Sunsoul Battleplate
+	129657,// Sunsoul Sabatons
+	129658,// Sunsoul Gauntlets
+	129659,// Sunsoul Helm
+	129660,// Sunsoul Legplates
+	129661,// Sunsoul Pauldrons
+	129662,// Sunsoul Girdle
+	129663,// Sunsoul Vambraces
+	129664,// Sunsoul Breastplate
+	129666,// Sunsoul Boots
+	129667,// Sunsoul Gloves
+	129668,// Sunsoul Headpiece
+	129669,// Sunsoul Leggings
+	129675,// Sunsoul Spaulders
+	129676,// Sunsoul Belt
+	129677,// Sunsoul Armplates
+	129689,// Sunsoul Chestguard
+	129691,// Sunsoul Greaves
+	129692,// Sunsoul Handguards
+	129693,// Sunsoul Faceguard
+	129694,// Sunsoul Legguards
+	129700,// Sunsoul Shoulderguards
+	129701,// Sunsoul Waistband
+	129702,// Sunsoul Armguards
+	129835,// Faceguard of Determination
+	129842,// Legplates of Unending Fury
+	129854,// Girdle of Seething Rage
+	129868,// Kyzoc's Ground Stompers
+	129880,// Gauntlets of the Kraken
+	129889,// Castle Breaker's Battleplate
+	133185,// Harp Shell Pauldrons
+	133191,// Anomuran Helm
+	133195,// Triton Legplates
+	133202,// Abalone Plate Armor
+	133205,// Alpheus Legguards
+	133208,// Cinnabar Shoulders
+	133214,// Hematite Plate Gloves
+	133218,// Belt of the Ringworm
+	133234,// Headcover of Fog
+	133243,// Legguards of Winnowing Wind
+	133249,// Lunar Halo
+	133253,// Darksky Treads
+	133256,// Greaves of Wu the Elder
+	133262,// Greaves of Wu the Younger
+	133267,// Sand Dune Belt
+	133289,// Belt of the Forgemaster
+	133294,// Earthshape Pauldrons
+	133306,// Bracers of Umbral Mending
+	133387,// Gauntlets of Temporal Interference
+	133388,// Breastplate of Sorrow
+	133390,// Girdle of Lost Heroes
+	133394,// Waistguard of Lost Time
+	133402,// Bloodhoof Legguards
+	133404,// Time Altered Legguards
+	133405,// Breastplate of Tarnished Bronze
+	133406,// Chrono Boots
+	133407,// Crown of Epochs
+	133408,// Temporal Pauldrons
+	133416,// Time Strand Gauntlets
+	133422,// Breastplate of Despair
+	133424,// Bindings of the End Times
+	133434,// Gauntlets of Divine Blessings
+	133445,// Bracers of Slaughter
+	133451,// Helm of Sanctification
+	133456,// Sunstrider Warboots
+	133465,// Shoulderplates of Everlasting Pain
+	133468,// Breastplate of Fierce Survival
+	133475,// Greaves of the Penitent Knight
+	133478,// Netherforce Chestplate
+	133492,// Bent Gold Belt
+	133498,// Scourgelord's Frigid Chestplate
+	133501,// Skeleton Lord's Cranium
+	133525,// Bones of the Damned
+	133531,// Blinding Girdle of Truth
+	133533,// Flashing Bracers of Warmth
 	     0,
 };
 
@@ -13167,6 +13274,69 @@ item_subclass_t weapon_type_list[] = {
 	{128199,    10},// Fractured Soulgem Staff
 	{128201,     8},// Greatsword of Chaos
 	{128629,     5},// Durg's Heavy Maul
+	{129394,    10},// Communal Staff
+	{129404,    10},// Communal Stave
+	{129425,    10},// Felsoul Staff
+	{129426,     8},// Heart-Lesion Greatsword
+	{129435,     7},// Heart-Lesion Blade
+	{129456,     8},// Heart-Lesion Runeblade
+	{129473,     7},// Lightdrinker Sword
+	{129478,    10},// Mistdancer Spire
+	{129499,    10},// Mistdancer Staff
+	{129502,     7},// Mistdancer Sword
+	{129525,    10},// Mountainsage Staff
+	{129526,     1},// Oathsworn Greataxe
+	{129535,     1},// Oathsworn Headchopper
+	{129536,     0},// Oathsworn Axe
+	{129570,    10},// Springrain Stave
+	{129583,     6},// Springrain Spear
+	{129602,    10},// Springrain Staff
+	{129678,     4},// Sunsoul Scepter
+	{129680,     7},// Sunsoul Sword
+	{129682,     5},// Sunsoul Warmaul
+	{129827,     1},// The Blade of Harbingers
+	{129828,    10},// Staff of the Soul-Eater
+	{129829,    10},// Staff of the Forest Lord
+	{129858,     4},// Gavel of Naaru Blessings
+	{129861,     7},// Sword of Unyielding Force
+	{129934,     0},// Wild Gladiator's Runeaxe
+	{129935,     0},// Wild Gladiator's Runeaxe
+	{129936,     0},// Wild Gladiator's Runeaxe
+	{133179,     0},// Lightning Whelk Axe
+	{133184,    10},// Cerith Spire Staff
+	{133196,     1},// Whitefin Axe
+	{133219,     8},// Sword of the Bottomless Pit
+	{133220,    10},// Darkling Staff
+	{133223,     7},// Elementium Fang
+	{133229,     4},// Heavy Geode Mace
+	{133240,     0},// Axe of the Eclipse
+	{133257,     6},// Seliza's Spear
+	{133259,     7},// Resonant Kris
+	{133271,     4},// Hammer of Sparks
+	{133298,     5},// Wild Hammer
+	{133301,     4},// Mace of Transformed Bone
+	{133303,    10},// Staff of Siphoned Essences
+	{133371,     1},// Thundercleaver Axe
+	{133375,     4},// Craclking Geode Mace
+	{133376,     4},// Sceptre of Swirling Winds
+	{133391,     4},// Dragonshrine Scepter
+	{133395,    10},// Jaina's Staff
+	{133399,     0},// Crescent Moon
+	{133401,     1},// Axe of the Tauren Chieftains
+	{133433,     0},// Sun-Forged Cleaver
+	{133437,     7},// Latro's Dancing Blade
+	{133446,     4},// Battle-Mace of the High Priestess
+	{133450,     1},// Axe of Shattered Dreams
+	{133453,    10},// Sun-Infused Focus Staff
+	{133471,    10},// Rod of the Blazing Light
+	{133472,     7},// Quickening Blade of the Prince
+	{133474,     4},// Cudgel of Consecration
+	{133479,     0},// Breeching Comet
+	{133485,    10},// Unspeakable Secret
+	{133486,     5},// Garfrost's Two-Ton Hammer
+	{133582,     0},// Warmongering Gladiator's Runeaxe
+	{133583,     0},// Warmongering Gladiator's Runeaxe
+	{133584,     0},// Warmongering Gladiator's Runeaxe
 	{     0,     0},
 };
 

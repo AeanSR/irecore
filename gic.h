@@ -12,6 +12,7 @@
 #include <QtWidgets/QMainWindow>
 #include <QtConcurrent/QtConcurrent>
 #include "ui_gic.h"
+#include "ui_select_trinkets.h"
 #include <QtNetwork>
 #include <qthread.h>
 #include <QNetworkAccessManager>
@@ -43,6 +44,11 @@ public slots:
     void on_btnGenerateDefaultAPL_clicked();
     void on_listActions_itemDoubleClicked();
     void on_listConditions_itemDoubleClicked();
+    void on_btnSelectTrinkets_clicked();
+    void on_btnSelectTrinketsBtns_accepted();
+    void on_btnSelectTrinketsBtns_rejected();
+    void on_btnSelectAllTrinkets_clicked();
+    void on_btnSelectNoneTrinkets_clicked();
     void on_comboIncandescence_currentIndexChanged( int );
     void TxtBoxNotify( QString );
     void mh_dps_calculate();
@@ -51,7 +57,8 @@ public slots:
     void select_gear_slot();
 private:
     Ui::gicClass ui;
-
+    Ui::dlgTrinkets uiTrinkets;
+    QDialog* dlgTrinkets;
 };
 
 class functionbuf

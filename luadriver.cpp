@@ -90,6 +90,7 @@ const param_t<int> bool_param_list[] = {
 	{"default_actions", &default_actions },
 	{"archmages_incandescence", &archmages_incandescence },
 	{"archmages_greater_incandescence", &archmages_greater_incandescence },
+    {"enemy_is_demonic", &enemy_is_demonic},
 	{"t17_2pc", &t17_2pc },
 	{"t17_4pc", &t17_4pc },
 	{"t18_2pc", &t18_2pc },

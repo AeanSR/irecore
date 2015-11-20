@@ -50,7 +50,7 @@
      <item>
       <widget class="QTabWidget" name="tabWidget">
        <property name="currentIndex">
-        <number>6</number>
+        <number>0</number>
        </property>
        <widget class="QWidget" name="tabCompute">
         <attribute name="title">
@@ -74,7 +74,7 @@
             <x>10</x>
             <y>31</y>
             <width>221</width>
-            <height>451</height>
+            <height>471</height>
            </rect>
           </property>
           <layout class="QVBoxLayout" name="verticalLayout_14">
@@ -428,6 +428,13 @@
             <widget class="QCheckBox" name="checkTrinketBenchmark">
              <property name="text">
               <string>Trinket Benchmark</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QPushButton" name="btnSelectTrinkets">
+             <property name="text">
+              <string>Select Trinkets...</string>
              </property>
             </widget>
            </item>
@@ -990,6 +997,22 @@ IreCore only simulates Tank-n-Spank combats. It's impossible to stop melee attac
            </layout>
           </item>
          </layout>
+        </widget>
+        <widget class="QCheckBox" name="checkEnemyIsDemonic">
+         <property name="geometry">
+          <rect>
+           <x>370</x>
+           <y>80</y>
+           <width>188</width>
+           <height>16</height>
+          </rect>
+         </property>
+         <property name="text">
+          <string>Enemy is Demonic</string>
+         </property>
+         <property name="checked">
+          <bool>false</bool>
+         </property>
         </widget>
        </widget>
        <widget class="QWidget" name="tabBuild">
@@ -3189,7 +3212,7 @@ IreCore only simulates Tank-n-Spank combats. It's impossible to stop melee attac
           <string>Write Lua scripts here.</string>
          </property>
         </widget>
-        <widget class="QWidget" name="">
+        <widget class="QWidget" name="layoutWidget">
          <property name="geometry">
           <rect>
            <x>10</x>

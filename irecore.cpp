@@ -203,7 +203,7 @@ int trinket_scaling( int trinket, int itemlvl ) {
         }
     }
     else if ( trinket == 12 ) {
-        switch ( itemlvl ) {
+        switch ( itemlvl - 15 ) { /** Due to blizzard's bug! */
         case 705: return 220;
         case 711: return 232;
         case 720: return 253;

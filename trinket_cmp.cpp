@@ -169,7 +169,7 @@ void pushback_trinkets() {
     trinkets_to_cmp.push_back( trinket_profile_t( QApplication::translate( "gicClass", "Fetid Salivation" ).toStdString(), 128148, 691, 281, 0, 281, 0, 0, 0, 1 ) );
     trinkets_to_cmp.push_back( trinket_profile_t( QApplication::translate( "gicClass", "Mark of Supreme Doom" ).toStdString(), 124546, 705, 187, 0, 0, 0, 0, 0, 1 ) );
     trinkets_to_cmp.push_back( trinket_profile_t( QApplication::translate( "gicClass", "Chipped Soul Prism" ).toStdString(), 124545, 705, 187, 187, 187, 187, 187, 187, 1 ) );
-    trinkets_to_cmp.push_back( trinket_profile_t( QApplication::translate( "gicClass", "Gronntooth War Horn" ).toStdString(), 133595, 715, 140, 140, 140, 0, 0, 0, 0 ) );
+    trinkets_to_cmp.push_back( trinket_profile_t( QApplication::translate( "gicClass", "Gronntooth War Horn" ).toStdString(), 133595, 715, 140, 140, 140, 0, 0, 0, 0, 0 ) );
     trinkets_to_cmp.push_back( trinket_profile_t( QApplication::translate( "gicClass", "Gronntooth War Horn(Demon)" ).toStdString(), 133595, 715, 140, 140, 140, 0, 0, 0, 0, 1 ) );
     std::stable_sort(trinkets_to_cmp.begin(), trinkets_to_cmp.end(), [](const trinket_profile_t& t1, const trinket_profile_t& t2){return t1.itemlvl > t2.itemlvl;});
     int s = trinkets_to_cmp.size();

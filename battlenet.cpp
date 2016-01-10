@@ -110,11 +110,12 @@ int gic::import_player( std::string& realm, std::string& name, std::string& regi
         url.append( API_KEY );
     }
     else {
-        url = "http://www.battlenet.com.cn/api/wow/character/";
+        url = "https://api.battlenet.com.cn/wow/character/";
         url.append( realm.c_str() );
         url.append( "/" );
         url.append( name.c_str() );
-        url.append( "?fields=talents,items" );
+        url.append( "?fields=talents,items&apikey=" );
+        url.append( API_KEY );
     }
     bn.set_url( url );
     rapidjson::Document j = bn.get();

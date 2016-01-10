@@ -17,6 +17,7 @@ copy kernel.c release_nolib\kernel.c
 copy gic_zh.qm release_nolib\gic_zh.qm
 copy LICENSE release_nolib\LICENSE
 copy lua\lua53.dll release_nolib\lua53.dll
+copy %windir%\SYSWOW64\ssleay32.dll
 
 :: Normal release.
 xcopy profile release\profile /I
@@ -33,6 +34,7 @@ copy %qt_dir%\bin\Qt5Widgets.dll release\Qt5Widgets.dll
 copy %qt_dir%\bin\Qt5Network.dll release\Qt5Network.dll
 copy %qt_dir%\plugins\platforms\qwindows.dll release\platforms\qwindows.dll
 copy lua\lua53.dll release\lua53.dll
+copy %windir%\SYSWOW64\ssleay32.dll
 :: ICU is no longer needed since irecore-620-50?
 :: copy %qt_dir%\bin\icuin53.dll release\icuin53.dll
 :: copy %qt_dir%\bin\icuuc53.dll release\icuuc53.dll

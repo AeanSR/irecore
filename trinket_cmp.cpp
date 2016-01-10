@@ -210,6 +210,8 @@ void gic::on_btnSelectTrinkets_clicked()
         uiTrinkets.setupUi(dlgTrinkets);
         connect( uiTrinkets.btnSelectAllTrinkets, SIGNAL( clicked( void ) ), this, SLOT( on_btnSelectAllTrinkets_clicked() ) );
         connect( uiTrinkets.btnSelectNoneTrinkets, SIGNAL( clicked( void ) ), this, SLOT( on_btnSelectNoneTrinkets_clicked() ) );
+        connect( uiTrinkets.btnSelectTrinketsBtns, SIGNAL( accepted( void ) ), this, SLOT( on_btnSelectTrinketsBtns_accepted() ) );
+        connect( uiTrinkets.btnSelectTrinketsBtns, SIGNAL( rejected( void ) ), this, SLOT( on_btnSelectTrinketsBtns_rejected() ) );
         uiTrinkets.btnSelectTrinketsBtns->button(QDialogButtonBox::Ok)->setText(tr("Ok"));
         uiTrinkets.btnSelectTrinketsBtns->button(QDialogButtonBox::Cancel)->setText(tr("Cancel"));
     }

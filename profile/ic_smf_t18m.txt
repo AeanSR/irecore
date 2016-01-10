@@ -8,10 +8,10 @@ plate_specialization=1
 glyph_of_ragingwind=1
 rage_max=120
 
-mh_low=1076
-oh_low=1076
-mh_high=2000
-oh_high=2000
+mh_low=1182
+oh_low=1182
+mh_high=2196
+oh_high=2196
 mh_speed=2.6
 oh_speed=2.6
 mh_type=1h
@@ -21,13 +21,13 @@ oh_enchant=thunderlord
 
 t18_2pc=1
 t18_4pc=1
-legendary_ring=735
+legendary_ring=795
 
-gear_str=4604
-gear_crit=2327
-gear_haste=1006
-gear_mastery=1381
-gear_mult=988
+gear_str=5217
+gear_crit=2642
+gear_haste=1104
+gear_mastery=1517
+gear_mult=1182
 gear_vers=0
 trinket1=empty_drinking_horn,ilvl=730
 trinket2=worldbreakers_resolve,ilvl=735
